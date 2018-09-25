@@ -134,7 +134,7 @@
         <shiro.version>1.2.6</shiro.version>
         <spotbugs.version>3.1.7</spotbugs.version>
         <spotbugs-maven-plugin.version>3.1.6</spotbugs-maven-plugin.version>
-        <surefire-version>2.16</surefire-version>
+        <surefire-version>2.22.0</surefire-version>
     </properties>
 
     <licenses>
