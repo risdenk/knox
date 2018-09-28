@@ -1474,7 +1474,7 @@
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>json-path</artifactId>
-                <version>3.0.3</version>
+                <version>3.1.1</version>
                 <scope>test</scope>
             </dependency>
 
