@@ -157,7 +157,7 @@
         <groovy-version>2.4.8</groovy-version>
         <hadoop-version>3.0.0</hadoop-version>
         <j2e-pac4j.version>3.0.0</j2e-pac4j.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <javax-websocket-version>1.1</javax-websocket-version>
         <jersey.version>2.6</jersey.version>
         <jetty-version>9.2.25.v20180606</jetty-version>
