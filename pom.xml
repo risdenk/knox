@@ -153,7 +153,7 @@
         <findsecbugs-plugin.version>1.8.0</findsecbugs-plugin.version>
         <forbiddenapis.version>2.6</forbiddenapis.version>
         <groovy-version>2.4.8</groovy-version>
-        <hadoop-version>3.0.0</hadoop-version>
+        <hadoop-version>3.1.1</hadoop-version>
         <jackson.version>2.9.5</jackson.version>
         <javax-websocket-version>1.1</javax-websocket-version>
         <jetty-version>9.2.25.v20180606</jetty-version>
