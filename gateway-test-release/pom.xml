@@ -35,7 +35,7 @@
     </modules>
 
     <properties>
-        <jetty.version>9.3.19.v20170502</jetty.version>
+        <jetty.version>9.4.12.v20180830</jetty.version>
     </properties>
 
 
