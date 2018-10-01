@@ -150,7 +150,7 @@
         <commons-digester3.version>3.2</commons-digester3.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.8</commons-lang3.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
         <commons-net.version>3.6</commons-net.version>
         <ehcache.version>2.5.0</ehcache.version>
         <findsecbugs-plugin.version>1.8.0</findsecbugs-plugin.version>
