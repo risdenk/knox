@@ -1299,7 +1299,7 @@
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-client</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.1</version>
             </dependency>
 
             <!-- Html pull parser.  EPLv1 license -->
