@@ -178,7 +178,7 @@
         <javax.websocket-api.version>1.1</javax.websocket-api.version>
         <jericho-html.version>3.2</jericho-html.version>
         <jersey.version>2.6</jersey.version>
-        <jetty.version>9.2.25.v20180606</jetty.version>
+        <jetty.version>9.4.12.v20180830</jetty.version>
         <jline.version>2.13</jline.version>
         <jna.version>4.1.0</jna.version>
         <joda-time.version>2.9.2</joda-time.version>
