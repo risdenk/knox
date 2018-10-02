@@ -140,7 +140,7 @@
         <gateway-group>org.apache.knox</gateway-group>
 
         <!-- Dependencies sorted alphabetically -->
-        <apacheds.version>2.0.0-M24</apacheds.version>
+        <apacheds.version>2.0.0.AM25</apacheds.version>
         <apacheds-jdbm.version>2.0.0-M5</apacheds-jdbm.version>
         <checkstyle.version>8.12</checkstyle.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
