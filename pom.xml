@@ -157,7 +157,7 @@
         <commons-net.version>3.6</commons-net.version>
         <cors-filter.version>2.6</cors-filter.version>
         <curator.version>4.0.1</curator.version>
-        <curator-test.version>2.12.0</curator-test.version>
+        <curator-test.version>4.0.1</curator-test.version>
         <easymock.version>3.5</easymock.version>
         <eclipselink.version>2.5.2</eclipselink.version>
         <ehcache.version>2.5.0</ehcache.version>
