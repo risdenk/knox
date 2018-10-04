@@ -140,7 +140,7 @@
         <gateway-group>org.apache.knox</gateway-group>
 
         <!-- Dependencies sorted alphabetically -->
-        <apacheds.version>2.0.0-M24</apacheds.version>
+        <apacheds.version>2.0.0.AM25</apacheds.version>
         <apacheds-jdbm.version>2.0.0-M5</apacheds-jdbm.version>
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
