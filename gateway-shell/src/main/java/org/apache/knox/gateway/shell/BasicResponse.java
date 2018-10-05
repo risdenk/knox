@@ -17,29 +17,29 @@
  */
 package org.apache.knox.gateway.shell;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
-import org.apache.http.util.EntityUtils;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BasicResponse implements Closeable {
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 
+public class BasicResponse implements Closeable {
   private HttpResponse response;
   private boolean consumed;
   private String string;
   private InputStream stream;
   private byte[] bytes;
 
-  public BasicResponse( HttpResponse response ) {
+  public BasicResponse(HttpResponse response) {
     this.response = response;
   }
 
   public void consume() {
-    if( !consumed ) {
-      EntityUtils.consumeQuietly( response.getEntity() );
+    if (!consumed) {
+      EntityUtils.consumeQuietly(response.getEntity());
       consumed = true;
     }
   }
@@ -66,15 +66,15 @@ public class BasicResponse implements Closeable {
   }
 
   public String getContentType() {
-    return ContentType.getOrDefault( response.getEntity() ).getMimeType();
+    return ContentType.getOrDefault(response.getEntity()).getMimeType();
   }
 
   public String getContentEncoding() {
-    return ContentType.getOrDefault( response.getEntity() ).getCharset().name();
+    return ContentType.getOrDefault(response.getEntity()).getCharset().name();
   }
 
   public InputStream getStream() throws IOException {
-    if( !consumed && stream == null ) {
+    if (!consumed && stream == null) {
       stream = response.getEntity().getContent();
       consumed = true;
     }
@@ -82,19 +82,23 @@ public class BasicResponse implements Closeable {
   }
 
   public String getString() throws IOException {
-    if( !consumed && string == null ) {
-      string = EntityUtils.toString( response.getEntity() );
-      consumed = true;
+    if (!consumed && string == null) {
+      HttpEntity tempEntity = response.getEntity();
+      if (tempEntity != null) {
+        string = EntityUtils.toString(tempEntity);
+        consumed = true;
+      } else {
+        string = "";
+      }
     }
     return string;
   }
 
   public byte[] getBytes() throws IOException {
-    if( !consumed && bytes == null ) {
-      bytes = EntityUtils.toByteArray( response.getEntity() );
+    if (!consumed && bytes == null) {
+      bytes = EntityUtils.toByteArray(response.getEntity());
       consumed = true;
     }
     return bytes;
   }
-
 }
