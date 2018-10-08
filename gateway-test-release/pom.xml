@@ -38,7 +38,7 @@
         <!-- This property name must be different thant jetty.version
              Otherwise Jetty 9.2.x and 9.3.x will not both be available.
              Jetty 9.2.x is needed for Knox and Jetty 9.3.x for Hadoop -->
-        <hadoop-jetty.version>9.3.19.v20170502</hadoop-jetty.version>
+        <hadoop-jetty.version>9.4.12.v20180830</hadoop-jetty.version>
     </properties>
 
     <dependencies>
