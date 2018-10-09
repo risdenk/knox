@@ -17,6 +17,7 @@
  */
 package org.apache.knox.gateway.services.security.impl;
 
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -36,6 +37,7 @@ import org.apache.knox.gateway.services.security.KeystoreService;
 import org.apache.knox.gateway.services.security.KeystoreServiceException;
 import org.apache.knox.gateway.services.security.SSLService;
 import org.apache.knox.gateway.util.X500PrincipalParser;
+import org.conscrypt.OpenSSLProvider;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class JettySSLService implements SSLService {
@@ -132,6 +134,8 @@ public class JettySSLService implements SSLService {
 
   @Override
   public Object buildSslContextFactory(GatewayConfig config) throws AliasServiceException {
+    Security.addProvider(new OpenSSLProvider());
+
     String identityKeystorePath = config.getIdentityKeystorePath();
     String identityKeystoreType = config.getIdentityKeystoreType();
     String identityKeyAlias = config.getIdentityKeyAlias();
@@ -224,6 +228,8 @@ public class JettySSLService implements SSLService {
     if (sslExcludeProtocols != null && !sslExcludeProtocols.isEmpty()) {
       sslContextFactory.setExcludeProtocols( sslExcludeProtocols.toArray(new String[0]) );
     }
+
+    sslContextFactory.setProvider("Conscrypt");
     return sslContextFactory;
   }
 
