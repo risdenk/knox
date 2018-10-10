@@ -29,6 +29,12 @@ import javax.servlet.FilterConfig;
 
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.knox.gateway.services.ServiceType;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.conn.HttpConnectionFactory;
+import org.apache.http.conn.ManagedHttpClientConnection;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.conn.KnoxManagedHttpClientConnectionFactory;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.KeystoreService;
 import org.apache.knox.gateway.config.GatewayConfig;
@@ -114,6 +120,19 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
 
     // See KNOX-1530 for details
     builder.disableContentCompression();
+
+    int connectionConfigBuffer = Integer.parseInt(System.getProperty("KNOX_CONNECTIONCONFIGBUFFER", String.valueOf(8 * 1024)));
+//    int fragmentSizeHint = Integer.parseInt(System.getProperty("KNOX_FRAGMENTSIZEHINT", String.valueOf(8 * 1024)));
+    ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                                            .setBufferSize(connectionConfigBuffer)
+//                                            .setFragmentSizeHint(fragmentSizeHint)
+                                            .build();
+
+    HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory = new KnoxManagedHttpClientConnectionFactory();
+    PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = new PoolingHttpClientConnectionManager(connFactory);
+    poolingHttpClientConnectionManager.setDefaultConnectionConfig(connectionConfig);
+    builder.setConnectionManager(poolingHttpClientConnectionManager);
+    builder.setDefaultConnectionConfig(connectionConfig);
 
     return builder.build();
   }

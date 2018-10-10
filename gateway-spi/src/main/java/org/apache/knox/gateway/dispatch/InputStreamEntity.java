@@ -26,6 +26,7 @@
  */
 package org.apache.knox.gateway.dispatch;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.Args;
@@ -41,7 +42,7 @@ import java.io.OutputStream;
 public class InputStreamEntity extends AbstractHttpEntity {
 
   // A value of 16K results in a significant performance improvement due to better HTTP chunking on the wire.
-  protected static final int OUTPUT_BUFFER_SIZE = 16 * 1024;
+  protected static final int OUTPUT_BUFFER_SIZE = Integer.parseInt(System.getProperty("KNOX_OUTPUT_BUFFER_SIZE",String.valueOf(16 * 1024)));
   private final InputStream content;
   private final long length;
 
@@ -122,25 +123,7 @@ public class InputStreamEntity extends AbstractHttpEntity {
   public void writeTo(final OutputStream outstream ) throws IOException {
     Args.notNull( outstream, "Output stream" );
     try (InputStream instream = this.content) {
-      final byte[] buffer = new byte[OUTPUT_BUFFER_SIZE];
-      int l;
-      if (this.length < 0) {
-        // consume until EOF
-        while ((l = instream.read(buffer)) != -1) {
-          outstream.write(buffer, 0, l);
-        }
-      } else {
-        // consume no more than length
-        long remaining = this.length;
-        while (remaining > 0) {
-          l = instream.read(buffer, 0, (int) Math.min(OUTPUT_BUFFER_SIZE, remaining));
-          if (l == -1) {
-            break;
-          }
-          outstream.write(buffer, 0, l);
-          remaining -= l;
-        }
-      }
+      IOUtils.copyLarge(instream, outstream, new byte[OUTPUT_BUFFER_SIZE]);
     }
   }
 
@@ -148,5 +131,4 @@ public class InputStreamEntity extends AbstractHttpEntity {
   public boolean isStreaming() {
     return true;
   }
-
 }
