@@ -17,9 +17,9 @@
  */
 package org.apache.knox.gateway.ha.dispatch;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,14 +31,14 @@ public class AtlasTrustedProxyHaDispatch extends DefaultHaDispatch {
   }
 
   @Override
-  protected void executeRequest(HttpUriRequest outboundRequest,
+  protected void executeRequest(ClassicHttpRequest outboundRequest,
                                 HttpServletRequest inboundRequest,
                                 HttpServletResponse outboundResponse) throws IOException {
-    HttpResponse inboundResponse = null;
+    ClassicHttpResponse inboundResponse = null;
     try {
       inboundResponse = executeOutboundRequest(outboundRequest);
 
-      int sc = inboundResponse.getStatusLine().getStatusCode();
+      int sc = inboundResponse.getCode();
       if (sc == HttpServletResponse.SC_MOVED_TEMPORARILY || sc == HttpServletResponse.SC_TEMPORARY_REDIRECT) {
         if (!isLoginRedirect(inboundResponse.getFirstHeader("Location"))) {
           inboundResponse.removeHeaders("Location");
@@ -51,9 +51,8 @@ public class AtlasTrustedProxyHaDispatch extends DefaultHaDispatch {
       }
 
       writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
-
     } catch (IOException e) {
-      LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
+      LOG.errorConnectingToServer(outboundRequest.getRequestUri(), e);
       failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
     }
   }

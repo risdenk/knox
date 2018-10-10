@@ -22,25 +22,27 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.hc.client5.http.SystemDefaultDnsResolver;
+import org.apache.hc.client5.http.auth.AuthSchemeProvider;
+import org.apache.hc.client5.http.auth.AuthSchemes;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.KerberosConfig;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.dispatch.KnoxSpnegoAuthSchemeFactory;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.impl.i18n.HaMessages;
 import org.apache.knox.gateway.i18n.messages.MessagesFactory;
-import org.apache.http.auth.AuthSchemeProvider;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.AuthSchemes;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * Base implementation of URLManager intended for query of Zookeeper active hosts. In
@@ -171,7 +173,7 @@ public abstract class BaseZookeeperURLManager implements URLManager {
           }
 
           // Ping host
-          String response = client.execute(get, new StringResponseHandler());
+          String response = client.execute(null, get, new StringResponseHandler());
 
           if (response != null) {
             result.add(host);
@@ -197,18 +199,17 @@ public abstract class BaseZookeeperURLManager implements URLManager {
 
     // Construct a HttpClient with short term timeout
     RequestConfig.Builder requestBuilder = RequestConfig.custom()
-                                                        .setConnectTimeout(TIMEOUT)
-                                                        .setSocketTimeout(TIMEOUT)
-                                                        .setConnectionRequestTimeout(TIMEOUT);
+                                                        .setConnectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                                                        .setConnectionRequestTimeout(TIMEOUT, TimeUnit.MILLISECONDS);
 
     // If Kerberos is enabled, allow for challenge/response transparent to client
     if (Boolean.getBoolean(GatewayConfig.HADOOP_KERBEROS_SECURED)) {
-      CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-      credentialsProvider.setCredentials(AuthScope.ANY, new NullCredentials());
+      BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+      credentialsProvider.setCredentials(new AuthScope(null, null, -1, null, null), new NullCredentials());
 
       Registry<AuthSchemeProvider> authSchemeRegistry =
                             RegistryBuilder.<AuthSchemeProvider>create()
-                                           .register(AuthSchemes.SPNEGO, new KnoxSpnegoAuthSchemeFactory(true))
+                                           .register(AuthSchemes.SPNEGO.name(), new KnoxSpnegoAuthSchemeFactory(KerberosConfig.DEFAULT, SystemDefaultDnsResolver.INSTANCE))
                                            .build();
 
       client = HttpClientBuilder.create()
@@ -232,7 +233,7 @@ public abstract class BaseZookeeperURLManager implements URLManager {
     }
 
     @Override
-    public String getPassword() {
+    public char[] getPassword() {
       return null;
     }
   }

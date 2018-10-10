@@ -17,17 +17,15 @@
  */
 package org.apache.knox.gateway.ha.dispatch;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.knox.gateway.ha.provider.HaDescriptor;
 import org.apache.knox.gateway.ha.provider.HaProvider;
 import org.apache.knox.gateway.ha.provider.HaServletContextListener;
 import org.apache.knox.gateway.ha.provider.impl.DefaultHaProvider;
 import org.apache.knox.gateway.ha.provider.impl.HaDescriptorFactory;
 import org.apache.knox.gateway.servlet.SynchronousServletOutputStreamAdapter;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.params.BasicHttpParams;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
@@ -62,12 +60,9 @@ public class DefaultHaDispatchTest {
     EasyMock.expect(filterConfig.getServletContext()).andReturn(servletContext).anyTimes();
     EasyMock.expect(servletContext.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(provider).anyTimes();
 
-    BasicHttpParams params = new BasicHttpParams();
-
-    HttpUriRequest outboundRequest = EasyMock.createNiceMock(HttpRequestBase.class);
+    ClassicHttpRequest outboundRequest = EasyMock.createNiceMock(ClassicHttpRequest.class);
     EasyMock.expect(outboundRequest.getMethod()).andReturn( "GET" ).anyTimes();
-    EasyMock.expect(outboundRequest.getURI()).andReturn( uri1  ).anyTimes();
-    EasyMock.expect(outboundRequest.getParams()).andReturn( params ).anyTimes();
+    EasyMock.expect(outboundRequest.getUri()).andReturn( uri1  ).anyTimes();
 
     HttpServletRequest inboundRequest = EasyMock.createNiceMock(HttpServletRequest.class);
     EasyMock.expect(inboundRequest.getRequestURL()).andReturn( new StringBuffer(uri2.toString()) ).once();

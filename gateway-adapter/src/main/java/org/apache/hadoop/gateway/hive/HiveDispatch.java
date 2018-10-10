@@ -16,7 +16,7 @@
  */
 package org.apache.hadoop.gateway.hive;
 
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 
 @Deprecated
 public class HiveDispatch extends org.apache.knox.gateway.hive.HiveDispatch{
@@ -26,7 +26,7 @@ public class HiveDispatch extends org.apache.knox.gateway.hive.HiveDispatch{
   }
 
   @Override
-  protected void addCredentialsToRequest(HttpUriRequest request) {
+  protected void addCredentialsToRequest(ClassicHttpRequest request) {
     super.addCredentialsToRequest(request);
   }
 

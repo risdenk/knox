@@ -17,8 +17,8 @@
  */
 package org.apache.knox.gateway.filter.rewrite.impl;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.knox.gateway.dispatch.InputStreamEntity;
 import org.apache.knox.gateway.filter.AbstractGatewayFilter;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteEnvironment;

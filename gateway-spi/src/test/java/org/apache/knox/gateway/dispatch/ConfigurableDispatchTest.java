@@ -17,12 +17,12 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.mock.MockHttpServletResponse;
 import org.easymock.Capture;
@@ -178,10 +178,10 @@ public class ConfigurableDispatchTest {
         .andAnswer(() -> headers.get(capturedArgument.getValue())).anyTimes();
     EasyMock.replay(inboundRequest);
 
-    HttpUriRequest outboundRequest = new HttpGet();
+    HttpUriRequest outboundRequest = new HttpGet("http://localhost");
     dispatch.copyRequestHeaderFields(outboundRequest, inboundRequest);
 
-    Header[] outboundRequestHeaders = outboundRequest.getAllHeaders();
+    Header[] outboundRequestHeaders = outboundRequest.getHeaders();
     assertThat(outboundRequestHeaders.length, is(2));
     assertThat(outboundRequestHeaders[0].getName(), is(HttpHeaders.ACCEPT));
     assertThat(outboundRequestHeaders[1].getName(), is("TEST"));
@@ -204,10 +204,10 @@ public class ConfigurableDispatchTest {
         .andAnswer(() -> headers.get(capturedArgument.getValue())).anyTimes();
     EasyMock.replay(inboundRequest);
 
-    HttpUriRequest outboundRequest = new HttpGet();
+    HttpUriRequest outboundRequest = new HttpGet("http://localhost");
     dispatch.copyRequestHeaderFields(outboundRequest, inboundRequest);
 
-    Header[] outboundRequestHeaders = outboundRequest.getAllHeaders();
+    Header[] outboundRequestHeaders = outboundRequest.getHeaders();
     assertThat(outboundRequestHeaders.length, is(1));
     assertThat(outboundRequestHeaders[0].getName(), is(HttpHeaders.AUTHORIZATION));
   }
@@ -222,8 +222,8 @@ public class ConfigurableDispatchTest {
         new BasicHeader("TEST", "testValue")
     };
 
-    HttpResponse inboundResponse = EasyMock.createNiceMock(HttpResponse.class);
-    EasyMock.expect(inboundResponse.getAllHeaders()).andReturn(headers).anyTimes();
+    ClassicHttpResponse inboundResponse = EasyMock.createNiceMock(ClassicHttpResponse.class);
+    EasyMock.expect(inboundResponse.getHeaders()).andReturn(headers).anyTimes();
     EasyMock.replay(inboundResponse);
 
     HttpServletResponse outboundResponse = new MockHttpServletResponse();
@@ -244,8 +244,8 @@ public class ConfigurableDispatchTest {
         new BasicHeader("TEST", "testValue")
     };
 
-    HttpResponse inboundResponse = EasyMock.createNiceMock(HttpResponse.class);
-    EasyMock.expect(inboundResponse.getAllHeaders()).andReturn(headers).anyTimes();
+    ClassicHttpResponse inboundResponse = EasyMock.createNiceMock(ClassicHttpResponse.class);
+    EasyMock.expect(inboundResponse.getHeaders()).andReturn(headers).anyTimes();
     EasyMock.replay(inboundResponse);
 
     HttpServletResponse outboundResponse = new MockHttpServletResponse();

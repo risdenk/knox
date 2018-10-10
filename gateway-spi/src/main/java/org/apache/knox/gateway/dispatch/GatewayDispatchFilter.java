@@ -17,8 +17,8 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.knox.gateway.SpiGatewayMessages;
 import org.apache.knox.gateway.config.ConfigurationInjectorBuilder;
 import org.apache.knox.gateway.filter.AbstractGatewayFilter;
@@ -94,7 +94,7 @@ public class GatewayDispatchFilter extends AbstractGatewayFilter {
     synchronized(lock) {
       dispatch.destroy();
       try {
-        if (httpClient instanceof  CloseableHttpClient) {
+        if (httpClient instanceof CloseableHttpClient) {
           ((CloseableHttpClient) httpClient).close();
         }
       } catch ( IOException e ) {

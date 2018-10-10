@@ -26,16 +26,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
 
 class NiFiResponseUtil {
 
-  static void modifyOutboundResponse(HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, HttpResponse inboundResponse) throws IOException {
+  static void modifyOutboundResponse(HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse) throws IOException {
     // Only want to rewrite the Location header on a HTTP 302
-    if (inboundResponse.getStatusLine().getStatusCode() == HttpServletResponse.SC_FOUND) {
+    if (inboundResponse.getCode() == HttpServletResponse.SC_FOUND) {
       Header originalLocationHeader = inboundResponse.getFirstHeader("Location");
       if (originalLocationHeader != null) {
         String originalLocation = originalLocationHeader.getValue();

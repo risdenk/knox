@@ -18,8 +18,9 @@
 package org.apache.knox.gateway.dispatch;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
+import org.apache.hc.core5.util.Args;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,7 @@ public class PartiallyRepeatableHttpEntity extends HttpEntityWrapper {
 
   public static final int DEFAULT_BUFFER_SIZE = 4096;
 
+  private final HttpEntity wrappedEntity;
   private int replayWriteIndex;
   private int replayWriteLimit;
   private byte[] replayBuffer;
@@ -37,6 +39,7 @@ public class PartiallyRepeatableHttpEntity extends HttpEntityWrapper {
 
   public PartiallyRepeatableHttpEntity(final HttpEntity entity, int bufferSize) throws IOException {
     super( entity );
+    this.wrappedEntity = Args.notNull(entity, "Wrapped entity");
     this.wrappedStream = null;
     this.finalStream = null;
     this.replayWriteIndex = -1;
@@ -93,12 +96,6 @@ public class PartiallyRepeatableHttpEntity extends HttpEntityWrapper {
   @Override
   public void writeTo( final OutputStream stream ) throws IOException {
     IOUtils.copy( getContent(), stream );
-  }
-
-  @Override
-  @SuppressWarnings( "deprecation" )
-  public void consumeContent() throws IOException {
-    throw new UnsupportedOperationException();
   }
 
   private class ReplayStream extends InputStream {

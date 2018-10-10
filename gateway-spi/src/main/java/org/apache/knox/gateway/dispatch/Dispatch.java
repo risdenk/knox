@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

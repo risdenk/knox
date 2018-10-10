@@ -17,10 +17,10 @@
  */
 package org.apache.knox.gateway.hive;
 
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.knox.gateway.config.Configure;
 import org.apache.knox.gateway.config.Default;
 import org.apache.knox.gateway.dispatch.DefaultDispatch;
-import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * This specialized dispatch provides Hive specific features to the
@@ -35,7 +35,7 @@ public class HiveDispatch extends DefaultDispatch {
   }
 
   @Override
-  protected void addCredentialsToRequest(HttpUriRequest request) {
+  protected void addCredentialsToRequest(ClassicHttpRequest request) {
     if( isBasicAuthPreemptive() ) {
       HiveDispatchUtils.addCredentialsToRequest(request);
     }

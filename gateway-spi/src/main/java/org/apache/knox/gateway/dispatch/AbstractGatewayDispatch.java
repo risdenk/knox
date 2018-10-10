@@ -18,9 +18,9 @@
 package org.apache.knox.gateway.dispatch;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.knox.gateway.filter.GatewayResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +38,7 @@ public abstract class AbstractGatewayDispatch implements Dispatch {
   private static final Set<String> REQUEST_EXCLUDE_HEADERS = new HashSet<>(Arrays.asList(
       "Host", "Authorization", "Content-Length", "Transfer-Encoding"));
 
-  protected  HttpClient client;
+  protected HttpClient client;
 
   @Override
   public void init() {
@@ -121,8 +121,8 @@ public abstract class AbstractGatewayDispatch implements Dispatch {
     response.sendError( HttpServletResponse.SC_METHOD_NOT_ALLOWED );
   }
 
-  public void copyRequestHeaderFields(HttpUriRequest outboundRequest,
-      HttpServletRequest inboundRequest) {
+  public void copyRequestHeaderFields(HttpRequest outboundRequest,
+                                      HttpServletRequest inboundRequest) {
     Enumeration<String> headerNames = inboundRequest.getHeaderNames();
     while( headerNames.hasMoreElements() ) {
       String name = headerNames.nextElement();

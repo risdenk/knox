@@ -16,8 +16,8 @@
  */
 package org.apache.hadoop.gateway.dispatch;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,16 +26,16 @@ import java.io.IOException;
 @Deprecated
 public class NiFiDispatch extends org.apache.knox.gateway.dispatch.NiFiDispatch {
   @Override
-  protected void executeRequest(HttpUriRequest outboundRequest,
-      HttpServletRequest inboundRequest, HttpServletResponse outboundResponse)
+  protected void executeRequest(ClassicHttpRequest outboundRequest,
+                                HttpServletRequest inboundRequest, HttpServletResponse outboundResponse)
       throws IOException {
     super.executeRequest(outboundRequest, inboundRequest, outboundResponse);
   }
 
   @Override
-  protected void writeOutboundResponse(HttpUriRequest outboundRequest,
+  protected void writeOutboundResponse(ClassicHttpRequest outboundRequest,
       HttpServletRequest inboundRequest, HttpServletResponse outboundResponse,
-      HttpResponse inboundResponse) throws IOException {
+      ClassicHttpResponse inboundResponse) throws IOException {
     super.writeOutboundResponse(outboundRequest, inboundRequest,
         outboundResponse, inboundResponse);
   }

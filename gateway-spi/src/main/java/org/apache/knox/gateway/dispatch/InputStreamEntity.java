@@ -26,9 +26,9 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
+import org.apache.hc.core5.util.Args;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -149,4 +149,8 @@ public class InputStreamEntity extends AbstractHttpEntity {
     return true;
   }
 
+  @Override
+  public void close() throws IOException {
+    content.close();
+  }
 }

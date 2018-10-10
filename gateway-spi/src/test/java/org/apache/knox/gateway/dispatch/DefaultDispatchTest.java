@@ -38,18 +38,15 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.servlet.SynchronousServletOutputStreamAdapter;
 import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.category.FastTests;
 import org.apache.knox.test.category.UnitTests;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpVersion;
-import org.apache.http.RequestLine;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.params.BasicHttpParams;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Test;
@@ -60,27 +57,18 @@ public class DefaultDispatchTest {
 
   // Make sure Hadoop cluster topology isn't exposed to client when there is a connectivity issue.
   @Test
-  public void testJiraKnox58() throws URISyntaxException, IOException {
-
+  public void testJiraKnox58() throws IOException, URISyntaxException {
     URI uri = new URI( "http://unreachable-host.invalid" );
-    BasicHttpParams params = new BasicHttpParams();
-
-    HttpUriRequest outboundRequest = EasyMock.createNiceMock( HttpUriRequest.class );
+    ClassicHttpRequest outboundRequest = EasyMock.createNiceMock( ClassicHttpRequest.class );
     EasyMock.expect( outboundRequest.getMethod() ).andReturn( "GET" ).anyTimes();
-    EasyMock.expect( outboundRequest.getURI() ).andReturn( uri  ).anyTimes();
-
-    RequestLine requestLine = EasyMock.createNiceMock( RequestLine.class );
-    EasyMock.expect( requestLine.getMethod() ).andReturn( "GET" ).anyTimes();
-    EasyMock.expect( requestLine.getProtocolVersion() ).andReturn( HttpVersion.HTTP_1_1 ).anyTimes();
-    EasyMock.expect( outboundRequest.getRequestLine() ).andReturn( requestLine ).anyTimes();
-    EasyMock.expect( outboundRequest.getParams() ).andReturn( params ).anyTimes();
+    EasyMock.expect( outboundRequest.getUri() ).andReturn( uri  ).anyTimes();
 
     HttpServletRequest inboundRequest = EasyMock.createNiceMock( HttpServletRequest.class );
 
     HttpServletResponse outboundResponse = EasyMock.createNiceMock( HttpServletResponse.class );
     EasyMock.expect( outboundResponse.getOutputStream() ).andAnswer( new IAnswer<SynchronousServletOutputStreamAdapter>() {
       @Override
-      public SynchronousServletOutputStreamAdapter answer() throws Throwable {
+      public SynchronousServletOutputStreamAdapter answer() {
         return new SynchronousServletOutputStreamAdapter() {
           @Override
           public void write( int b ) throws IOException {
@@ -90,7 +78,7 @@ public class DefaultDispatchTest {
       }
     });
 
-    EasyMock.replay( outboundRequest, inboundRequest, outboundResponse, requestLine );
+    EasyMock.replay( outboundRequest, inboundRequest, outboundResponse );
 
     DefaultDispatch dispatch = new DefaultDispatch();
     HttpClientBuilder builder = HttpClientBuilder.create();
@@ -238,7 +226,5 @@ public class DefaultDispatchTest {
     EasyMock.replay( request );
     uri = dispatch.getDispatchUrl( request );
     assertThat( uri.toASCIIString(), is( "http://test-host:42/test%2Cpath?test%26name=test%3Dvalue" ) );
-
   }
-
 }

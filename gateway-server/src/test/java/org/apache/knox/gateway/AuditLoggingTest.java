@@ -17,8 +17,8 @@
  */
 package org.apache.knox.gateway;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.knox.gateway.audit.api.Action;
 import org.apache.knox.gateway.audit.api.ActionOutcome;
 import org.apache.knox.gateway.audit.api.AuditContext;
@@ -225,7 +225,7 @@ public class AuditLoggingTest {
   @Test
   public void testHttpClientOutboundException() throws IOException,
       URISyntaxException {
-    String uri = "http://outbound-host.invalid:port/path";
+    String uri = "http://outbound-host.invalid:10000/path";
 
     HttpServletRequest inboundRequest = EasyMock.createNiceMock( HttpServletRequest.class );
     EasyMock.expect( inboundRequest.getHeaderNames() ).andReturn( Collections.enumeration(new ArrayList<>() ) ).anyTimes();

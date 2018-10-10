@@ -17,8 +17,8 @@
  */
 package org.apache.knox.gateway.hdfs.dispatch;
 
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.knox.gateway.dispatch.DefaultDispatch;
-import org.apache.http.HttpEntity;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

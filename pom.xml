@@ -178,8 +178,10 @@
         <hadoop.version>3.2.0</hadoop.version>
         <hamcrest.version>2.1</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
-        <httpclient.version>4.5.6</httpclient.version>
+        <httpclient.version>4.5.7</httpclient.version>
+        <httpclient5.version>5.0-beta3</httpclient5.version>
         <httpcore.version>4.4.11</httpcore.version>
+        <httpcore5.version>5.0-beta6</httpcore5.version>
         <j2e-pac4j.version>4.1.0</j2e-pac4j.version>
         <jackson.version>2.9.9</jackson.version>
         <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
@@ -1264,6 +1266,22 @@
                 <version>${httpcore.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>

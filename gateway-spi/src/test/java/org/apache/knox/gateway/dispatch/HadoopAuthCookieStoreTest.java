@@ -17,8 +17,8 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.hc.client5.http.cookie.Cookie;
+import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -46,8 +46,7 @@ public class HadoopAuthCookieStoreTest {
    */
   @Test
   public void testOozieCookieWorkaroundKnox1171() {
-    String rawValue = "u=knox&p=knox/host.example.com.com@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=";
-    String quotedValue = "\""+rawValue+"\"";
+    String rawValue = "\"u=knox&p=knox/host.example.com.com@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=\"";
 
     HadoopAuthCookieStore store;
     List<Cookie> cookies;
@@ -64,13 +63,7 @@ public class HadoopAuthCookieStoreTest {
     store.addCookie( new BasicClientCookie( "hadoop.auth", rawValue ) );
     cookies = store.getCookies();
     cookie = cookies.get( 0 );
-    assertThat( cookie.getValue(), is(quotedValue) );
-
-    store = new HadoopAuthCookieStore(gatewayConfig);
-    store.addCookie( new BasicClientCookie( "hadoop.auth", quotedValue ) );
-    cookies = store.getCookies();
-    cookie = cookies.get( 0 );
-    assertThat( cookie.getValue(), is(quotedValue) );
+    assertThat( cookie.getValue(), is(rawValue) );
 
     store = new HadoopAuthCookieStore(gatewayConfig);
     store.addCookie( new BasicClientCookie( "hadoop.auth", null ) );
@@ -145,7 +138,7 @@ public class HadoopAuthCookieStoreTest {
     List<Cookie> cookies = store.getCookies();
     assertNotNull(cookies);
     assertFalse(cookies.isEmpty());
-    assertThat(cookies.get(0).getValue(), is("\"" + cookieValue + "\""));
+    assertThat(cookies.get(0).getValue(), is(cookieValue));
   }
 
   private void doTestKnoxCookieExclusion(final String cookieValue) {

@@ -24,10 +24,7 @@ import org.apache.knox.gateway.i18n.messages.Messages;
 import org.apache.knox.gateway.i18n.messages.StackTrace;
 import org.apache.knox.gateway.services.security.KeystoreServiceException;
 
-import java.io.File;
-import java.net.URI;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 @Messages(logger="org.apache.knox.gateway")
@@ -105,9 +102,6 @@ public interface GatewayMessages {
   @Message(level = MessageLevel.ERROR, text = "Failed to load topology {0}: Topology configuration is invalid!")
   void failedToLoadTopology(String fileName);
 
-  @Message( level = MessageLevel.ERROR, text = "Failed to redeploy topologies: {0}" )
-  void failedToRedeployTopologies( @StackTrace(level=MessageLevel.DEBUG) Throwable e );
-
   @Message( level = MessageLevel.ERROR, text = "Failed to undeploy topology {0}: {1}" )
   void failedToUndeployTopology( String name, @StackTrace(level=MessageLevel.DEBUG) Exception e );
 
@@ -127,18 +121,6 @@ public interface GatewayMessages {
   @Message( level = MessageLevel.INFO, text = "Deleting backup deployed topology {0}" )
   void cleanupDeployment( String absolutePath );
 
-  @Message( level = MessageLevel.INFO, text = "Creating gateway home directory: {0}" )
-  void creatingGatewayHomeDir( File homeDir );
-
-  @Message( level = MessageLevel.INFO, text = "Creating gateway deployment directory: {0}" )
-  void creatingGatewayDeploymentDir( File topologiesDir );
-
-  @Message( level = MessageLevel.INFO, text = "Creating default gateway configuration file: {0}" )
-  void creatingDefaultConfigFile( File defaultConfigFile );
-
-  @Message( level = MessageLevel.INFO, text = "Creating sample topology file: {0}" )
-  void creatingDefaultTopologyFile( File defaultConfigFile );
-
   @Message( level = MessageLevel.WARN, text = "Ignoring service deployment contributor with invalid null name: {0}" )
   void ignoringServiceContributorWithMissingName( String className );
 
@@ -153,12 +135,6 @@ public interface GatewayMessages {
 
   @Message( level = MessageLevel.WARN, text = "Ignoring provider deployment contributor with invalid null role: {0}" )
   void ignoringProviderContributorWithMissingRole( String className );
-
-  @Message( level = MessageLevel.INFO, text = "Loaded logging configuration: {0}" )
-  void loadedLoggingConfig( String fileName );
-
-  @Message( level = MessageLevel.WARN, text = "Failed to load logging configuration: {0}" )
-  void failedToLoadLoggingConfig( String fileName );
 
   @Message( level = MessageLevel.INFO, text = "Creating credential store for the gateway instance." )
   void creatingCredentialStoreForGateway();
@@ -190,17 +166,8 @@ public interface GatewayMessages {
   @Message( level = MessageLevel.DEBUG, text = "Received request: {0} {1}" )
   void receivedRequest( String method, String uri );
 
-  @Message( level = MessageLevel.DEBUG, text = "Dispatch request: {0} {1}" )
-  void dispatchRequest( String method, URI uri );
-
-  @Message( level = MessageLevel.WARN, text = "Connection exception dispatching request: {0} {1}" )
-  void dispatchServiceConnectionException( URI uri, @StackTrace(level=MessageLevel.WARN) Exception e );
-
   @Message( level = MessageLevel.DEBUG, text = "Signature verified: {0}" )
   void signatureVerified( boolean verified );
-
-  @Message( level = MessageLevel.DEBUG, text = "Apache Knox Gateway {0} ({1})" )
-  void gatewayVersionMessage( String version, String hash );
 
   @Message( level = MessageLevel.ERROR, text = "Failed to inject service {0}: {1}" )
   void failedToInjectService( String serviceName, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
@@ -235,21 +202,6 @@ public interface GatewayMessages {
   @Message( level = MessageLevel.ERROR, text = "Failed to reload topologies: {0}" )
   void failedToReloadTopologies( @StackTrace( level = MessageLevel.DEBUG ) Exception e );
 
-  @Message( level = MessageLevel.FATAL, text = "Unsupported encoding: {0}" )
-  void unsupportedEncoding( @StackTrace( level = MessageLevel.FATAL ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to persist master secret: {0}" )
-  void failedToPersistMasterSecret( @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to encrypt master secret: {0}" )
-  void failedToEncryptMasterSecret( @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to initialize master service from persistent master {0}: {1}" )
-  void failedToInitializeFromPersistentMaster( String masterFileName, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to encode passphrase: {0}" )
-  void failedToEncodePassphrase( @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
   @Message( level = MessageLevel.ERROR, text = "Failed to verify signature: {0}")
   void failedToVerifySignature( @StackTrace(level=MessageLevel.DEBUG) Exception e );
 
@@ -262,15 +214,6 @@ public interface GatewayMessages {
   @Message( level = MessageLevel.ERROR, text = "Failed to encrypt password for cluster {0}: {1}")
   void failedToEncryptPasswordForCluster( String clusterName, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
 
-  @Message( level = MessageLevel.ERROR, text = "Failed to create keystore [filename={0}, type={1}]: {2}" )
-  void failedToCreateKeystore( String fileName, String keyStoreType, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to load keystore [filename={0}, type={1}]: {2}" )
-  void failedToLoadKeystore( String fileName, String keyStoreType, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to add key for cluster {0}: {1}" )
-  void failedToAddKeyForCluster( String clusterName, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
   @Message( level = MessageLevel.ERROR, text = "Failed to add credential for cluster {0}: {1}" )
   void failedToAddCredentialForCluster( String clusterName, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
 
@@ -280,14 +223,8 @@ public interface GatewayMessages {
   @Message( level = MessageLevel.ERROR, text = "Failed to get credential for cluster {0}: {1}" )
   void failedToGetCredentialForCluster( String clusterName, @StackTrace(level = MessageLevel.DEBUG ) Exception e );
 
-  @Message( level = MessageLevel.ERROR, text = "Failed to get key for cluster {0}: {1}" )
-  void failedToGetKeyForCluster( String clusterName, @StackTrace(level = MessageLevel.DEBUG ) Exception e );
-
   @Message( level = MessageLevel.ERROR, text = "Failed to add self signed certificate for Gateway {0}: {1}" )
   void failedToAddSeflSignedCertForGateway( String alias, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.ERROR, text = "Failed to generate secret key from password: {0}" )
-  void failedToGenerateKeyFromPassword( @StackTrace( level = MessageLevel.DEBUG ) Exception e );
 
   @Message( level = MessageLevel.ERROR, text = "Failed to establish connection to {0}: {1}" )
   void failedToEstablishConnectionToUrl( String url, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
@@ -298,23 +235,8 @@ public interface GatewayMessages {
   @Message( level = MessageLevel.ERROR, text = "Failed to instantiate the internal gateway services." )
   void failedToInstantiateGatewayServices();
 
-  @Message( level = MessageLevel.ERROR, text = "Failed to serialize map to Json string {0}: {1}" )
-  void failedToSerializeMapToJSON( Map<String, Object> map, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
   @Message( level = MessageLevel.ERROR, text = "Failed to get map from Json string {0}: {1}" )
   void failedToGetMapFromJsonString( String json, @StackTrace( level = MessageLevel.DEBUG ) Exception e );
-
-  @Message( level = MessageLevel.DEBUG, text = "Successful Knox->Hadoop SPNegotiation authentication for URL: {0}" )
-  void successfulSPNegoAuthn(String uri);
-
-  @Message( level = MessageLevel.ERROR, text = "Failed Knox->Hadoop SPNegotiation authentication for URL: {0}" )
-  void failedSPNegoAuthn(String uri);
-
-  @Message( level = MessageLevel.DEBUG, text = "Dispatch response status: {0}" )
-  void dispatchResponseStatusCode(int statusCode);
-
-  @Message( level = MessageLevel.DEBUG, text = "Dispatch response status: {0}, Location: {1}" )
-  void dispatchResponseCreatedStatusCode( int statusCode, String location );
 
   @Message( level = MessageLevel.ERROR, text = "Failed to decrypt cipher text for cluster {0}: due to inability to retrieve the password." )
   void failedToDecryptCipherForClusterNullPassword(String clusterName);
@@ -556,9 +478,6 @@ public interface GatewayMessages {
 
   @Message( level = MessageLevel.INFO, text = "Deleting topology {0} because the associated descriptor {1} was deleted." )
   void deletingTopologyForDescriptorDeletion(String topologyName, String descriptorName);
-
-  @Message( level = MessageLevel.INFO, text = "Deleting descriptor {0} because the associated topology {1} was deleted." )
-  void deletingDescriptorForTopologyDeletion(String descriptorName, String topologyName);
 
   @Message( level = MessageLevel.DEBUG, text = "Added descriptor {0} reference to provider configuration {1}." )
   void addedProviderConfigurationReference(String descriptorName, String providerConfigurationName);

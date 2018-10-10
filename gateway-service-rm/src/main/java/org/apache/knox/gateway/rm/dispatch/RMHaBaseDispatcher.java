@@ -16,10 +16,10 @@
  */
 package org.apache.knox.gateway.rm.dispatch;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.entity.BufferedHttpEntity;
+import org.apache.hc.core5.net.URIAuthority;
 import org.apache.knox.gateway.dispatch.DefaultDispatch;
 import org.apache.knox.gateway.filter.AbstractGatewayFilter;
 import org.apache.knox.gateway.ha.provider.HaProvider;
@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,20 +43,20 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
     private int maxFailoverAttempts = HaServiceConfigConstants.DEFAULT_MAX_FAILOVER_ATTEMPTS;
     private int failoverSleep = HaServiceConfigConstants.DEFAULT_FAILOVER_SLEEP;
     private String resourceRole;
-    private HttpResponse inboundResponse;
+    private ClassicHttpResponse inboundResponse;
 
     /**
      *
      * @return HttpReponse used for unit testing so we
      * can inject inboundResponse before calling executeRequest method
      */
-    private HttpResponse getInboundResponse() {
-        HttpResponse response = this.inboundResponse;
+    private ClassicHttpResponse getInboundResponse() {
+        ClassicHttpResponse response = this.inboundResponse;
         this.setInboundResponse(null);
         return response;
     }
 
-    void setInboundResponse(HttpResponse inboundResponse) {
+    void setInboundResponse(ClassicHttpResponse inboundResponse) {
         this.inboundResponse = inboundResponse;
     }
 
@@ -78,8 +79,8 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
     }
 
     @Override
-     protected void executeRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
-        HttpResponse inboundResponse = this.getInboundResponse();
+     protected void executeRequest(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
+        ClassicHttpResponse inboundResponse = this.getInboundResponse();
         try {
            if( this.getInboundResponse() == null ) {
              inboundResponse = executeOutboundRequest(outboundRequest);
@@ -89,7 +90,7 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
            LOG.errorReceivedFromStandbyNode(e);
            failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
         } catch (IOException e) {
-           LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
+           LOG.errorConnectingToServer(outboundRequest.getRequestUri(), e);
            failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
         }
      }
@@ -98,8 +99,8 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
      * Checks for specific outbound response codes/content to trigger a retry or failover
      */
     @Override
-    protected void writeOutboundResponse(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, HttpResponse inboundResponse) throws IOException {
-       int status = inboundResponse.getStatusLine().getStatusCode();
+    protected void writeOutboundResponse(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse) throws IOException {
+       int status = inboundResponse.getCode();
        if ( status  == 403 || status == 307) {
           BufferedHttpEntity entity = new BufferedHttpEntity(inboundResponse.getEntity());
           inboundResponse.setEntity(entity);
@@ -113,8 +114,8 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
        super.writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
     }
 
-    private void failoverRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, HttpResponse inboundResponse, Exception exception) throws IOException {
-       LOG.failingOverRequest(outboundRequest.getURI().toString());
+    private void failoverRequest(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse, Exception exception) throws IOException {
+       LOG.failingOverRequest(outboundRequest.getRequestUri());
        URI uri;
        String outboundURIs;
        AtomicInteger counter = (AtomicInteger) inboundRequest.getAttribute(FAILOVER_COUNTER_ATTRIBUTE);
@@ -122,14 +123,20 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
           counter = new AtomicInteger(0);
        }
        inboundRequest.setAttribute(FAILOVER_COUNTER_ATTRIBUTE, counter);
-        outboundURIs = outboundRequest.getURI().toString();
+        outboundURIs = outboundRequest.getRequestUri();
 
        if (counter.incrementAndGet() <= maxFailoverAttempts) {
           //null out target url so that rewriters run again
           inboundRequest.setAttribute(AbstractGatewayFilter.TARGET_REQUEST_URL_ATTRIBUTE_NAME, null);
 
            uri = getUriFromInbound(inboundRequest, inboundResponse, outboundURIs);
-           ((HttpRequestBase) outboundRequest).setURI(uri);
+         try {
+           outboundRequest.setAuthority(URIAuthority.create(uri.getAuthority()));
+         } catch (URISyntaxException e) {
+           throw new IOException(e);
+         }
+         outboundRequest.setScheme(uri.getScheme());
+           outboundRequest.setPath(uri.getPath());
           if (failoverSleep > 0) {
              try {
                 Thread.sleep(failoverSleep);
@@ -148,7 +155,7 @@ class  RMHaBaseDispatcher extends DefaultDispatch {
        }
     }
 
-    URI getUriFromInbound(HttpServletRequest inboundRequest, HttpResponse inboundResponse, String outboundURIs) {
+    URI getUriFromInbound(HttpServletRequest inboundRequest, ClassicHttpResponse inboundResponse, String outboundURIs) {
          URI uri;
          if( outboundURIs != null ) {
            markFailedURL(outboundURIs);

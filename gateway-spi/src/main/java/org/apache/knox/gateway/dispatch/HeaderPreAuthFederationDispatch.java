@@ -16,8 +16,8 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.knox.gateway.config.GatewayConfig;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +49,7 @@ public class HeaderPreAuthFederationDispatch extends DefaultDispatch {
 
   @Override
   protected void executeRequest(
-      final HttpUriRequest outboundRequest,
+      final ClassicHttpRequest outboundRequest,
       final HttpServletRequest inboundRequest,
       final HttpServletResponse outboundResponse)
       throws IOException {
@@ -66,7 +66,7 @@ public class HeaderPreAuthFederationDispatch extends DefaultDispatch {
       outboundRequest.addHeader(headerName, principal.getName());
     }
 
-    final HttpResponse inboundResponse = executeOutboundRequest(outboundRequest);
+    final ClassicHttpResponse inboundResponse = executeOutboundRequest(outboundRequest);
     writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
   }
 

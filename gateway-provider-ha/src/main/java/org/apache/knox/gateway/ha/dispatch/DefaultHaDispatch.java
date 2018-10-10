@@ -17,6 +17,9 @@
  */
 package org.apache.knox.gateway.ha.dispatch;
 
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.net.URIAuthority;
 import org.apache.knox.gateway.config.Configure;
 import org.apache.knox.gateway.config.Optional;
 import org.apache.knox.gateway.dispatch.DefaultDispatch;
@@ -26,14 +29,12 @@ import org.apache.knox.gateway.ha.provider.HaProvider;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.impl.HaServiceConfigConstants;
 import org.apache.knox.gateway.i18n.messages.MessagesFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -84,31 +85,43 @@ public class DefaultHaDispatch extends DefaultDispatch {
   }
 
   @Override
-  protected void executeRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
-    HttpResponse inboundResponse = null;
+  protected void executeRequest(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
+    ClassicHttpResponse inboundResponse = null;
     try {
       inboundResponse = executeOutboundRequest(outboundRequest);
       writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
     } catch ( IOException e ) {
-      LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
+      LOG.errorConnectingToServer(outboundRequest.getRequestUri(), e);
       failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
     }
   }
 
 
-  protected void failoverRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, HttpResponse inboundResponse, Exception exception) throws IOException {
-    LOG.failingOverRequest(outboundRequest.getURI().toString());
+  protected void failoverRequest(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse, Exception exception) throws IOException {
+    String auditUri;
+    try {
+      auditUri = outboundRequest.getUri().toString();
+    } catch (URISyntaxException e) {
+      auditUri = null;
+    }
+    LOG.failingOverRequest(auditUri);
     AtomicInteger counter = (AtomicInteger) inboundRequest.getAttribute(FAILOVER_COUNTER_ATTRIBUTE);
     if ( counter == null ) {
       counter = new AtomicInteger(0);
     }
     inboundRequest.setAttribute(FAILOVER_COUNTER_ATTRIBUTE, counter);
     if ( counter.incrementAndGet() <= maxFailoverAttempts ) {
-      haProvider.markFailedURL(getServiceRole(), outboundRequest.getURI().toString());
+      haProvider.markFailedURL(getServiceRole(), auditUri);
       //null out target url so that rewriters run again
       inboundRequest.setAttribute(AbstractGatewayFilter.TARGET_REQUEST_URL_ATTRIBUTE_NAME, null);
       URI uri = getDispatchUrl(inboundRequest);
-      ((HttpRequestBase) outboundRequest).setURI(uri);
+      try {
+        outboundRequest.setAuthority(URIAuthority.create(uri.getAuthority()));
+      } catch (URISyntaxException e) {
+        throw new IOException(e);
+      }
+      outboundRequest.setScheme(uri.getScheme());
+      outboundRequest.setPath(uri.getPath());
       if ( failoverSleep > 0 ) {
         try {
           Thread.sleep(failoverSleep);

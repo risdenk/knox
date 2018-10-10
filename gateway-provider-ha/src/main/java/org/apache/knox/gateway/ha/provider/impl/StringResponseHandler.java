@@ -17,32 +17,28 @@
  */
 package org.apache.knox.gateway.ha.provider.impl;
 
-import java.io.IOException;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.util.EntityUtils;
+import java.io.IOException;
 
 /**
  * Apache HttpClient ResponseHandler for String HttpResponse
  */
-public class StringResponseHandler implements ResponseHandler<String>
-{
-  @Override
-  public String handleResponse(HttpResponse response)
-  throws ClientProtocolException, IOException
-  {
-    int status = response.getStatusLine().getStatusCode();
+public class StringResponseHandler implements HttpClientResponseHandler<String> {
 
-    if (status >= 200 && status < 300)
-    {
+  @Override
+  public String handleResponse(ClassicHttpResponse response) throws HttpException, IOException {
+    int status = response.getCode();
+
+    if (status >= 200 && status < 300) {
       HttpEntity entity = response.getEntity();
-      return entity != null ?EntityUtils.toString(entity) : null;
-    }
-    else
-    {
+      return entity != null ? EntityUtils.toString(entity) : null;
+    } else {
       throw new ClientProtocolException("Unexcepted response status: " + status);
     }
   }

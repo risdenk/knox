@@ -19,16 +19,12 @@ package org.apache.knox.gateway.dispatch;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.Properties;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
+import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.knox.gateway.SpiGatewayMessages;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.i18n.messages.MessagesFactory;
@@ -48,9 +44,8 @@ public class HadoopAuthCookieStore extends BasicCookieStore {
     if (cookie.getName().equals("hadoop.auth") || cookie.getName().equals("hive.server2.auth")) {
       // Only add the cookie if it's Knox's cookie
       if (isKnoxCookie(gatewayConfig, cookie)) {
-        Wrapper wrapper = new Wrapper(cookie);
-        LOG.acceptingServiceCookie(wrapper);
-        super.addCookie(wrapper);
+        LOG.acceptingServiceCookie(cookie);
+        super.addCookie(cookie);
       }
     }
   }
@@ -94,106 +89,4 @@ public class HadoopAuthCookieStore extends BasicCookieStore {
 
     return result;
   }
-
-  private static class Wrapper extends BasicClientCookie {
-
-    private Cookie delegate;
-
-    Wrapper( Cookie delegate ) {
-      super( delegate.getName(), delegate.getValue() );
-      this.delegate = delegate;
-    }
-
-    @Override
-    public String getName() {
-      return delegate.getName();
-    }
-
-    /**
-     * Checks the cookie value returned by the delegate and wraps it in double quotes if the value isn't
-     * null, empty or already wrapped in double quotes.
-     *
-     * This change is required to workaround Oozie 4.3/Hadoop 2.4 not properly formatting the hadoop.auth cookie.
-     * See the following jiras for additional context:
-     *   https://issues.apache.org/jira/browse/HADOOP-10710
-     *   https://issues.apache.org/jira/browse/HADOOP-10379
-     * This issue was further compounded by another Oozie issue resulting in Kerberos replay attacks.
-     *   https://issues.apache.org/jira/browse/OOZIE-2427
-     */
-    @Override
-    public String getValue() {
-      String value = delegate.getValue();
-      if ( value != null && !value.isEmpty() ) {
-        if( !value.startsWith( "\"" ) ) {
-          value = "\"" + value;
-        }
-        if( !value.endsWith( "\"" ) ) {
-          value = value + "\"";
-        }
-      }
-      return value;
-    }
-
-    @Override
-    public String getComment() {
-      return delegate.getComment();
-    }
-
-    @Override
-    public String getCommentURL() {
-      return delegate.getCommentURL();
-    }
-
-    @Override
-    public Date getExpiryDate() {
-      return delegate.getExpiryDate();
-    }
-
-    @Override
-    public boolean isPersistent() {
-      return delegate.isPersistent();
-    }
-
-    @Override
-    public String getDomain() {
-      return delegate.getDomain();
-    }
-
-    @Override
-    public String getPath() {
-      return delegate.getPath();
-    }
-
-    @Override
-    public int[] getPorts() {
-      return delegate.getPorts();
-    }
-
-    @Override
-    public boolean isSecure() {
-      return delegate.isSecure();
-    }
-
-    @Override
-    public int getVersion() {
-      return delegate.getVersion();
-    }
-
-    @Override
-    public boolean isExpired( Date date ) {
-      return delegate.isExpired( date );
-    }
-
-    @Override
-    public String toString() {
-      return (new ReflectionToStringBuilder(this) {
-        @Override
-        protected boolean accept(Field f) {
-          return super.accept(f) && !f.getName().equals("delegate");
-        }
-      }).toString();
-    }
-
-  }
-
 }

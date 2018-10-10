@@ -18,9 +18,9 @@
 package org.apache.knox.gateway.dispatch;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
+import org.apache.hc.client5.http.classic.methods.RequestBuilder;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.Header;
 import org.apache.knox.gateway.security.SubjectUtils;
 import org.apache.log4j.Logger;
 
@@ -31,10 +31,10 @@ import java.util.Locale;
 
 class NiFiRequestUtil {
 
-  static HttpUriRequest modifyOutboundRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest) throws IOException {
+  static ClassicHttpRequest modifyOutboundRequest(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest) throws IOException {
     // preserve trailing slash from inbound request in the outbound request
     if (inboundRequest.getPathInfo().endsWith("/")) {
-      String[] split = outboundRequest.getURI().toString().split("\\?");
+      String[] split = outboundRequest.getRequestUri().split("\\?");
       if (!split[0].endsWith("/")) {
         outboundRequest = RequestBuilder.copy(outboundRequest).setUri(split[0] + "/" + (split.length == 2 ? "?" + split[1] : "")).build();
       }
@@ -53,7 +53,7 @@ class NiFiRequestUtil {
         // For example, if Knox has a rewrite rule "*://*:*/**/nifi-app/{**}?{**}", "/nifi-app" needs to be added
         // to the existing value of the X-Forwarded-Context header, which ends up being "/gateway/sandbox/nifi-app".
         String inboundRequestPathInfo = inboundRequest.getPathInfo();
-        String outboundRequestUriPath = outboundRequest.getURI().getPath();
+        String outboundRequestUriPath = outboundRequest.getPath();
         String outboundRequestUriPathNoTrailingSlash = StringUtils.removeEnd(outboundRequestUriPath, "/");
         String knoxRouteContext = null;
         int index = inboundRequestPathInfo.lastIndexOf(outboundRequestUriPathNoTrailingSlash);

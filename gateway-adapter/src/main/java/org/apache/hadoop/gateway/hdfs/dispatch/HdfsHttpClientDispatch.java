@@ -16,7 +16,7 @@
  */
 package org.apache.hadoop.gateway.hdfs.dispatch;
 
-import org.apache.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntity;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

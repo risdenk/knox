@@ -17,23 +17,26 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.auth.AuthScheme;
-import org.apache.http.impl.auth.SPNegoSchemeFactory;
-import org.apache.http.params.HttpParams;
+import org.apache.hc.client5.http.DnsResolver;
+import org.apache.hc.client5.http.auth.AuthScheme;
+import org.apache.hc.client5.http.auth.KerberosConfig;
+import org.apache.hc.client5.http.impl.auth.SPNegoSchemeFactory;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class KnoxSpnegoAuthSchemeFactory extends SPNegoSchemeFactory {
 
-  public KnoxSpnegoAuthSchemeFactory( boolean stripPort ) {
-    super( stripPort );
-  }
+  private final KerberosConfig config;
+  private final DnsResolver dnsResolver;
 
-  public KnoxSpnegoAuthSchemeFactory() {
-    super();
+  public KnoxSpnegoAuthSchemeFactory(KerberosConfig config, DnsResolver dnsResolver) {
+    super(config, dnsResolver);
+    this.config = config;
+    this.dnsResolver = dnsResolver;
   }
 
   @SuppressWarnings("deprecation")
   @Override
-  public AuthScheme newInstance(final HttpParams params ) {
-    return new KnoxSpnegoAuthScheme( isStripPort() );
+  public AuthScheme create(HttpContext context) {
+    return new KnoxSpnegoAuthScheme(this.config, this.dnsResolver);
   }
 }

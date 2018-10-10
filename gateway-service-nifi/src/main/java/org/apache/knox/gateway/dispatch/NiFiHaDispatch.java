@@ -17,11 +17,12 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.knox.gateway.ha.dispatch.DefaultHaDispatch;
 import org.apache.knox.gateway.util.MimeTypes;
 
@@ -39,26 +40,26 @@ public class NiFiHaDispatch extends DefaultHaDispatch {
   }
 
   @Override
-  protected void executeRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
-    HttpResponse inboundResponse = null;
+  protected void executeRequest(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
+    ClassicHttpResponse inboundResponse = null;
     try {
       outboundRequest = NiFiRequestUtil.modifyOutboundRequest(outboundRequest, inboundRequest);
       inboundResponse = executeOutboundRequest(outboundRequest);
       writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
     } catch (IOException e) {
-      LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
+      LOG.errorConnectingToServer(outboundRequest.getRequestUri(), e);
       failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
     }
   }
 
-  /**
+  /*
    * Overridden to provide a spot to modify the outbound response before its stream is closed.
    */
   @Override
-  protected void writeOutboundResponse(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, HttpResponse inboundResponse) throws IOException {
+  protected void writeOutboundResponse(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse) throws IOException {
     // Copy the client respond header to the server respond.
-    outboundResponse.setStatus(inboundResponse.getStatusLine().getStatusCode());
-    Header[] headers = inboundResponse.getAllHeaders();
+    outboundResponse.setStatus(inboundResponse.getCode());
+    Header[] headers = inboundResponse.getHeaders();
     Set<String> excludeHeaders = getOutboundResponseExcludeHeaders();
     boolean hasExcludeHeaders = false;
     if ((excludeHeaders != null) && !(excludeHeaders.isEmpty())) {
@@ -88,12 +89,12 @@ public class NiFiHaDispatch extends DefaultHaDispatch {
 
   /**
    * Overriden due to DefaultDispatch#getInboundResponseContentType(HttpEntity) having private access, and the method is used by
-   * {@link #writeOutboundResponse(HttpUriRequest, HttpServletRequest, HttpServletResponse, HttpResponse)}}
+   * {@link #writeOutboundResponse(ClassicHttpRequest, HttpServletRequest, HttpServletResponse, ClassicHttpResponse)}}
    */
   private String getInboundResponseContentType( final HttpEntity entity ) {
     String fullContentType = null;
     if( entity != null ) {
-      ContentType entityContentType = ContentType.get( entity );
+      ContentType entityContentType = EntityUtils.getContentType(entity);
       if( entityContentType != null ) {
         if( entityContentType.getCharset() == null ) {
           final String entityMimeType = entityContentType.getMimeType();

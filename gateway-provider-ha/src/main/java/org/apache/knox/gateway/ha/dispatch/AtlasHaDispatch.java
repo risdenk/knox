@@ -15,12 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.knox.gateway.ha.dispatch;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,66 +29,60 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AtlasHaDispatch extends DefaultHaDispatch {
-    private static Set<String> REQUEST_EXCLUDE_HEADERS = new HashSet<>();
+  private static Set<String> REQUEST_EXCLUDE_HEADERS = new HashSet<>();
 
-    static {
-        REQUEST_EXCLUDE_HEADERS.add("Content-Length");
-    }
+  static {
+    REQUEST_EXCLUDE_HEADERS.add("Content-Length");
+  }
 
-    public AtlasHaDispatch() {
-        setServiceRole("ATLAS");
-    }
+  public AtlasHaDispatch() {
+    setServiceRole("ATLAS");
+  }
 
-    @Override
-    public void init() {
-        super.init();
-    }
+  @Override
+  public Set<String> getOutboundResponseExcludeHeaders() {
+    return Collections.emptySet();
+  }
 
-    @Override
-    public Set<String> getOutboundResponseExcludeHeaders() {
-        return Collections.emptySet();
-    }
+  @Override
+  public Set<String> getOutboundRequestExcludeHeaders() {
+    return REQUEST_EXCLUDE_HEADERS;
+  }
 
-    @Override
-    public Set<String> getOutboundRequestExcludeHeaders() {
-        return REQUEST_EXCLUDE_HEADERS;
-    }
+  @Override
+  protected void executeRequest(ClassicHttpRequest outboundRequest,
+                                HttpServletRequest inboundRequest,
+                                HttpServletResponse outboundResponse) throws IOException {
+    ClassicHttpResponse inboundResponse = null;
+    try {
+      inboundResponse = executeOutboundRequest(outboundRequest);
 
-    @Override
-    protected void executeRequest(HttpUriRequest      outboundRequest,
-                                  HttpServletRequest  inboundRequest,
-                                  HttpServletResponse outboundResponse) throws IOException {
-        HttpResponse inboundResponse = null;
-        try {
-            inboundResponse = executeOutboundRequest(outboundRequest);
-
-            int sc = inboundResponse.getStatusLine().getStatusCode();
-            if(sc == HttpServletResponse.SC_MOVED_TEMPORARILY || sc == HttpServletResponse.SC_TEMPORARY_REDIRECT) {
-                if(!isLoginRedirect(inboundResponse.getFirstHeader("Location"))) {
-                    inboundResponse.removeHeaders("Location");
-                    failoverRequest(outboundRequest,
-                                    inboundRequest,
-                                    outboundResponse,
-                                    inboundResponse,
-                                    new Exception("Atlas HA redirection"));
-                }
-            }
-
-            writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
-
-        } catch (IOException e) {
-            LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
-            failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
+      int sc = inboundResponse.getCode();
+      if (sc == HttpServletResponse.SC_MOVED_TEMPORARILY || sc == HttpServletResponse.SC_TEMPORARY_REDIRECT) {
+        if (!isLoginRedirect(inboundResponse.getFirstHeader("Location"))) {
+          inboundResponse.removeHeaders("Location");
+          failoverRequest(outboundRequest,
+              inboundRequest,
+              outboundResponse,
+              inboundResponse,
+              new Exception("Atlas HA redirection"));
         }
-    }
+      }
 
-    private boolean isLoginRedirect(Header locationHeader) {
-        boolean result = false;
-        if (locationHeader != null) {
-            String value = locationHeader.getValue();
-            result = (value.endsWith("login.jsp") || value.contains("originalUrl"));
-        }
-        return result;
-    }
+      writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
 
+    } catch (IOException e) {
+      LOG.errorConnectingToServer(outboundRequest.getRequestUri(), e);
+      failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
+    }
+  }
+
+  private boolean isLoginRedirect(Header locationHeader) {
+    boolean result = false;
+    if (locationHeader != null) {
+      String value = locationHeader.getValue();
+      result = (value.endsWith("login.jsp") || value.contains("originalUrl"));
+    }
+    return result;
+  }
 }

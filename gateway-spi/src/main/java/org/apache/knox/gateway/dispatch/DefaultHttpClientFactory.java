@@ -18,48 +18,56 @@
 package org.apache.knox.gateway.dispatch;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.FilterConfig;
 
-import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.knox.gateway.services.ServiceType;
+import org.apache.hc.client5.http.HttpRequestRetryHandler;
+import org.apache.hc.client5.http.SystemDefaultDnsResolver;
+import org.apache.hc.client5.http.auth.AuthSchemeProvider;
+import org.apache.hc.client5.http.auth.AuthSchemes;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.KerberosConfig;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.cookie.Cookie;
+import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
+import org.apache.hc.client5.http.protocol.RedirectStrategy;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.TrustSelfSignedStrategy;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.config.H1Config;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.http.io.HttpConnectionFactory;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.KeystoreService;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.metrics.MetricsService;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
-import org.apache.http.auth.AuthSchemeProvider;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.RedirectStrategy;
-import org.apache.http.client.config.AuthSchemes;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.ssl.SSLContexts;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -80,18 +88,21 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
       builder = HttpClients.custom();
     }
 
+    PoolingHttpClientConnectionManagerBuilder cmBuilder = PoolingHttpClientConnectionManagerBuilder.create();
+
     // Conditionally set a custom SSLContext
     SSLContext sslContext = createSSLContext(services, filterConfig);
     if(sslContext != null) {
-      builder.setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext));
+      cmBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext));
     }
 
     if (Boolean.parseBoolean(System.getProperty(GatewayConfig.HADOOP_KERBEROS_SECURED))) {
-      CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-      credentialsProvider.setCredentials(AuthScope.ANY, new UseJaasCredentials());
+      BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+      credentialsProvider.setCredentials(new AuthScope(null, null, -1, null, null),
+          new UseJaasCredentials());
 
       Registry<AuthSchemeProvider> authSchemeRegistry = RegistryBuilder.<AuthSchemeProvider>create()
-          .register(AuthSchemes.SPNEGO, new KnoxSpnegoAuthSchemeFactory(true))
+          .register(AuthSchemes.SPNEGO.name(), new KnoxSpnegoAuthSchemeFactory(KerberosConfig.DEFAULT, SystemDefaultDnsResolver.INSTANCE))
           .build();
 
       builder.setDefaultAuthSchemeRegistry(authSchemeRegistry)
@@ -106,11 +117,22 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     builder.setRedirectStrategy( new NeverRedirectStrategy() );
     builder.setRetryHandler( new NeverRetryHandler() );
 
-    int maxConnections = getMaxConnections( filterConfig );
-    builder.setMaxConnTotal( maxConnections );
-    builder.setMaxConnPerRoute( maxConnections );
+    RequestConfig requestConfig = getRequestConfig(filterConfig);
+    builder.setDefaultRequestConfig( requestConfig  );
 
-    builder.setDefaultRequestConfig( getRequestConfig( filterConfig ) );
+    int maxConnections = getMaxConnections( filterConfig );
+    cmBuilder
+        .setMaxConnPerRoute(maxConnections)
+        .setMaxConnTotal(maxConnections);
+
+    final H1Config h1Config = H1Config.custom()
+                                  .setChunkSizeHint(Integer.parseInt(System.getProperty("KNOX_CHUNKSIZE", "2028")))
+                                  .build();
+    final HttpConnectionFactory<ManagedHttpClientConnection> connFactory =
+        new ManagedHttpClientConnectionFactory(h1Config, null, null);
+    cmBuilder.setConnectionFactory(connFactory);
+
+    builder.setConnectionManager(cmBuilder.build());
 
     // See KNOX-1530 for details
     builder.disableContentCompression();
@@ -179,9 +201,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
           sslContextBuilder.loadKeyMaterial(identityKeystore, identityKeyPassphrase);
         }
 
-        if (trustKeystore != null) {
-          sslContextBuilder.loadTrustMaterial(trustKeystore, new TrustSelfSignedStrategy());
-        }
+        sslContextBuilder.loadTrustMaterial(trustKeystore, new TrustSelfSignedStrategy());
 
         return sslContextBuilder.build();
       } else {
@@ -192,17 +212,17 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     }
   }
 
-  private static RequestConfig getRequestConfig( FilterConfig config ) {
+  private static RequestConfig getRequestConfig(FilterConfig config) {
     RequestConfig.Builder builder = RequestConfig.custom();
     int connectionTimeout = getConnectionTimeout( config );
     if ( connectionTimeout != -1 ) {
-      builder.setConnectTimeout( connectionTimeout );
-      builder.setConnectionRequestTimeout( connectionTimeout );
+      builder.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
+      builder.setConnectionRequestTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
     }
-    int socketTimeout = getSocketTimeout( config );
-    if( socketTimeout != -1 ) {
-      builder.setSocketTimeout( socketTimeout );
-    }
+//    int socketTimeout = getSocketTimeout( config );
+//    if( socketTimeout != -1 ) {
+//      builder.setSocketTimeout( socketTimeout );
+//    }
     return builder.build();
   }
 
@@ -230,21 +250,20 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
 
   private static class NeverRedirectStrategy implements RedirectStrategy {
     @Override
-    public boolean isRedirected( HttpRequest request, HttpResponse response, HttpContext context )
+    public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context )
         throws ProtocolException {
       return false;
     }
 
     @Override
-    public HttpUriRequest getRedirect( HttpRequest request, HttpResponse response, HttpContext context )
-        throws ProtocolException {
+    public URI getLocationURI(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException {
       return null;
     }
   }
 
   private static class NeverRetryHandler implements HttpRequestRetryHandler {
     @Override
-    public boolean retryRequest( IOException exception, int executionCount, HttpContext context ) {
+    public boolean retryRequest(HttpRequest request, IOException exception, int executionCount, HttpContext context) {
       return false;
     }
   }
@@ -252,7 +271,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
   private static class UseJaasCredentials implements Credentials {
 
     @Override
-    public String getPassword() {
+    public char[] getPassword() {
       return null;
     }
 
@@ -299,23 +318,23 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     return timeout;
   }
 
-  private static int getSocketTimeout( FilterConfig filterConfig ) {
-    int timeout = -1;
-    GatewayConfig globalConfig =
-        (GatewayConfig)filterConfig.getServletContext().getAttribute( GatewayConfig.GATEWAY_CONFIG_ATTRIBUTE );
-    if( globalConfig != null ) {
-      timeout = globalConfig.getHttpClientSocketTimeout();
-    }
-    String str = filterConfig.getInitParameter( "httpclient.socketTimeout" );
-    if( str != null ) {
-      try {
-        timeout = (int)parseTimeout( str );
-      } catch ( Exception e ) {
-        // Ignore it and use the default.
-      }
-    }
-    return timeout;
-  }
+//  private static int getSocketTimeout( FilterConfig filterConfig ) {
+//    int timeout = -1;
+//    GatewayConfig globalConfig =
+//        (GatewayConfig)filterConfig.getServletContext().getAttribute( GatewayConfig.GATEWAY_CONFIG_ATTRIBUTE );
+//    if( globalConfig != null ) {
+//      timeout = globalConfig.getHttpClientSocketTimeout();
+//    }
+//    String str = filterConfig.getInitParameter( "httpclient.socketTimeout" );
+//    if( str != null ) {
+//      try {
+//        timeout = (int)parseTimeout( str );
+//      } catch ( Exception e ) {
+//        // Ignore it and use the default.
+//      }
+//    }
+//    return timeout;
+//  }
 
   private static long parseTimeout( String s ) {
     PeriodFormatter f = new PeriodFormatterBuilder()
@@ -325,5 +344,4 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     Period p = Period.parse( s, f );
     return p.toStandardDuration().getMillis();
   }
-
 }

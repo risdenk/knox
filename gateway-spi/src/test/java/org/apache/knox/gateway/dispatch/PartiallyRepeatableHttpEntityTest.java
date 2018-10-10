@@ -17,10 +17,9 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.io.entity.BufferedHttpEntity;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -719,7 +718,7 @@ public class PartiallyRepeatableHttpEntityTest {
     basic.setContent( new ByteArrayInputStream( input.getBytes( StandardCharsets.UTF_8 ) ) );
     basic.setContentType( ContentType.APPLICATION_JSON.getMimeType() );
     replay = new PartiallyRepeatableHttpEntity( basic, 5 );
-    assertThat( replay.getContentType().getValue(), is( "application/json" ) );
+    assertThat( replay.getContentType(), is( "application/json" ) );
   }
 
   @Test
@@ -737,7 +736,7 @@ public class PartiallyRepeatableHttpEntityTest {
     basic.setContent( new ByteArrayInputStream( input.getBytes( StandardCharsets.UTF_8 ) ) );
     basic.setContentEncoding( StandardCharsets.UTF_8.name() );
     replay = new PartiallyRepeatableHttpEntity( basic, 5 );
-    assertThat( replay.getContentEncoding().getValue(), is( StandardCharsets.UTF_8.name() ) );
+    assertThat( replay.getContentEncoding(), is( StandardCharsets.UTF_8.name() ) );
   }
 
   @Test
@@ -760,19 +759,6 @@ public class PartiallyRepeatableHttpEntityTest {
     streaming = new InputStreamEntity( new ByteArrayInputStream( input.getBytes( StandardCharsets.UTF_8 ) ), 10, ContentType.TEXT_PLAIN );
     replay = new PartiallyRepeatableHttpEntity( streaming, 5 );
     assertThat( replay.isStreaming(), is( true ) );
-  }
-
-  @Test (expected = UnsupportedOperationException.class)
-  public void testConsumeContent() throws Exception {
-    String input = "0123456789";
-    BasicHttpEntity basic;
-    PartiallyRepeatableHttpEntity replay;
-
-    basic = new BasicHttpEntity();
-    basic.setContent( new ByteArrayInputStream( input.getBytes( StandardCharsets.UTF_8 ) ) );
-    replay = new PartiallyRepeatableHttpEntity( basic, 5 );
-
-    replay.consumeContent();
   }
 
   private static String byteRead( InputStream stream, int total ) throws IOException {

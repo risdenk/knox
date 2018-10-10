@@ -17,24 +17,19 @@
  */
 package org.apache.knox.gateway.rm.dispatch;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.knox.gateway.ha.provider.HaDescriptor;
 import org.apache.knox.gateway.ha.provider.HaProvider;
 import org.apache.knox.gateway.ha.provider.HaServletContextListener;
 import org.apache.knox.gateway.ha.provider.impl.DefaultHaProvider;
 import org.apache.knox.gateway.ha.provider.impl.HaDescriptorFactory;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.StatusLine;
-import org.apache.http.message.BasicStatusLine;
-import org.apache.http.message.BasicHeader;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
@@ -72,12 +67,9 @@ public class RMHaDispatchTest {
         EasyMock.expect(filterConfig.getServletContext()).andReturn(servletContext).anyTimes();
         EasyMock.expect(servletContext.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(provider).anyTimes();
 
-        BasicHttpParams params = new BasicHttpParams();
-
-        HttpUriRequest outboundRequest = EasyMock.createNiceMock(HttpRequestBase.class);
+        ClassicHttpRequest outboundRequest = EasyMock.createNiceMock(ClassicHttpRequest.class);
         EasyMock.expect(outboundRequest.getMethod()).andReturn("GET").anyTimes();
-        EasyMock.expect(outboundRequest.getURI()).andReturn(uri1).anyTimes();
-        EasyMock.expect(outboundRequest.getParams()).andReturn(params).anyTimes();
+        EasyMock.expect(outboundRequest.getUri()).andReturn(uri1).anyTimes();
 
         HttpServletRequest inboundRequest = EasyMock.createNiceMock(HttpServletRequest.class);
         EasyMock.expect(inboundRequest.getRequestURL()).andReturn(new StringBuffer(uri2.toString())).once();
@@ -146,17 +138,14 @@ public class RMHaDispatchTest {
         EasyMock.expect(servletContext.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(provider).anyTimes();
 
 
-        BasicHttpResponse inboundResponse = EasyMock.createNiceMock(BasicHttpResponse.class);
-        EasyMock.expect(inboundResponse.getStatusLine()).andReturn(getStatusLine()).anyTimes();
+        BasicClassicHttpResponse inboundResponse = EasyMock.createNiceMock(BasicClassicHttpResponse.class);
         EasyMock.expect(inboundResponse.getEntity()).andReturn(getResponseEntity()).anyTimes();
         EasyMock.expect(inboundResponse.getFirstHeader(LOCATION)).andReturn(getFirstHeader(uri3.toString())).anyTimes();
 
-        BasicHttpParams params = new BasicHttpParams();
 
-        HttpUriRequest outboundRequest = EasyMock.createNiceMock(HttpRequestBase.class);
+        ClassicHttpRequest outboundRequest = EasyMock.createNiceMock(ClassicHttpRequest.class);
         EasyMock.expect(outboundRequest.getMethod()).andReturn("GET").anyTimes();
-        EasyMock.expect(outboundRequest.getURI()).andReturn(uri1).anyTimes();
-        EasyMock.expect(outboundRequest.getParams()).andReturn(params).anyTimes();
+        EasyMock.expect(outboundRequest.getUri()).andReturn(uri1).anyTimes();
 
         HttpServletRequest inboundRequest = EasyMock.createNiceMock(HttpServletRequest.class);
         EasyMock.expect(inboundRequest.getRequestURL()).andReturn(new StringBuffer(uri2.toString())).once();
@@ -210,11 +199,6 @@ public class RMHaDispatchTest {
     private StringEntity getResponseEntity() {
         String body = "This is standby RM";
         return new StringEntity(body, ContentType.TEXT_HTML);
-    }
-
-    private StatusLine getStatusLine() {
-        ProtocolVersion p = new ProtocolVersion("HTTP", 1, 1);
-        return new BasicStatusLine(p, 307, "Code" + 307);
     }
 
     private Header getFirstHeader(String host) {

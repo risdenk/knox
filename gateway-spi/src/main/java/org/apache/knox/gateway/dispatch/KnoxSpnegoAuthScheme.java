@@ -17,23 +17,21 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.impl.auth.SPNegoScheme;
+import org.apache.hc.client5.http.DnsResolver;
+import org.apache.hc.client5.http.auth.KerberosConfig;
+import org.apache.hc.client5.http.impl.auth.SPNegoScheme;
 import org.ietf.jgss.GSSException;
 
 public class KnoxSpnegoAuthScheme extends SPNegoScheme {
 
   private static long nano = Long.MIN_VALUE;
 
-  public KnoxSpnegoAuthScheme( boolean stripPort ) {
-    super( stripPort );
-  }
-
-  public KnoxSpnegoAuthScheme() {
-    super();
+  public KnoxSpnegoAuthScheme(KerberosConfig config, DnsResolver dnsResolver) {
+    super(config, dnsResolver);
   }
 
   @Override
-  protected byte[] generateToken(final byte[] input, final String authServer) throws GSSException {
+  protected byte[] generateToken(byte[] input, String serviceName, String authServer) throws GSSException {
     // This is done to avoid issues with Keberos service ticket replay detection on the service side.
     synchronized( KnoxSpnegoAuthScheme.class ) {
       long now;
@@ -47,8 +45,7 @@ public class KnoxSpnegoAuthScheme extends SPNegoScheme {
         }
       }
       nano = now;
-      return super.generateToken( input, authServer );
+      return super.generateToken(input, serviceName, authServer);
     }
   }
-
 }

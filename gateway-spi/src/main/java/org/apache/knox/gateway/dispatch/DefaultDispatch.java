@@ -17,18 +17,18 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.knox.gateway.SpiGatewayMessages;
 import org.apache.knox.gateway.SpiGatewayResources;
 import org.apache.knox.gateway.audit.api.Action;
@@ -46,7 +46,6 @@ import org.apache.knox.gateway.util.MimeTypes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -101,27 +100,33 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
 
 
   protected void executeRequest(
-         HttpUriRequest outboundRequest,
+         ClassicHttpRequest outboundRequest,
          HttpServletRequest inboundRequest,
          HttpServletResponse outboundResponse)
          throws IOException {
-      HttpResponse inboundResponse = executeOutboundRequest(outboundRequest);
+      ClassicHttpResponse inboundResponse = executeOutboundRequest(outboundRequest);
       writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
    }
 
-  protected HttpResponse executeOutboundRequest( HttpUriRequest outboundRequest ) throws IOException {
-    LOG.dispatchRequest( outboundRequest.getMethod(), outboundRequest.getURI() );
-    HttpResponse inboundResponse;
-
+  protected ClassicHttpResponse executeOutboundRequest( ClassicHttpRequest outboundRequest ) throws IOException {
+    String auditUri;
     try {
-      auditor.audit( Action.DISPATCH, outboundRequest.getURI().toString(), ResourceType.URI, ActionOutcome.UNAVAILABLE, RES.requestMethod( outboundRequest.getMethod() ) );
+      auditUri = outboundRequest.getUri().toString();
+    } catch (URISyntaxException e) {
+      auditUri = null;
+    }
+    try {
+      LOG.dispatchRequest( outboundRequest.getMethod(), auditUri);
+      ClassicHttpResponse inboundResponse;
+
+      auditor.audit( Action.DISPATCH, auditUri, ResourceType.URI, ActionOutcome.UNAVAILABLE, RES.requestMethod( outboundRequest.getMethod() ) );
       if( !Boolean.parseBoolean(System.getProperty(GatewayConfig.HADOOP_KERBEROS_SECURED))) {
         // Hadoop cluster not Kerberos enabled
         addCredentialsToRequest( outboundRequest );
       }
-      inboundResponse = getHttpClient().execute( outboundRequest );
+      inboundResponse = getHttpClient().execute( null, outboundRequest );
 
-      int statusCode = inboundResponse.getStatusLine().getStatusCode();
+      int statusCode = inboundResponse.getCode();
       if( statusCode != 201 ) {
         LOG.dispatchResponseStatusCode( statusCode );
       } else {
@@ -132,19 +137,19 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
           LOG.dispatchResponseCreatedStatusCode( statusCode, location.getValue() );
         }
       }
-      auditor.audit( Action.DISPATCH, outboundRequest.getURI().toString(), ResourceType.URI, ActionOutcome.SUCCESS, RES.responseStatus( statusCode ) );
+      auditor.audit( Action.DISPATCH, auditUri, ResourceType.URI, ActionOutcome.SUCCESS, RES.responseStatus( statusCode ) );
+      return inboundResponse;
     } catch( Exception e ) {
       // We do not want to expose back end host. port end points to clients, see JIRA KNOX-58
-      auditor.audit( Action.DISPATCH, outboundRequest.getURI().toString(), ResourceType.URI, ActionOutcome.FAILURE );
-      LOG.dispatchServiceConnectionException( outboundRequest.getURI(), e );
+      auditor.audit( Action.DISPATCH, auditUri, ResourceType.URI, ActionOutcome.FAILURE );
+      LOG.dispatchServiceConnectionException( auditUri, e );
       throw new IOException( RES.dispatchConnectionError() );
     }
-    return inboundResponse;
   }
 
-  protected void writeOutboundResponse(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, HttpResponse inboundResponse) throws IOException {
+  protected void writeOutboundResponse(ClassicHttpRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse) throws IOException {
     // Copy the client respond header to the server respond.
-    outboundResponse.setStatus(inboundResponse.getStatusLine().getStatusCode());
+    outboundResponse.setStatus(inboundResponse.getCode());
     copyResponseHeaderFields(outboundResponse, inboundResponse);
 
     HttpEntity entity = inboundResponse.getEntity();
@@ -169,7 +174,7 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
   private String getInboundResponseContentType( final HttpEntity entity ) {
     String fullContentType = null;
     if( entity != null ) {
-      ContentType entityContentType = ContentType.get( entity );
+      ContentType entityContentType = ContentType.parse(entity.getContentType());
       if( entityContentType != null ) {
         if( entityContentType.getCharset() == null ) {
           final String entityMimeType = entityContentType.getMimeType();
@@ -192,12 +197,12 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
     return fullContentType;
   }
 
-  protected void closeInboundResponse( HttpResponse response, InputStream stream ) throws IOException {
+  protected void closeInboundResponse( ClassicHttpResponse response, InputStream stream ) throws IOException {
     try {
       stream.close();
     } finally {
-      if( response instanceof Closeable ) {
-        ( (Closeable)response).close();
+      if(response != null) {
+        response.close();
       }
     }
   }
@@ -208,7 +213,7 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
     *
     * @param outboundRequest outboundRequest to add credentials to
     */
-   protected void addCredentialsToRequest(HttpUriRequest outboundRequest) {
+   protected void addCredentialsToRequest(ClassicHttpRequest outboundRequest) {
    }
 
    protected HttpEntity createRequestEntity(HttpServletRequest request)
@@ -275,7 +280,7 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
 
    @Override
    public void doPatch(URI url, HttpServletRequest request, HttpServletResponse response)
-         throws IOException, URISyntaxException {
+         throws IOException {
       HttpPatch method = new HttpPatch(url);
       HttpEntity entity = createRequestEntity(request);
       method.setEntity(entity);
@@ -309,8 +314,8 @@ public class DefaultDispatch extends AbstractGatewayDispatch {
     executeRequest(method, request, response);
   }
 
-  public void copyResponseHeaderFields(HttpServletResponse outboundResponse, HttpResponse inboundResponse) {
-    Header[] headers = inboundResponse.getAllHeaders();
+  public void copyResponseHeaderFields(HttpServletResponse outboundResponse, ClassicHttpResponse inboundResponse) {
+    Header[] headers = inboundResponse.getHeaders();
     Set<String> excludeHeaders = getOutboundResponseExcludeHeaders();
     boolean hasExcludeHeaders = false;
     if ((excludeHeaders != null) && !(excludeHeaders.isEmpty())) {

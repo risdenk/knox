@@ -17,37 +17,27 @@
  */
 package org.apache.knox.gateway;
 
-import org.apache.http.cookie.Cookie;
+import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.knox.gateway.i18n.messages.Message;
 import org.apache.knox.gateway.i18n.messages.MessageLevel;
 import org.apache.knox.gateway.i18n.messages.Messages;
 import org.apache.knox.gateway.i18n.messages.StackTrace;
 
-import java.net.URI;
 import java.nio.charset.Charset;
-
-
 
 @Messages(logger="org.apache.knox.gateway")
 public interface SpiGatewayMessages {
-
   @Message( level = MessageLevel.DEBUG, text = "Dispatch request: {0} {1}" )
-  void dispatchRequest( String method, URI uri );
+  void dispatchRequest( String method, String uri );
 
   @Message( level = MessageLevel.WARN, text = "Connection exception dispatching request: {0} {1}" )
-  void dispatchServiceConnectionException( URI uri, @StackTrace(level=MessageLevel.WARN) Exception e );
+  void dispatchServiceConnectionException( String uri, @StackTrace(level=MessageLevel.WARN) Exception e );
 
   @Message( level = MessageLevel.DEBUG, text = "Dispatch response status: {0}" )
   void dispatchResponseStatusCode(int statusCode);
 
   @Message( level = MessageLevel.DEBUG, text = "Dispatch response status: {0}, Location: {1}" )
   void dispatchResponseCreatedStatusCode( int statusCode, String location );
-
-  @Message( level = MessageLevel.DEBUG, text = "Successful Knox->Hadoop SPNegotiation authentication for URL: {0}" )
-  void successfulSPNegoAuthn(String uri);
-
-  @Message( level = MessageLevel.ERROR, text = "Failed Knox->Hadoop SPNegotiation authentication for URL: {0}" )
-  void failedSPNegoAuthn(String uri);
 
   @Message( level = MessageLevel.WARN, text = "Error occurred when closing HTTP client : {0}" )
   void errorClosingHttpClient(@StackTrace(level=MessageLevel.WARN) Exception e);
@@ -90,5 +80,4 @@ public interface SpiGatewayMessages {
   @Message( level = MessageLevel.ERROR,
             text = "The dispatch to {0} was disallowed because it fails the dispatch whitelist validation. See documentation for dispatch whitelisting." )
   void dispatchDisallowed(String uri);
-
 }

@@ -16,9 +16,9 @@
  */
 package org.apache.hadoop.gateway.dispatch;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,34 +61,34 @@ public class DefaultDispatch extends org.apache.knox.gateway.dispatch.DefaultDis
   }
 
   @Override
-  protected void executeRequest(HttpUriRequest outboundRequest,
-      HttpServletRequest inboundRequest, HttpServletResponse outboundResponse)
+  protected void executeRequest(ClassicHttpRequest outboundRequest,
+                                HttpServletRequest inboundRequest, HttpServletResponse outboundResponse)
       throws IOException {
     super.executeRequest(outboundRequest, inboundRequest, outboundResponse);
   }
 
   @Override
-  protected HttpResponse executeOutboundRequest(HttpUriRequest outboundRequest)
+  protected ClassicHttpResponse executeOutboundRequest(ClassicHttpRequest outboundRequest)
       throws IOException {
     return super.executeOutboundRequest(outboundRequest);
   }
 
   @Override
-  protected void writeOutboundResponse(HttpUriRequest outboundRequest,
+  protected void writeOutboundResponse(ClassicHttpRequest outboundRequest,
       HttpServletRequest inboundRequest, HttpServletResponse outboundResponse,
-      HttpResponse inboundResponse) throws IOException {
+      ClassicHttpResponse inboundResponse) throws IOException {
     super.writeOutboundResponse(outboundRequest, inboundRequest,
         outboundResponse, inboundResponse);
   }
 
   @Override
-  protected void closeInboundResponse(HttpResponse response, InputStream stream)
+  protected void closeInboundResponse(ClassicHttpResponse response, InputStream stream)
       throws IOException {
     super.closeInboundResponse(response, stream);
   }
 
   @Override
-  protected void addCredentialsToRequest(HttpUriRequest outboundRequest) {
+  protected void addCredentialsToRequest(ClassicHttpRequest outboundRequest) {
     super.addCredentialsToRequest(outboundRequest);
   }
 
