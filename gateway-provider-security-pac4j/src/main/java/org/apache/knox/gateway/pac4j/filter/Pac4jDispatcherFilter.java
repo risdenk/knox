@@ -22,6 +22,7 @@ import org.apache.knox.gateway.i18n.messages.MessagesFactory;
 import org.apache.knox.gateway.pac4j.Pac4jMessages;
 import org.apache.knox.gateway.pac4j.session.KnoxSessionStore;
 import org.apache.knox.gateway.services.ServiceType;
+import org.apache.knox.gateway.pac4j.strategy.OriginalUrlRedirectCallbackLogic;
 import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.AliasServiceException;
@@ -33,6 +34,7 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.engine.CallbackLogic;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.util.CommonHelper;
 import org.pac4j.http.client.indirect.IndirectBasicAuthClient;
@@ -195,10 +197,12 @@ public class Pac4jDispatcherFilter implements Filter {
 
     }
 
+    CallbackLogic callbackLogic = new OriginalUrlRedirectCallbackLogic();
 
     callbackFilter = new CallbackFilter();
     callbackFilter.init(filterConfig);
     callbackFilter.setConfigOnly(config);
+    callbackFilter.setCallbackLogic(callbackLogic);
     securityFilter = new SecurityFilter();
     securityFilter.setClients(clientName);
     securityFilter.setConfigOnly(config);
