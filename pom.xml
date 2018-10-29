@@ -449,6 +449,12 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <!-- If you are looking to change source/target,
                      change the maven.compiler.{source,target} property -->
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
+                    <failOnWarning>true</failOnWarning>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
