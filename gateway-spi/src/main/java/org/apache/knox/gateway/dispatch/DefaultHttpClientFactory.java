@@ -29,6 +29,8 @@ import javax.servlet.FilterConfig;
 
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.knox.gateway.services.ServiceType;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.KeystoreService;
 import org.apache.knox.gateway.config.GatewayConfig;
@@ -36,7 +38,6 @@ import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.metrics.MetricsService;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -50,7 +51,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
@@ -73,18 +73,19 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     GatewayConfig gatewayConfig = (GatewayConfig) filterConfig.getServletContext().getAttribute(GatewayConfig.GATEWAY_CONFIG_ATTRIBUTE);
     GatewayServices services = (GatewayServices) filterConfig.getServletContext()
         .getAttribute(GatewayServices.GATEWAY_SERVICES_ATTRIBUTE);
+    ConnectionManagerBuilder connectionManagerBuilder;
     if (gatewayConfig != null && gatewayConfig.isMetricsEnabled()) {
       MetricsService metricsService = services.getService(ServiceType.METRICS_SERVICE);
       builder = metricsService.getInstrumented(HttpClientBuilder.class);
+      connectionManagerBuilder = metricsService.getInstrumented(ConnectionManagerBuilder.class);
     } else {
       builder = HttpClients.custom();
+      connectionManagerBuilder = new DefaultConnectionManagerBuilder();
     }
 
-    // Conditionally set a custom SSLContext
-    SSLContext sslContext = createSSLContext(services, filterConfig);
-    if(sslContext != null) {
-      builder.setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext));
-    }
+    PoolingHttpClientConnectionManager connectionManager = getConnectionManager(connectionManagerBuilder,
+        filterConfig, services);
+    builder.setConnectionManager(connectionManager);
 
     if (Boolean.parseBoolean(System.getProperty(GatewayConfig.HADOOP_KERBEROS_SECURED))) {
       CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -105,10 +106,6 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     builder.setConnectionReuseStrategy( DefaultConnectionReuseStrategy.INSTANCE );
     builder.setRedirectStrategy( new NeverRedirectStrategy() );
     builder.setRetryHandler( new NeverRetryHandler() );
-
-    int maxConnections = getMaxConnections( filterConfig );
-    builder.setMaxConnTotal( maxConnections );
-    builder.setMaxConnPerRoute( maxConnections );
 
     builder.setDefaultRequestConfig( getRequestConfig( filterConfig ) );
 
@@ -179,9 +176,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
           sslContextBuilder.loadKeyMaterial(identityKeystore, identityKeyPassphrase);
         }
 
-        if (trustKeystore != null) {
-          sslContextBuilder.loadTrustMaterial(trustKeystore, new TrustSelfSignedStrategy());
-        }
+        sslContextBuilder.loadTrustMaterial(trustKeystore, new TrustSelfSignedStrategy());
 
         return sslContextBuilder.build();
       } else {
@@ -190,6 +185,27 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     } catch (Exception e) {
       throw new IllegalArgumentException("Unable to create SSLContext", e);
     }
+  }
+
+  private PoolingHttpClientConnectionManager getConnectionManager(ConnectionManagerBuilder connectionManagerBuilder,
+                                                                  FilterConfig filterConfig, GatewayServices services) {
+    String topologyName = String.valueOf(filterConfig.getServletContext().getAttribute(GatewayServices.GATEWAY_CLUSTER_ATTRIBUTE));
+    connectionManagerBuilder.setName(topologyName);
+
+    final SSLContext sslcontext;
+    try {
+      sslcontext = createSSLContext(services, filterConfig);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unable to create SSLContext", e);
+    }
+    connectionManagerBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(sslcontext));
+
+    PoolingHttpClientConnectionManager connectionManager = connectionManagerBuilder.build();
+    int maxConnections = getMaxConnections( filterConfig );
+    connectionManager.setMaxTotal( maxConnections );
+    connectionManager.setDefaultMaxPerRoute( maxConnections );
+
+    return connectionManager;
   }
 
   static RequestConfig getRequestConfig( FilterConfig config ) {
@@ -239,14 +255,12 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
 
   private static class NeverRedirectStrategy implements RedirectStrategy {
     @Override
-    public boolean isRedirected( HttpRequest request, HttpResponse response, HttpContext context )
-        throws ProtocolException {
+    public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) {
       return false;
     }
 
     @Override
-    public HttpUriRequest getRedirect( HttpRequest request, HttpResponse response, HttpContext context )
-        throws ProtocolException {
+    public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) {
       return null;
     }
   }
@@ -334,5 +348,4 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
     Period p = Period.parse( s, f );
     return p.toStandardDuration().getMillis();
   }
-
 }

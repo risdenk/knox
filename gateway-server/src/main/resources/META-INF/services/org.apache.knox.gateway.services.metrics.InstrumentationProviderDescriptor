@@ -17,4 +17,5 @@
 ##########################################################################
 
 org.apache.knox.gateway.services.metrics.impl.instr.InstrHttpClientProviderDescriptor
+org.apache.knox.gateway.services.metrics.impl.instr.InstrHttpClientConnectionManagerProviderDescriptor
 org.apache.knox.gateway.services.metrics.impl.instr.InstrGatewayFilterProviderDescriptor

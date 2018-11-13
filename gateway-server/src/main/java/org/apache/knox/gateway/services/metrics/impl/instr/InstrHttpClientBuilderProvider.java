@@ -25,6 +25,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.RequestLine;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.knox.gateway.services.metrics.InstrumentationProvider;
 import org.apache.knox.gateway.services.metrics.MetricsContext;
 import org.apache.knox.gateway.services.metrics.impl.DefaultMetricsService;
@@ -37,13 +38,13 @@ public class InstrHttpClientBuilderProvider implements
 
   @Override
   public HttpClientBuilder getInstrumented(MetricsContext metricsContext) {
-    MetricRegistry registry = (MetricRegistry) metricsContext.getProperty(DefaultMetricsService.METRICS_REGISTRY);
-    return  HttpClientBuilder.create().setRequestExecutor(new InstrumentedHttpRequestExecutor(registry, TOPOLOGY_URL_AND_METHOD));
+    return getInstrumented(HttpClients.custom(), metricsContext);
   }
 
   @Override
-  public HttpClientBuilder getInstrumented(HttpClientBuilder instanceClass, MetricsContext metricsContext) {
-    throw new UnsupportedOperationException();
+  public HttpClientBuilder getInstrumented(HttpClientBuilder httpClientBuilder, MetricsContext metricsContext) {
+    MetricRegistry registry = (MetricRegistry) metricsContext.getProperty(DefaultMetricsService.METRICS_REGISTRY);
+    return  httpClientBuilder.setRequestExecutor(new InstrumentedHttpRequestExecutor(registry, TOPOLOGY_URL_AND_METHOD));
   }
 
   private static final HttpClientMetricNameStrategy TOPOLOGY_URL_AND_METHOD = new HttpClientMetricNameStrategy() {
