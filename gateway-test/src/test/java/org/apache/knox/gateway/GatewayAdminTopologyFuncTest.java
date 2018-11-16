@@ -595,7 +595,7 @@ public class GatewayAdminTopologyFuncTest {
     return topology;
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
+  @Test //( timeout = TestUtils.LONG_TIMEOUT )
   public void testDeployTopology() throws Exception {
     LOG_ENTER();
 

@@ -856,7 +856,7 @@ public class GatewayServer {
     createArchiveTempDir( warDir );
   }
 
-  private synchronized void internalActivateTopology( Topology topology, File topoDir ) {
+  private synchronized void internalActivateTopology( Topology topology, File topoDir ) throws Throwable {
     log.activatingTopology( topology.getName() );
     File[] files = topoDir.listFiles( new RegexFilenameFilter( "%.*" ) );
     if( files != null ) {
@@ -866,8 +866,8 @@ public class GatewayServer {
     }
   }
 
-  private synchronized void internalActivateArchive( Topology topology, File warDir ) {
-    log.activatingTopologyArchive( topology.getName(), warDir.getName() );
+  private synchronized void internalActivateArchive( Topology topology, File warDir ) throws Throwable {
+    log.activatingTopologyArchive(topology.getName(), warDir.getName());
     try {
       WebAppContext newContext = createWebAppContext( topology, warDir, Urls.decode( warDir.getName() ) );
       WebAppContext oldContext = deployments.get( newContext.getContextPath() );
@@ -882,10 +882,10 @@ public class GatewayServer {
           throw newContext.getUnavailableException();
         }
       }
-
     } catch( Throwable e ) {
       auditor.audit( Action.DEPLOY, topology.getName(), ResourceType.TOPOLOGY, ActionOutcome.FAILURE );
       log.failedToDeployTopology( topology.getName(), e );
+      throw e;
     }
   }
 
@@ -932,15 +932,19 @@ public class GatewayServer {
   private class InternalTopologyListener implements TopologyListener {
 
     @Override
-    public void handleTopologyEvent( List<TopologyEvent> events ) {
+    public void handleTopologyEvent( List<TopologyEvent> events )  {
       synchronized ( GatewayServer.this ) {
         for( TopologyEvent event : events ) {
-          Topology topology = event.getTopology();
-          File deployDir = calculateAbsoluteDeploymentsDir();
-          if( event.getType().equals( TopologyEvent.Type.DELETED ) ) {
-            handleDeleteDeployment(topology, deployDir);
-          } else {
-            handleCreateDeployment(topology, deployDir);
+          try {
+            Topology topology = event.getTopology();
+            File deployDir = calculateAbsoluteDeploymentsDir();
+            if (event.getType().equals(TopologyEvent.Type.DELETED)) {
+              handleDeleteDeployment(topology, deployDir);
+            } else {
+              handleCreateDeployment(topology, deployDir);
+            }
+          } catch (Throwable e) {
+            throw new RuntimeException(e);
           }
         }
       }
@@ -960,7 +964,7 @@ public class GatewayServer {
       }
     }
 
-    private void handleCreateDeployment(Topology topology, File deployDir) {
+    private void handleCreateDeployment(Topology topology, File deployDir) throws Throwable {
       try {
         File topoDir = calculateDeploymentDir( topology );
         if( !topoDir.exists() ) {
@@ -997,6 +1001,7 @@ public class GatewayServer {
       } catch( Throwable e ) {
         auditor.audit( Action.DEPLOY, topology.getName(), ResourceType.TOPOLOGY, ActionOutcome.FAILURE );
         log.failedToDeployTopology( topology.getName(), e );
+        throw e;
       }
     }
   }

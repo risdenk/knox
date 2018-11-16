@@ -359,6 +359,7 @@ public class DefaultTopologyService
     } catch (Exception e) {
       // Maybe it makes sense to throw exception
       log.failedToReloadTopologies(e);
+      throw e;
     }
   }
 
@@ -384,6 +385,7 @@ public class DefaultTopologyService
       } catch (RuntimeException e) {
         auditor.audit(Action.LOAD, "Topology_Event", ResourceType.TOPOLOGY, ActionOutcome.FAILURE);
         log.failedToHandleTopologyEvents(e);
+        throw e;
       }
     }
   }
