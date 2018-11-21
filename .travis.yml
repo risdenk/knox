@@ -16,28 +16,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-language: minimal
-matrix:
-  fast_finish: true
-  include:
-    - env: IMAGE=maven:3-jdk-8
-    - env: IMAGE=maven:3-jdk-11
-    
-env:
-  global:
-  - DOCKERRUN="docker run -it --rm -v $PWD:/src -v $HOME/.m2:/root/.m2 -v /var/run/docker.sock:/var/run/docker.sock -w /src"
-services:
-  - docker
-before_install:
-  - docker pull $IMAGE
-script:
-  - $DOCKERRUN $IMAGE mvn -T.75C clean verify -U -Dsurefire.useFile=false -Djavax.net.ssl.trustStorePassword=changeit -B -V
-  - shellcheck gateway-shell-release/home/bin/*.sh
-  - shellcheck gateway-release/home/bin/*.sh
-  - shellcheck gateway-release-common/home/bin/*.sh
-git:
-  depth: 1000
+language: java
+jdk:
+  - openjdk8
 cache:
   directories:
     - $HOME/.m2
-# End .travis.yml
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "g80rzaoKGwzhnq/OV0W0EMSSe9Wx8ea8zHbd8UzkRFH60HyfC0MPsCJaag6MVcVQYVsTTzOYxHUci3QnK2+goTGfayF5v/+SweqfO0QitbFN0XYc6uNU0gRIwZKKOpecM6ICRQ77+7Mtb2L2G+vqMvVD3jeaMuDl/ZbxMLKBAJueXakcZrVnozJTstBomuDIuiteM+rV9dWSKZR8HlLchihOuL9pSQv/sO7kqpBuXpaRY3MQx+xd3GVEQBskINRRYJwhtDZ1r29ywJ/6DfYRVvtq7InYIVi0cHpAwDDX6B6SGrYc28bmqkpfwOdkHVq/Eqx0LZk/h3Pp4EmOBvL3gQLS22HJdHidBU1MXfPEWpL8fgbylcfmDdGpHLEm5PdBTY1zm226TFQi78V+hOs4pyCZZHRIw9W9d2YEcomddPQ5p+5xOSV/J48jYUQ9kRfQ6UgktkSNMh0g1QYDdcST9pclYaXsnsyKfxM4/7I35RgbqSnJCU4bVWmv61rMvKqlmQJUjkrfNi498XqjoJi3n/M1+Fitpo8UsZ+FHAmGKSOPked0CLcILeQOsUFlx6VZBy50PykMGy2X+Vyz1WJgDyCCHxlZdipYQfmW4NQbRrELosWvP5rq5TwMykc7dzwj8nbFQeiw0NAmnupn4kQilXSsQriQIJ6QkoWLns/3oeg="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+install: true
+script: true
+
+addons:
+  coverity_scan:
+    project:
+      name: "risdenk/knox"
+      description: "Apache Knox"
+    notification_email: krisden@apache.org
+    build_command: "mvn -B -V package -DskipTests"
+    branch_pattern: coverity_scan
