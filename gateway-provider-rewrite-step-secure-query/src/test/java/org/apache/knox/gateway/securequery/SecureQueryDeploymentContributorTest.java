@@ -28,25 +28,20 @@ import org.apache.knox.gateway.topology.Topology;
 import org.easymock.EasyMock;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SecureQueryDeploymentContributorTest {
-
+class SecureQueryDeploymentContributorTest {
   @Test
-  public void testDeployment() throws IOException {
+  void testDeployment() {
     WebArchive webArchive = ShrinkWrap.create( WebArchive.class, "test-acrhive" );
 
-//    UrlRewriteRulesDescriptorImpl rewriteRules = new UrlRewriteRulesDescriptorImpl();
-
     Map<String,String> providerParams = new HashMap<>();
-//    providerParams.put( "test-host-external", "test-host-internal" );
     Provider provider = new Provider();
     provider.setEnabled( true );
     provider.setName( "secure-query" );
@@ -56,7 +51,6 @@ public class SecureQueryDeploymentContributorTest {
     topology.setName("Sample");
 
     DeploymentContext context = EasyMock.createNiceMock( DeploymentContext.class );
-//    EasyMock.expect( context.getDescriptor( "rewrite" ) ).andReturn( rewriteRules ).anyTimes();
     EasyMock.expect( context.getWebArchive() ).andReturn( webArchive ).anyTimes();
     EasyMock.expect( context.getTopology() ).andReturn( topology ).anyTimes();
     EasyMock.replay( context );
@@ -85,16 +79,7 @@ public class SecureQueryDeploymentContributorTest {
 
     contributor.contributeProvider( context, provider );
 
-//    HostmapFunctionDescriptor funcDesc = rewriteRules.getFunction( "hostmap" );
-//    assertThat( funcDesc.config(), is( "/WEB-INF/hostmap.txt" ) );
-//
-//    Node node = webArchive.get( "/WEB-INF/hostmap.txt" );
-//    String asset = IOUtils.toString( node.getAsset().openStream() );
-//    assertThat( asset, containsString( "test-host-external=test-host-internal" ) );
-
     // Just make sure it doesn't blow up.
     contributor.finalizeContribution( context );
-
   }
-
 }

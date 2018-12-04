@@ -27,47 +27,46 @@ import org.apache.curator.test.TestingCluster;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.URLManagerLoader;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Simple unit tests for HBaseZookeeperURLManager.
  *
  * @see HBaseZookeeperURLManager
  */
-public class HBaseZookeeperURLManagerTest {
-
+class HBaseZookeeperURLManagerTest {
   private static final String UNSECURE_NS = "/hbase-unsecure";
   private static final String SECURE_NS   = "/hbase-secure";
 
   private TestingCluster cluster;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     cluster = new TestingCluster(3);
     cluster.start();
   }
 
-  @After
-  public void tearDown() throws IOException {
+  @AfterEach
+  void tearDown() throws IOException {
     if(cluster != null) {
       cluster.close();
     }
   }
 
   @Test
-  public void testHBaseZookeeperURLManagerLoading() throws Exception {
+  void testHBaseZookeeperURLManagerLoading() throws Exception {
     createZNodes(UNSECURE_NS);
     doTest(null);
   }
 
   @Test
-  public void testSecureNSHBaseZookeeperURLManagerLoading() throws Exception {
+  void testSecureNSHBaseZookeeperURLManagerLoading() throws Exception {
     createZNodes(SECURE_NS);
     doTest(SECURE_NS);
   }
@@ -76,7 +75,7 @@ public class HBaseZookeeperURLManagerTest {
    * KNOX-1149
    */
   @Test
-  public void testDefaultNSHBaseZookeeperURLManagerLoadingWhenSecureAndUnsecureZNodesPresent() throws Exception {
+  void testDefaultNSHBaseZookeeperURLManagerLoadingWhenSecureAndUnsecureZNodesPresent() throws Exception {
     createZNodes(UNSECURE_NS);
     createZNodes(SECURE_NS);
     doTest(null);
@@ -86,14 +85,14 @@ public class HBaseZookeeperURLManagerTest {
    * KNOX-1149
    */
   @Test
-  public void testSpecifiedNSHBaseZookeeperURLManagerLoadingWhenSecureAndUnsecureZNodesPresent() throws Exception {
+  void testSpecifiedNSHBaseZookeeperURLManagerLoadingWhenSecureAndUnsecureZNodesPresent() throws Exception {
     createZNodes(UNSECURE_NS);
     createZNodes(SECURE_NS);
     doTest(UNSECURE_NS);
   }
 
   @Test
-  public void testSecureNSHBaseZookeeperURLManagerLoadingNoLeadingSlash() throws Exception {
+  void testSecureNSHBaseZookeeperURLManagerLoadingNoLeadingSlash() throws Exception {
     createZNodes(SECURE_NS);
     doTest(SECURE_NS.substring(1)); // Omit the leading slash from the namespace
   }
@@ -107,10 +106,10 @@ public class HBaseZookeeperURLManagerTest {
     try {
       manager = URLManagerLoader.loadURLManager(config);
     } catch (Exception e) {
-      fail(e.getMessage());
+      fail(e);
     }
-    Assert.assertNotNull(manager);
-    Assert.assertTrue(manager instanceof HBaseZookeeperURLManager);
+    assertNotNull(manager);
+    assertTrue(manager instanceof HBaseZookeeperURLManager);
   }
 
   private void createZNodes(String namespace) throws Exception {
@@ -123,5 +122,4 @@ public class HBaseZookeeperURLManagerTest {
       zooKeeperClient.create().forPath(namespace + "/rs");
     }
   }
-
 }

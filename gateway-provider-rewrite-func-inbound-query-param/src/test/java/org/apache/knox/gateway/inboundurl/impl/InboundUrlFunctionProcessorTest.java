@@ -34,7 +34,7 @@ import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Resolver;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -49,12 +49,11 @@ import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class InboundUrlFunctionProcessorTest {
-
+class InboundUrlFunctionProcessorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -68,7 +67,7 @@ public class InboundUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testServiceResolve() throws Exception {
+  void testServiceResolve() throws Exception {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -96,7 +95,7 @@ public class InboundUrlFunctionProcessorTest {
     assertThat( result.get(0), is( "http://foo:50075" ) );
   }
 
-  private UrlRewriteResponse getRewriteResponse() throws Exception {
+  private UrlRewriteResponse getRewriteResponse() {
     UrlRewriteProcessor rewriter = EasyMock.createNiceMock( UrlRewriteProcessor.class );
     EasyMock.expect( rewriter.getConfig() ).andReturn( null ).anyTimes();
 
@@ -118,7 +117,7 @@ public class InboundUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testQueryParam() throws Exception {
+  void testQueryParam() throws Exception {
     GatewayServices gatewayServices = EasyMock.createNiceMock( GatewayServices.class );
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     EasyMock.expect( environment.getAttribute( GatewayServices.GATEWAY_SERVICES_ATTRIBUTE ) ).andReturn( gatewayServices ).anyTimes();

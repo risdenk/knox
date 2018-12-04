@@ -50,18 +50,16 @@ import org.apache.knox.gateway.util.XmlUtils;
 import io.restassured.response.ResponseBody;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.knox.test.TestUtils;
 import org.apache.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import static io.restassured.RestAssured.given;
-import static junit.framework.TestCase.assertTrue;
 import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -72,13 +70,14 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.xml.HasXPath.hasXPath;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class GatewayAdminTopologyFuncTest {
+class GatewayAdminTopologyFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayAdminTopologyFuncTest.class );
 
   public static GatewayConfig config;
@@ -87,19 +86,19 @@ public class GatewayAdminTopologyFuncTest {
   public static String clusterUrl;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     driver.setupLdap(0);
     setupGateway(new GatewayTestConfig());
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     gateway.stop();
     driver.cleanup();
   }
 
-  public static void setupGateway(GatewayTestConfig testConfig) throws Exception {
+  private static void setupGateway(GatewayTestConfig testConfig) throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -313,8 +312,8 @@ public class GatewayAdminTopologyFuncTest {
     return sb.toString();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testTopologyCollection() {
+  @Test
+  void testTopologyCollection() {
     LOG_ENTER();
 
     String username = "admin";
@@ -369,8 +368,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testTopologyObject() throws ClassNotFoundException {
+  @Test
+  void testTopologyObject() {
     LOG_ENTER();
 
     String username = "admin";
@@ -433,8 +432,8 @@ public class GatewayAdminTopologyFuncTest {
   /*
    * KNOX-1322
    */
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testTopologyObjectForcedReadOnly() throws Exception {
+  @Test
+  void testTopologyObjectForcedReadOnly() throws Exception {
     LOG_ENTER();
 
     final String testTopologyName = "test-cluster";
@@ -485,8 +484,8 @@ public class GatewayAdminTopologyFuncTest {
     assertThat(doc, hasXPath("/topology/generated", is(expectedValue)));
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPositiveAuthorization() throws ClassNotFoundException{
+  @Test
+  void testPositiveAuthorization() {
     LOG_ENTER();
 
     String adminUser = "admin";
@@ -514,8 +513,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testNegativeAuthorization() throws ClassNotFoundException{
+  @Test
+  void testNegativeAuthorization() {
     LOG_ENTER();
 
     String guestUser = "guest";
@@ -595,8 +594,8 @@ public class GatewayAdminTopologyFuncTest {
     return topology;
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDeployTopology() throws Exception {
+  @Test
+  void testDeployTopology() throws Exception {
     LOG_ENTER();
 
     Topology testTopology = createTestTopology();
@@ -649,8 +648,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDeleteTopology() throws ClassNotFoundException {
+  @Test
+  void testDeleteTopology() {
     LOG_ENTER();
 
     Topology test = createTestTopology();
@@ -693,8 +692,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutTopology() throws Exception {
+  @Test
+  void testPutTopology() throws Exception {
     LOG_ENTER() ;
 
     String username = "admin";
@@ -764,8 +763,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutTopologyWithInvalidName() throws Exception {
+  @Test
+  void testPutTopologyWithInvalidName() throws Exception {
     LOG_ENTER() ;
 
     String username = "admin";
@@ -788,8 +787,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutTopologyWithEntityInjection() throws Exception {
+  @Test
+  void testPutTopologyWithEntityInjection() throws Exception {
     LOG_ENTER() ;
 
     final String MALICIOUS_PARAM_NAME = "exposed";
@@ -869,8 +868,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutTopologyWithEntityExpansion() throws Exception {
+  @Test
+  void testPutTopologyWithEntityExpansion() throws Exception {
     LOG_ENTER() ;
 
     final String MALICIOUS_PARAM_NAME = "expanded";
@@ -950,8 +949,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testXForwardedHeaders() {
+  @Test
+  void testXForwardedHeaders() {
     LOG_ENTER();
 
     String username = "admin";
@@ -1065,8 +1064,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testGatewayPathChange() throws Exception {
+  @Test
+  void testGatewayPathChange() throws Exception {
     LOG_ENTER();
     String username = "admin";
     String password = "admin-password";
@@ -1099,7 +1098,7 @@ public class GatewayAdminTopologyFuncTest {
          .body(containsString(newUrl + "/test-cluster"))
          .when().get(newUrl);
    } catch(Exception e){
-     fail(e.getMessage());
+     fail(e);
    }
     finally {
 //        Restart the gateway with old settings.
@@ -1110,8 +1109,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testProviderConfigurationCollection() throws Exception {
+  @Test
+  void testProviderConfigurationCollection() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1139,7 +1138,8 @@ public class GatewayAdminTopologyFuncTest {
                                   .contentType(MediaType.APPLICATION_JSON)
                                   .when().get(serviceUrl).body();
     List<String> items = responseBody.path("items");
-    assertTrue("Expected no items since the shared-providers dir is empty.", items.isEmpty());
+    assertTrue(items.isEmpty(),
+        "Expected no items since the shared-providers dir is empty.");
 
     // Manually write a file to the shared-providers directory
     File providerConfig = new File(sharedProvidersDir, configFileNames.get(0));
@@ -1156,7 +1156,7 @@ public class GatewayAdminTopologyFuncTest {
                       .contentType(MediaType.APPLICATION_JSON)
                       .when().get(serviceUrl).body();
     items = responseBody.path("items");
-    assertEquals("Expected items to include the new file in the shared-providers dir.", 1, items.size());
+    assertEquals(1, items.size(), "Expected items to include the new file in the shared-providers dir.");
     assertEquals(configFileNames.get(0), responseBody.path("items[0].name"));
     String href1 = responseBody.path("items[0].href");
 
@@ -1208,8 +1208,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutProviderConfiguration() throws Exception {
+  @Test
+  void testPutProviderConfiguration() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1267,8 +1267,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutProviderConfigurationWithInvalidName() throws Exception {
+  @Test
+  void testPutProviderConfigurationWithInvalidName() {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1296,8 +1296,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDeleteProviderConfiguration() throws Exception {
+  @Test
+  void testDeleteProviderConfiguration() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1373,8 +1373,8 @@ public class GatewayAdminTopologyFuncTest {
   /*
    * KNOX-1176
    */
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDeleteReferencedProviderConfiguration() throws Exception {
+  @Test
+  void testDeleteReferencedProviderConfiguration() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1437,7 +1437,8 @@ public class GatewayAdminTopologyFuncTest {
         .then()
         .statusCode(HttpStatus.SC_NOT_MODIFIED)
         .when().delete(href1).body();
-    assertTrue("Provider config deletion should have been prevented.", (new File(sharedProvidersDir, name1)).exists());
+    assertTrue((new File(sharedProvidersDir, name1)).exists(),
+        "Provider config deletion should have been prevented.");
 
     /////////////////////////////////////////////////////////////
     // Update the descriptor to reference the other provider config, such that the first one should become eligible for
@@ -1506,8 +1507,8 @@ public class GatewayAdminTopologyFuncTest {
   /*
    * KNOX-1331
    */
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testForceDeleteReferencedProviderConfiguration() throws Exception {
+  @Test
+  void testForceDeleteReferencedProviderConfiguration() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1570,7 +1571,8 @@ public class GatewayAdminTopologyFuncTest {
         .then()
         .statusCode(HttpStatus.SC_NOT_MODIFIED)
         .when().delete(href1).body();
-    assertTrue("Provider config deletion should have been prevented.", (new File(sharedProvidersDir, name1)).exists());
+    assertTrue((new File(sharedProvidersDir, name1)).exists(),
+        "Provider config deletion should have been prevented.");
 
     /////////////////////////////////////////////////////////////
     // (KNOX-1331)
@@ -1620,8 +1622,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDescriptorCollection() throws Exception {
+  @Test
+  void testDescriptorCollection() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1651,7 +1653,8 @@ public class GatewayAdminTopologyFuncTest {
                                   .contentType(MediaType.APPLICATION_JSON)
                                   .when().get(serviceUrl).body();
     List<String> items = responseBody.path("items");
-    assertTrue("Expected no items since the descriptors dir is empty.", items.isEmpty());
+    assertTrue(items.isEmpty(),
+        "Expected no items since the descriptors dir is empty.");
 
     // Manually write a file to the descriptors directory
     File descriptorOneFile = new File(descriptorsDir, descriptorFileNames.get(0));
@@ -1666,7 +1669,8 @@ public class GatewayAdminTopologyFuncTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .when().get(serviceUrl).body();
     items = responseBody.path("items");
-    assertEquals("Expected items to include the new file in the shared-providers dir.", 1, items.size());
+    assertEquals(1, items.size(),
+        "Expected items to include the new file in the shared-providers dir.");
     assertEquals(descriptorFileNames.get(0), responseBody.path("items[0].name"));
     String href1 = responseBody.path("items[0].href");
 
@@ -1722,8 +1726,8 @@ public class GatewayAdminTopologyFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutDescriptor() throws Exception {
+  @Test
+  void testPutDescriptor() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";
@@ -1790,8 +1794,7 @@ public class GatewayAdminTopologyFuncTest {
   }
 
   @Test
-  public void testPutDescriptorWithValidEncodedName() throws Exception {
-
+  void testPutDescriptorWithValidEncodedName() throws Exception {
     final String encodedName = "new%2Ddescriptor";
     final String newDescriptorName = URLDecoder.decode(encodedName, StandardCharsets.UTF_8.name());
 
@@ -1838,8 +1841,7 @@ public class GatewayAdminTopologyFuncTest {
   }
 
   @Test
-  public void testPutDescriptorWithFileExtension() throws Exception {
-
+  void testPutDescriptorWithFileExtension() throws Exception {
     final String newDescriptorName = "newdescriptor";
 
     final String username = "admin";
@@ -1885,8 +1887,7 @@ public class GatewayAdminTopologyFuncTest {
   }
 
   @Test
-  public void testPutDescriptorWithInvalidEncodedName() throws Exception {
-
+  void testPutDescriptorWithInvalidEncodedName() throws Exception {
     final String encodedName = "'';!--%22%3CXSS%3E=&%7B()%7D";
     final String newDescriptorName = URLDecoder.decode(encodedName, StandardCharsets.UTF_8.name());
 
@@ -1912,35 +1913,29 @@ public class GatewayAdminTopologyFuncTest {
     assertFalse(newDescriptorFile.exists());
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutDescriptorWithInvalidNameEncodedElement() throws Exception {
+  @Test
+  void testPutDescriptorWithInvalidNameEncodedElement() throws Exception {
     LOG_ENTER();
-
     doTestPutDescriptorWithInvalidName("new&lt;descriptor&gt;");
-
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutDescriptorWithInvalidNamePercent() throws Exception {
+  @Test
+  void testPutDescriptorWithInvalidNamePercent() throws Exception {
     LOG_ENTER();
-
     doTestPutDescriptorWithInvalidName("newdes%criptor");
-
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutDescriptorWithInvalidNameXMLElement() throws Exception {
+  @Test
+  void testPutDescriptorWithInvalidNameXMLElement() throws Exception {
     LOG_ENTER();
-
     doTestPutDescriptorWithInvalidName("new<descriptor>");
-
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testPutDescriptorWithInvalidNameTooLong() throws Exception {
+  @Test
+  void testPutDescriptorWithInvalidNameTooLong() throws Exception {
     LOG_ENTER();
 
     String descName = "newDescriptor";
@@ -1954,7 +1949,6 @@ public class GatewayAdminTopologyFuncTest {
   }
 
   private void doTestPutDescriptorWithInvalidName(final String newDescriptorName) throws Exception {
-
     assertNotNull(newDescriptorName);
 
     final String username = "admin";
@@ -1992,8 +1986,8 @@ public class GatewayAdminTopologyFuncTest {
     }
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDeleteDescriptor() throws Exception {
+  @Test
+  void testDeleteDescriptor() throws Exception {
     LOG_ENTER();
 
     final String username = "admin";

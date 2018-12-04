@@ -18,7 +18,7 @@
 package org.apache.knox.gateway.services.hostmap;
 
 import org.apache.knox.test.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 
@@ -26,10 +26,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class FileBasedHostMapperTest {
-
+class FileBasedHostMapperTest {
   @Test
-  public void testEverything() throws Exception {
+  void testEverything() throws Exception {
     URL hostMapUrl = TestUtils.getResourceUrl( FileBasedHostMapperTest.class, "hostmap.txt" );
     FileBasedHostMapper mapper = new FileBasedHostMapper( hostMapUrl );
 
@@ -48,17 +47,16 @@ public class FileBasedHostMapperTest {
     assertThat( mapper.resolveOutboundHostName( "external-space" ), is( "external-space" ) );
     assertThat( mapper.resolveOutboundHostName( "internal-space" ), is( "external-space" ) );
 
-//    external-list = external-list-1, external-list-2
+    // external-list = external-list-1, external-list-2
     assertThat( mapper.resolveInboundHostName( "external-list" ), is( "external-list-1" ) );
 
-//    internal-list-1, internal-list-2 = internal-list
+    // internal-list-1, internal-list-2 = internal-list
     assertThat( mapper.resolveOutboundHostName( "internal-list" ), is( "internal-list-1" ) );
 
-//    external-both-list-1, external-both-list-2 = internal-both-list-1, internal-both-list-2
+    // external-both-list-1, external-both-list-2 = internal-both-list-1, internal-both-list-2
     assertThat( mapper.resolveInboundHostName( "external-both-list-1" ), is( "internal-both-list-1" ) );
     assertThat( mapper.resolveInboundHostName( "external-both-list-2" ), is( "internal-both-list-1" ) );
     assertThat( mapper.resolveOutboundHostName( "internal-both-list-1" ), is( "external-both-list-1" ) );
     assertThat( mapper.resolveOutboundHostName( "internal-both-list-2" ), is( "external-both-list-1" ) );
   }
-
 }

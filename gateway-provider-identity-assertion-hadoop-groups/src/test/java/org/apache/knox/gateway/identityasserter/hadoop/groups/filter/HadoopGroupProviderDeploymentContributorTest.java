@@ -17,23 +17,22 @@
  */
 package org.apache.knox.gateway.identityasserter.hadoop.groups.filter;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import org.apache.knox.gateway.deploy.ProviderDeploymentContributor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test for {@link HadoopGroupProviderDeploymentContributor}
  * @since 0.11
  */
-public class HadoopGroupProviderDeploymentContributorTest {
-
+class HadoopGroupProviderDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader<ProviderDeploymentContributor> loader = ServiceLoader
         .load(ProviderDeploymentContributor.class);
 
@@ -49,5 +48,4 @@ public class HadoopGroupProviderDeploymentContributorTest {
         + HadoopGroupProviderDeploymentContributor.class.getName()
         + " via service loader.");
   }
-
 }

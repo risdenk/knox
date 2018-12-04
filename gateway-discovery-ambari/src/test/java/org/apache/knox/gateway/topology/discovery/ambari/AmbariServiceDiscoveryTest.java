@@ -24,7 +24,7 @@ import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.topology.discovery.ServiceDiscovery;
 import org.apache.knox.gateway.topology.discovery.ServiceDiscoveryConfig;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -36,10 +36,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the Ambari ServiceDiscovery implementation.
@@ -47,10 +47,9 @@ import static org.junit.Assert.assertTrue;
  * N.B. These tests do NOT verify Ambari API responses. They DO validate the Ambari ServiceDiscovery implementation's
  *      treatment of the responses as they were observed at the time the tests are developed.
  */
-public class AmbariServiceDiscoveryTest {
-
+class AmbariServiceDiscoveryTest {
     @Test
-    public void testSingleClusterDiscovery() throws Exception {
+    void testSingleClusterDiscovery() {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "testCluster";
         ServiceDiscovery sd = new TestAmbariServiceDiscovery(clusterName);
@@ -71,7 +70,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testSingleClusterDiscoveryWithDefaultAddress() throws Exception {
+    void testSingleClusterDiscoveryWithDefaultAddress() {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "testCluster";
 
@@ -94,7 +93,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testSingleClusterDiscoveryWithDefaultClusterName() throws Exception {
+    void testSingleClusterDiscoveryWithDefaultClusterName() {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "testCluster";
 
@@ -118,7 +117,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testSingleClusterDiscoveryWithDefaultAddressAndClusterName() throws Exception {
+    void testSingleClusterDiscoveryWithDefaultAddressAndClusterName() {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "testCluster";
 
@@ -141,7 +140,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testSingleClusterDiscoveryWithMissingAddressAndClusterName() throws Exception {
+    void testSingleClusterDiscoveryWithMissingAddressAndClusterName() {
         final String clusterName = "testCluster";
 
         AliasService as = EasyMock.createNiceMock(AliasService.class);
@@ -161,7 +160,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testSingleClusterDiscoveryWithMissingAddress() throws Exception {
+    void testSingleClusterDiscoveryWithMissingAddress() {
         final String clusterName = "testCluster";
 
         ServiceDiscovery sd = new TestAmbariServiceDiscovery(clusterName);
@@ -178,7 +177,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testSingleClusterDiscoveryWithMissingClusterName() throws Exception {
+    void testSingleClusterDiscoveryWithMissingClusterName() {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "testCluster";
 
@@ -197,7 +196,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testBulkClusterDiscovery() throws Exception {
+    void testBulkClusterDiscovery() {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "anotherCluster";
         ServiceDiscovery sd = new TestAmbariServiceDiscovery(clusterName);
@@ -221,7 +220,7 @@ public class AmbariServiceDiscoveryTest {
     }
 
     @Test
-    public void testClusterDiscoveryWithExternalComponentConfigAugmentation() throws Exception {
+    void testClusterDiscoveryWithExternalComponentConfigAugmentation() throws Exception {
         final String discoveryAddress = "http://ambarihost:8080";
         final String clusterName = "myCluster";
 

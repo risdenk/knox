@@ -18,7 +18,7 @@
 package org.apache.knox.gateway.service.knoxsso;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -30,13 +30,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class WebSSOutResourceTest {
-
+class WebSSOutResourceTest {
   @Test
-  public void testClearCookies() {
+  void testClearCookies() {
     testClearCookie("hadoop-jwt");
     testClearCookie(UUID.randomUUID().toString());
   }
@@ -46,7 +45,7 @@ public class WebSSOutResourceTest {
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(cookieName);
 
     HttpServletRequest request = EasyMock.createNiceMock(HttpServletRequest.class);
-    EasyMock.expect(request.getRequestURL()).andReturn(new StringBuffer(""));
+    EasyMock.expect(request.getRequestURL()).andReturn(new StringBuffer());
 
     HttpServletResponse response = EasyMock.createNiceMock(HttpServletResponse.class);
     ServletOutputStream outputStream = EasyMock.createNiceMock(ServletOutputStream.class);

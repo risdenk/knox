@@ -17,9 +17,6 @@
  */
 package org.apache.knox.gateway.filter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -37,15 +34,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.knox.gateway.security.GroupPrincipal;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class AclsAuthzFilterTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class AclsAuthzFilterTest {
   private boolean accessGranted;
   private Filter filter;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     filter = new AclsAuthorizationFilter() {
       @Override
       public void doFilter(ServletRequest request, ServletResponse response,
@@ -66,7 +66,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminGroupsValid() throws ServletException, IOException {
+  void testKnoxAdminGroupsValid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn(null);
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn("admin");
@@ -83,8 +83,7 @@ public class AclsAuthzFilterTest {
 
     final FilterChain chain = new FilterChain() {
       @Override
-      public void doFilter(ServletRequest request, ServletResponse response)
-          throws IOException, ServletException {
+      public void doFilter(ServletRequest request, ServletResponse response) {
       }
     };
 
@@ -109,11 +108,9 @@ public class AclsAuthzFilterTest {
       Throwable t = e.getCause();
       if (t instanceof IOException) {
         throw (IOException) t;
-      }
-      else if (t instanceof ServletException) {
+      } else if (t instanceof ServletException) {
         throw (ServletException) t;
-      }
-      else {
+      } else {
         throw new ServletException(t);
       }
     }
@@ -121,7 +118,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminGroupsInvalid() throws ServletException, IOException {
+  void testKnoxAdminGroupsInvalid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn(null);
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn("admin");
@@ -163,11 +160,9 @@ public class AclsAuthzFilterTest {
       Throwable t = e.getCause();
       if (t instanceof IOException) {
         throw (IOException) t;
-      }
-      else if (t instanceof ServletException) {
+      } else if (t instanceof ServletException) {
         throw (ServletException) t;
-      }
-      else {
+      } else {
         throw new ServletException(t);
       }
     }
@@ -175,7 +170,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminUsersValid() throws ServletException, IOException {
+  void testKnoxAdminUsersValid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn("adminuser");
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn(null);
@@ -217,11 +212,9 @@ public class AclsAuthzFilterTest {
       Throwable t = e.getCause();
       if (t instanceof IOException) {
         throw (IOException) t;
-      }
-      else if (t instanceof ServletException) {
+      } else if (t instanceof ServletException) {
         throw (ServletException) t;
-      }
-      else {
+      } else {
         throw new ServletException(t);
       }
     }
@@ -229,7 +222,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminUsersInvalid() throws ServletException, IOException {
+  void testKnoxAdminUsersInvalid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn("adminuser");
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn(null);
@@ -271,11 +264,9 @@ public class AclsAuthzFilterTest {
       Throwable t = e.getCause();
       if (t instanceof IOException) {
         throw (IOException) t;
-      }
-      else if (t instanceof ServletException) {
+      } else if (t instanceof ServletException) {
         throw (ServletException) t;
-      }
-      else {
+      } else {
         throw new ServletException(t);
       }
     }
@@ -283,7 +274,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminUsersInvalidButACLUsersValid() throws ServletException, IOException {
+  void testKnoxAdminUsersInvalidButACLUsersValid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn("adminuser");
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn(null);
@@ -338,7 +329,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminUsersInvalidButACLGroupValid() throws ServletException, IOException {
+  void testKnoxAdminUsersInvalidButACLGroupValid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn("adminuser");
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn(null);
@@ -392,7 +383,7 @@ public class AclsAuthzFilterTest {
   }
 
   @Test
-  public void testKnoxAdminUsersInvalidButKnoxAdminGroupValid() throws ServletException, IOException {
+  void testKnoxAdminUsersInvalidButKnoxAdminGroupValid() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("knox.admin.users")).andReturn("adminuser");
     EasyMock.expect(config.getInitParameter("knox.admin.groups")).andReturn("admingroup");

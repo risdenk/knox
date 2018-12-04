@@ -17,7 +17,10 @@
  */
 package org.apache.knox.gateway.provider.federation;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.security.Principal;
 import java.util.Properties;
@@ -34,17 +37,16 @@ import org.apache.knox.gateway.provider.federation.jwt.filter.SSOCookieFederatio
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.apache.knox.gateway.services.security.token.JWTokenAuthority;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.nimbusds.jwt.SignedJWT;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SSOCookieProviderTest extends AbstractJWTFilterTest {
   private static final String SERVICE_URL = "https://localhost:8888/resource";
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     handler = new TestSSOCookieFederationProvider();
     ((TestSSOCookieFederationProvider) handler).setTokenService(new TestJWTokenAuthority(publicKey));
   }
@@ -67,7 +69,7 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
   }
 
   @Test
-  public void testCustomCookieNameJWT() throws Exception {
+  void testCustomCookieNameJWT() throws Exception {
     try {
       Properties props = getProperties();
       props.put("sso.cookie.name", "jowt");
@@ -89,30 +91,30 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal returned.", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal returned.");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
-      fail("Should NOT have thrown a ServletException.");
+      fail("Should NOT have thrown a ServletException.", se);
     }
   }
 
   @Test
-  public void testNoProviderURLJWT() {
+  void testNoProviderURLJWT() {
     try {
       Properties props = getProperties();
       props.remove("sso.authentication.provider.url");
       handler.init(new TestFilterConfig(props));
     } catch (ServletException se) {
       // no longer expected - let's ensure it mentions the missing authentication provider URL
-      fail("Servlet exception should have been thrown.");
-      se.printStackTrace();
+      fail("Servlet exception should have been thrown.", se);
     }
   }
 
   @Test
-  public void testOrigURLWithQueryString() throws Exception {
+  void testOrigURLWithQueryString() throws Exception {
     Properties props = getProperties();
     handler.init(new TestFilterConfig(props));
 
@@ -123,12 +125,12 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
     EasyMock.replay(request);
 
     String loginURL = ((TestSSOCookieFederationProvider)handler).constructLoginURL(request);
-    Assert.assertNotNull("loginURL should not be null.", loginURL);
-    Assert.assertEquals("https://localhost:8443/authserver?originalUrl=" + SERVICE_URL + "?name=value", loginURL);
+    assertNotNull(loginURL, "loginURL should not be null.");
+    assertEquals("https://localhost:8443/authserver?originalUrl=" + SERVICE_URL + "?name=value", loginURL);
   }
 
   @Test
-  public void testOrigURLNoQueryString() throws Exception {
+  void testOrigURLNoQueryString() throws Exception {
     Properties props = getProperties();
     handler.init(new TestFilterConfig(props));
 
@@ -139,12 +141,12 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
     EasyMock.replay(request);
 
     String loginURL = ((TestSSOCookieFederationProvider)handler).constructLoginURL(request);
-    Assert.assertNotNull("LoginURL should not be null.", loginURL);
-    Assert.assertEquals("https://localhost:8443/authserver?originalUrl=" + SERVICE_URL, loginURL);
+    assertNotNull(loginURL, "LoginURL should not be null.");
+    assertEquals("https://localhost:8443/authserver?originalUrl=" + SERVICE_URL, loginURL);
   }
 
   @Test
-  public void testDefaultAuthenticationProviderURL() throws Exception {
+  void testDefaultAuthenticationProviderURL() throws Exception {
     Properties props = new Properties();
     props.setProperty("gateway.path", "gateway");
     handler.init(new TestFilterConfig(props));
@@ -158,16 +160,16 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
     EasyMock.replay(request);
 
     String providerURL = ((TestSSOCookieFederationProvider) handler).deriveDefaultAuthenticationProviderUrl(request);
-    Assert.assertNotNull("LoginURL should not be null.", providerURL);
-    Assert.assertEquals(providerURL, "https://localhost:8443/gateway/knoxsso/api/v1/websso");
+    assertNotNull(providerURL, "ProviderURL should not be null.");
+    assertEquals(providerURL, "https://localhost:8443/gateway/knoxsso/api/v1/websso");
 
     String loginURL = ((TestSSOCookieFederationProvider) handler).constructLoginURL(request);
-    Assert.assertNotNull("LoginURL should not be null.", loginURL);
-    Assert.assertEquals(loginURL, "https://localhost:8443/gateway/knoxsso/api/v1/websso?originalUrl=" + SERVICE_URL);
+    assertNotNull(loginURL, "LoginURL should not be null.");
+    assertEquals(loginURL, "https://localhost:8443/gateway/knoxsso/api/v1/websso?originalUrl=" + SERVICE_URL);
   }
 
   @Test
-  public void testProxiedDefaultAuthenticationProviderURL() throws Exception {
+  void testProxiedDefaultAuthenticationProviderURL() throws Exception {
     Properties props = new Properties();
     props.setProperty("gateway.path", "gateway");
     handler.init(new TestFilterConfig(props));
@@ -180,16 +182,16 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
     EasyMock.replay(request);
 
     String providerURL = ((TestSSOCookieFederationProvider) handler).deriveDefaultAuthenticationProviderUrl(request);
-    Assert.assertNotNull("LoginURL should not be null.", providerURL);
-    Assert.assertEquals(providerURL, "https://remotehost:8443/gateway/knoxsso/api/v1/websso");
+    assertNotNull(providerURL, "ProviderURL should not be null.");
+    assertEquals(providerURL, "https://remotehost:8443/gateway/knoxsso/api/v1/websso");
 
     String loginURL = ((TestSSOCookieFederationProvider) handler).constructLoginURL(request);
-    Assert.assertNotNull("LoginURL should not be null.", loginURL);
-    Assert.assertEquals(loginURL, "https://remotehost:8443/gateway/knoxsso/api/v1/websso?originalUrl=" + SERVICE_URL);
+    assertNotNull(loginURL, "LoginURL should not be null.");
+    assertEquals(loginURL, "https://remotehost:8443/gateway/knoxsso/api/v1/websso?originalUrl=" + SERVICE_URL);
   }
 
   @Test
-  public void testProxiedDefaultAuthenticationProviderURLWithoutPortInHostHeader() throws Exception {
+  void testProxiedDefaultAuthenticationProviderURLWithoutPortInHostHeader() throws Exception {
     Properties props = new Properties();
     props.setProperty("gateway.path", "notgateway");
     handler.init(new TestFilterConfig(props));
@@ -202,12 +204,12 @@ public class SSOCookieProviderTest extends AbstractJWTFilterTest {
     EasyMock.replay(request);
 
     String providerURL = ((TestSSOCookieFederationProvider) handler).deriveDefaultAuthenticationProviderUrl(request);
-    Assert.assertNotNull("LoginURL should not be null.", providerURL);
-    Assert.assertEquals(providerURL, "https://remotehost:8443/notgateway/knoxsso/api/v1/websso");
+    assertNotNull(providerURL, "ProviderURL should not be null.");
+    assertEquals(providerURL, "https://remotehost:8443/notgateway/knoxsso/api/v1/websso");
 
     String loginURL = ((TestSSOCookieFederationProvider) handler).constructLoginURL(request);
-    Assert.assertNotNull("LoginURL should not be null.", loginURL);
-    Assert.assertEquals(loginURL, "https://remotehost:8443/notgateway/knoxsso/api/v1/websso?originalUrl=" + SERVICE_URL);
+    assertNotNull(loginURL, "LoginURL should not be null.");
+    assertEquals(loginURL, "https://remotehost:8443/notgateway/knoxsso/api/v1/websso?originalUrl=" + SERVICE_URL);
   }
 
   @Override

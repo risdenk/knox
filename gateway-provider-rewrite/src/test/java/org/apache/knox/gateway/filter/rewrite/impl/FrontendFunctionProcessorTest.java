@@ -42,7 +42,7 @@ import org.eclipse.jetty.util.Attributes;
 import org.eclipse.jetty.util.AttributesMap;
 import org.eclipse.jetty.util.log.Log;
 import org.hamcrest.core.Is;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.DispatcherType;
@@ -53,7 +53,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -71,10 +70,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class FrontendFunctionProcessorTest {
-
+class FrontendFunctionProcessorTest {
   private ServletTester server;
   private HttpTester.Request request;
   private HttpTester.Response response;
@@ -83,7 +81,7 @@ public class FrontendFunctionProcessorTest {
 
   @SuppressWarnings("rawtypes")
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -97,13 +95,13 @@ public class FrontendFunctionProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     FrontendFunctionProcessor processor = new FrontendFunctionProcessor();
     assertThat( processor.name(), is( "frontend" ) );
   }
 
   @Test
-  public void testNullHandling() throws Exception {
+  void testNullHandling() throws Exception {
     UrlRewriteEnvironment badEnv = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     UrlRewriteEnvironment goodEnv = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     EasyMock.expect( goodEnv.getAttribute(FrontendFunctionDescriptor.FRONTEND_URI_ATTRIBUTE) ).andReturn( new URI( "http://mock-host:80/mock-root/mock-topo" ) ).anyTimes();
@@ -173,7 +171,7 @@ public class FrontendFunctionProcessorTest {
   }
 
   @Test
-  public void testFrontendFunctionsOnJsonRequestBody() throws Exception {
+  void testFrontendFunctionsOnJsonRequestBody() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "response.body", "test-filter" );
     testSetup( "test-user", initParams, null );
@@ -212,8 +210,7 @@ public class FrontendFunctionProcessorTest {
   }
 
   @Test
-  public void testFrontendFunctionsWithFrontendUriConfigOnJsonRequestBody() throws Exception {
-
+  void testFrontendFunctionsWithFrontendUriConfigOnJsonRequestBody() throws Exception {
     // This hooks up the filter in rewrite.xml in this class' test resource directory.
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "response.body", "test-filter" );
@@ -265,11 +262,11 @@ public class FrontendFunctionProcessorTest {
     }
 
     @Override
-    public void init( FilterConfig filterConfig ) throws ServletException {
+    public void init( FilterConfig filterConfig ) {
     }
 
     @Override
-    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws ServletException {
       HttpServletRequest httpRequest = ((HttpServletRequest)request);
       StringBuffer sourceUrl = httpRequest.getRequestURL();
       String queryString = httpRequest.getQueryString();

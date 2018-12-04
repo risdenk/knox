@@ -31,7 +31,7 @@ import org.apache.knox.gateway.filter.rewrite.ext.UrlRewriteActionRewriteDescrip
 import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ReadListener;
@@ -47,12 +47,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UrlRewriteRequestTest {
+class UrlRewriteRequestTest {
   @Test
-  public void testResolve() throws Exception {
-
+  void testResolve() {
     UrlRewriteProcessor rewriter = EasyMock.createNiceMock( UrlRewriteProcessor.class );
 
     ServletContext context = EasyMock.createNiceMock( ServletContext.class );
@@ -105,14 +104,13 @@ public class UrlRewriteRequestTest {
    * Content-Type:text/xml and Content-Encoding:gzip
    */
   @Test
-  public void testContentEncoding() throws Exception {
+  void testContentEncoding() throws Exception {
     /* copy results */
     final ByteArrayOutputStream results = new ByteArrayOutputStream();
 
     final InputStream input = Files.newInputStream(
         Paths.get(ClassLoader.getSystemResource("KNOX-1412.xml.gz").toURI()));
     final ServletInputStream payload = new ServletInputStream() {
-
       @Override
       public int read() throws IOException {
         return input.read();
@@ -256,7 +254,5 @@ public class UrlRewriteRequestTest {
     entity = new InputStreamEntity(inputStream, request1.getContentLength(),
         ContentType.parse("application/gzip"));
     entity.writeTo(results);
-
   }
-
 }

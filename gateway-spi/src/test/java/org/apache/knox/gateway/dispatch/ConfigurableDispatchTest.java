@@ -23,11 +23,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHeader;
-import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.mock.MockHttpServletResponse;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,11 +39,11 @@ import java.util.Map;
 import static org.apache.knox.gateway.dispatch.DefaultDispatch.SET_COOKIE;
 import static org.apache.knox.gateway.dispatch.DefaultDispatch.WWW_AUTHENTICATE;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ConfigurableDispatchTest {
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGetDispatchUrl() {
+class ConfigurableDispatchTest {
+  @Test
+  void testGetDispatchUrl() {
     HttpServletRequest request;
     String path;
     String query;
@@ -90,8 +89,8 @@ public class ConfigurableDispatchTest {
     assertThat( uri.toASCIIString(), is( "http://test-host:42/test%2Cpath?test%26name=test%3Dvalue" ) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGetDispatchUrlNoUrlEncoding() {
+  @Test
+  void testGetDispatchUrlNoUrlEncoding() {
     HttpServletRequest request;
     String path;
     String query;
@@ -162,8 +161,8 @@ public class ConfigurableDispatchTest {
     assertThat( uri.toASCIIString(), is( "http://test-host:8080/api/v1/clusters/mmolnar-knox2/configurations/service_config_versions?group_id%3E0&fields=*&_=1541527314780" ) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testRequestExcludeHeadersDefault() {
+  @Test
+  void testRequestExcludeHeadersDefault() {
     ConfigurableDispatch dispatch = new ConfigurableDispatch();
 
     Map<String, String> headers = new HashMap<>();
@@ -187,8 +186,8 @@ public class ConfigurableDispatchTest {
     assertThat(outboundRequestHeaders[1].getName(), is("TEST"));
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testRequestExcludeHeadersConfig() {
+  @Test
+  void testRequestExcludeHeadersConfig() {
     ConfigurableDispatch dispatch = new ConfigurableDispatch();
     dispatch.setRequestExcludeHeaders(String.join(",", Arrays.asList(HttpHeaders.ACCEPT, "TEST")));
 
@@ -212,8 +211,8 @@ public class ConfigurableDispatchTest {
     assertThat(outboundRequestHeaders[0].getName(), is(HttpHeaders.AUTHORIZATION));
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testResponseExcludeHeadersDefault() {
+  @Test
+  void testResponseExcludeHeadersDefault() {
     ConfigurableDispatch dispatch = new ConfigurableDispatch();
 
     Header[] headers = new Header[]{
@@ -233,8 +232,8 @@ public class ConfigurableDispatchTest {
     assertThat(outboundResponse.getHeader("TEST"), is("testValue"));
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testResponseExcludeHeadersConfig() {
+  @Test
+  void testResponseExcludeHeadersConfig() {
     ConfigurableDispatch dispatch = new ConfigurableDispatch();
     dispatch.setResponseExcludeHeaders(String.join(",", Collections.singletonList("TEST")));
 

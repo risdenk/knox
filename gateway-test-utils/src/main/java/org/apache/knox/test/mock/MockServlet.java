@@ -26,7 +26,7 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MockServlet extends HttpServlet {
   private static final Logger LOG = Logger.getLogger(MockServlet.class);

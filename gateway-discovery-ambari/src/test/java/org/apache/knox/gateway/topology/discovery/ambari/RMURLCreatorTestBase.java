@@ -23,16 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 abstract class RMURLCreatorTestBase {
-
   abstract String getTargetService();
-
-
   abstract ServiceURLCreator getServiceURLCreator(AmbariCluster cluster);
-
 
   String doTestCreateSingleURL(final String httpPolicy, final String httpAddress, final String httpsAddress) {
     AmbariCluster.ServiceConfiguration rmSvcConfig = EasyMock.createNiceMock(AmbariCluster.ServiceConfiguration.class);
@@ -56,7 +52,6 @@ abstract class RMURLCreatorTestBase {
     assertEquals(1, urls.size());
     return urls.get(0);
   }
-
 
   List<String> doTestCreateHAURLs(final String httpPolicy,
                                           final String activeHttpAddress,
@@ -91,12 +86,10 @@ abstract class RMURLCreatorTestBase {
     return urls;
   }
 
-
   private List<String> doTestCreateURLs(AmbariCluster cluster) {
     ServiceURLCreator rmc = getServiceURLCreator(cluster);
     List<String> urls = rmc.create(getTargetService(), Collections.emptyMap());
     assertNotNull(urls);
     return urls;
   }
-
 }

@@ -28,9 +28,8 @@ import org.apache.knox.gateway.services.security.token.JWTokenAuthority;
 import org.apache.knox.gateway.services.security.token.impl.JWT;
 import org.apache.knox.gateway.services.security.token.impl.JWTToken;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
@@ -50,20 +49,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Some tests for the token service
  */
-public class TokenServiceResourceTest {
-
+class TokenServiceResourceTest {
   private static RSAPublicKey publicKey;
   private static RSAPrivateKey privateKey;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
     kpg.initialize(2048);
     KeyPair KPair = kpg.generateKeyPair();
@@ -73,30 +71,24 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testTokenService() {
-    Assert.assertTrue(true);
-  }
-
-  @Test
-  public void testClientData() {
+  void testClientData() {
     TokenResource tr = new TokenResource();
 
     Map<String,Object> clientDataMap = new HashMap<>();
     tr.addClientDataToMap("cookie.name=hadoop-jwt,test=value".split(","), clientDataMap);
-    Assert.assertEquals(2, clientDataMap.size());
+    assertEquals(2, clientDataMap.size());
 
     clientDataMap = new HashMap<>();
     tr.addClientDataToMap("cookie.name=hadoop-jwt".split(","), clientDataMap);
-    Assert.assertEquals(1, clientDataMap.size());
+    assertEquals(1, clientDataMap.size());
 
     clientDataMap = new HashMap<>();
     tr.addClientDataToMap("".split(","), clientDataMap);
-    Assert.assertEquals(0, clientDataMap.size());
+    assertEquals(0, clientDataMap.size());
   }
 
   @Test
-  public void testGetToken() throws Exception {
-
+  void testGetToken() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
 
     HttpServletRequest request = EasyMock.createNiceMock(HttpServletRequest.class);
@@ -135,8 +127,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testAudiences() throws Exception {
-
+  void testAudiences() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn("recipient1,recipient2");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn(null);
@@ -187,8 +178,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testAudiencesWhitespace() throws Exception {
-
+  void testAudiencesWhitespace() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn(" recipient1, recipient2 ");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn(null);
@@ -239,8 +229,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testValidClientCert() throws Exception {
-
+  void testValidClientCert() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.client.cert.required")).andReturn("true");
     EasyMock.expect(context.getInitParameter("knox.token.allowed.principals")).andReturn("CN=localhost, OU=Test, O=Hadoop, L=Test, ST=Test, C=US");
@@ -290,8 +279,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testValidClientCertWrongUser() throws Exception {
-
+  void testValidClientCertWrongUser() {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.client.cert.required")).andReturn("true");
     EasyMock.expect(context.getInitParameter("knox.token.allowed.principals")).andReturn("CN=remotehost, OU=Test, O=Hadoop, L=Test, ST=Test, C=US");
@@ -329,8 +317,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testMissingClientCert() throws Exception {
-
+  void testMissingClientCert() {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.client.cert.required")).andReturn("true");
     EasyMock.expect(context.getInitParameter("knox.token.allowed.principals")).andReturn("CN=remotehost, OU=Test, O=Hadoop, L=Test, ST=Test, C=US");
@@ -363,7 +350,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testSignatureAlgorithm() throws Exception {
+  void testSignatureAlgorithm() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn("recipient1,recipient2");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn(null);
@@ -410,7 +397,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testDefaultTTL() throws Exception {
+  void testDefaultTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn("recipient1,recipient2");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn(null);
@@ -460,7 +447,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testCustomTTL() throws Exception {
+  void testCustomTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn("recipient1,recipient2");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn("60000");
@@ -511,7 +498,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testNegativeTTL() throws Exception {
+  void testNegativeTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn("recipient1,recipient2");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn("-60000");
@@ -561,7 +548,7 @@ public class TokenServiceResourceTest {
   }
 
   @Test
-  public void testOverflowTTL() throws Exception {
+  void testOverflowTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knox.token.audiences")).andReturn("recipient1,recipient2");
     EasyMock.expect(context.getInitParameter("knox.token.ttl")).andReturn(String.valueOf(Long.MAX_VALUE));
@@ -626,7 +613,6 @@ public class TokenServiceResourceTest {
   }
 
   private static class TestJWTokenAuthority implements JWTokenAuthority {
-
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
 

@@ -25,7 +25,7 @@ import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Resolver;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,11 +36,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class UrlRewriteContextImplTest {
-
+class UrlRewriteContextImplTest {
   @Test
-  public void testResolve() throws Exception {
-
+  void testResolve() throws Exception {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     EasyMock.expect( environment.resolve( "test-env-param-name" ) ).andReturn(Collections.singletonList("test-env-param-value")).anyTimes();
 
@@ -67,5 +65,4 @@ public class UrlRewriteContextImplTest {
     assertThat( values.size(), is( 1 ) );
     assertThat( values.get( 0 ), is( "test-ctx-param-value" ) );
   }
-
 }

@@ -19,17 +19,17 @@ package org.apache.knox.gateway.provider.federation;
 
 import org.apache.knox.gateway.preauth.filter.DefaultValidator;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultValidatorTest {
+class DefaultValidatorTest {
   @Test
-  public void testDefault() throws Exception {
+  void testDefault() throws Exception {
     final FilterConfig filterConfig = EasyMock.createMock(FilterConfig.class);
     final HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
     DefaultValidator dv = new DefaultValidator();
@@ -37,7 +37,7 @@ public class DefaultValidatorTest {
   }
 
   @Test
-  public void testName() {
+  void testName() {
     DefaultValidator dv = new DefaultValidator();
     assertEquals(dv.getName(), DefaultValidator.DEFAULT_VALIDATION_METHOD_VALUE);
   }

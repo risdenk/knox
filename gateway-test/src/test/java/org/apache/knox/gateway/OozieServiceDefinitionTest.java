@@ -32,7 +32,7 @@ import org.apache.knox.gateway.util.XmlUtils;
 import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.mock.MockServletInputStream;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 import javax.servlet.FilterConfig;
@@ -48,10 +48,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.xml.HasXPath.hasXPath;
 
-public class OozieServiceDefinitionTest {
-
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testOozieRewriteRulesForLiteralTemplateValuesBugKnox394() throws Exception {
+class OozieServiceDefinitionTest {
+  @Test
+  void testOozieRewriteRulesForLiteralTemplateValuesBugKnox394() throws Exception {
     LOG_ENTER();
 
     // This is a unique part of this test.
@@ -104,8 +103,8 @@ public class OozieServiceDefinitionTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testOozieRewriteRulesForLiteralComplexTemplateValuesBugKnox394() throws Exception {
+  @Test
+  void testOozieRewriteRulesForLiteralComplexTemplateValuesBugKnox394() throws Exception {
     LOG_ENTER();
 
     // This is a unique part of this test.
@@ -157,8 +156,8 @@ public class OozieServiceDefinitionTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testOozieRewriteRulesForValuesRelativeToServiceRegistry() throws Exception {
+  @Test
+  void testOozieRewriteRulesForValuesRelativeToServiceRegistry() throws Exception {
     LOG_ENTER();
 
     // This is a unique part of this test.
@@ -210,5 +209,4 @@ public class OozieServiceDefinitionTest {
 
     LOG_EXIT();
   }
-
 }

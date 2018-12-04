@@ -24,25 +24,25 @@ import org.apache.curator.test.TestingCluster;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.URLManagerLoader;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HS2ZookeeperURLManagerTest {
+class HS2ZookeeperURLManagerTest {
   private TestingCluster cluster;
   private HS2ZookeeperURLManager manager;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     cluster = new TestingCluster(3);
     cluster.start();
 
@@ -75,17 +75,17 @@ public class HS2ZookeeperURLManagerTest {
 
   }
 
-  @After
-  public void tearDown() throws IOException {
+  @AfterEach
+  void tearDown() throws IOException {
     if(cluster != null) {
       cluster.close();
     }
   }
 
   @Test
-  public void testActiveURLManagement() throws Exception {
+  void testActiveURLManagement() {
     List<String> urls = manager.getURLs();
-    Assert.assertNotNull(urls);
+    assertNotNull(urls);
     String url1 = urls.get( 0 ); //"https://host4:10004/cliservice";
     String url2 = urls.get( 1 ); //"http://host3:10003/cliservice";
     String url3 = urls.get( 2 ); //"http://host2:10002/foobar";
@@ -98,7 +98,7 @@ public class HS2ZookeeperURLManagerTest {
   }
 
   @Test
-  public void testMarkingFailedURL() {
+  void testMarkingFailedURL() {
     List<String> urls = manager.getURLs();
     String url1 = urls.get(0); //"https://host4:10004/cliservice";
     urls.add(url1);
@@ -123,13 +123,13 @@ public class HS2ZookeeperURLManagerTest {
   }
 
   @Test
-  public void testHS2URLManagerLoading() {
+  void testHS2URLManagerLoading() {
     HaServiceConfig config = new DefaultHaServiceConfig("HIVE");
     config.setEnabled(true);
     config.setZookeeperEnsemble(cluster.getConnectString());
     config.setZookeeperNamespace("hiveServer2");
     URLManager manager = URLManagerLoader.loadURLManager(config);
-    Assert.assertNotNull(manager);
+    assertNotNull(manager);
     assertTrue(manager instanceof HS2ZookeeperURLManager);
   }
 }

@@ -18,7 +18,7 @@
 package org.apache.knox.gateway.hostmap.api;
 
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteFunctionDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -26,12 +26,11 @@ import java.util.ServiceLoader;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class HostmapFunctionDescriptorTest {
-
+class HostmapFunctionDescriptorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionDescriptor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -45,7 +44,7 @@ public class HostmapFunctionDescriptorTest {
   }
 
   @Test
-  public void testGetAndSet() {
+  void testGetAndSet() {
     HostmapFunctionDescriptor descriptor = new HostmapFunctionDescriptor();
 
     assertThat( descriptor.name(), is( "hostmap" ) );
@@ -61,5 +60,4 @@ public class HostmapFunctionDescriptorTest {
     assertThat( descriptor.config(), is( "test-config-location-bean" ) );
     assertThat( descriptor.getConfig(), is( "test-config-location-bean" ) );
   }
-
 }

@@ -35,7 +35,6 @@ import java.util.Locale;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
-
 @Path(PingResource.RESOURCE_PATH)
 public class PingResource {
   static final String VERSION_TAG = "v1";
@@ -83,5 +82,4 @@ public class PingResource {
   String getPingContent() {
     return CONTENT;
   }
-
 }

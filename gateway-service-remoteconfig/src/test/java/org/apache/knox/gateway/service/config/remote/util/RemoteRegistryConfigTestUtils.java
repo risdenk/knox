@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 
 public class RemoteRegistryConfigTestUtils {
-
     public static final String PROPERTY_TYPE = "type";
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_ADDRESS = "address";

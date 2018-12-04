@@ -27,8 +27,8 @@ import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.registry.ServiceRegistry;
 import org.apache.knox.gateway.svcregfunc.api.ServiceHostFunctionDescriptor;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -40,18 +40,17 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceHostFunctionProcessorTest {
+class ServiceHostFunctionProcessorTest {
+  private ServiceRegistry reg;
+  private GatewayServices svc;
+  private UrlRewriteEnvironment env;
+  private UrlRewriteContext ctx;
+  private ServiceHostFunctionDescriptor desc;
 
-  ServiceRegistry reg;
-  GatewayServices svc;
-  UrlRewriteEnvironment env;
-  UrlRewriteContext ctx;
-  ServiceHostFunctionDescriptor desc;
-
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     reg = EasyMock.createNiceMock( ServiceRegistry.class );
     EasyMock.expect( reg.lookupServiceURL( "test-cluster", "test-service" ) ).andReturn( "test-scheme://test-host:777/test-path" ).anyTimes();
 
@@ -73,11 +72,10 @@ public class ServiceHostFunctionProcessorTest {
      EasyMock.expect(haProvider.isHaEnabled(EasyMock.anyObject(String.class))).andReturn(Boolean.FALSE).anyTimes();
 
      EasyMock.replay( reg, svc, env, desc, ctx, haProvider );
-
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -91,13 +89,13 @@ public class ServiceHostFunctionProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     ServiceHostFunctionProcessor func = new ServiceHostFunctionProcessor();
     assertThat( func.name(), is( "serviceHost" ) );
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  void testInitialize() throws Exception {
     ServiceHostFunctionProcessor func = new ServiceHostFunctionProcessor();
     try {
       func.initialize( null, desc );
@@ -121,7 +119,7 @@ public class ServiceHostFunctionProcessorTest {
   }
 
   @Test
-  public void testDestroy() throws Exception {
+  void testDestroy() throws Exception {
     ServiceHostFunctionProcessor func = new ServiceHostFunctionProcessor();
     func.initialize( env, desc );
     func.destroy();
@@ -131,7 +129,7 @@ public class ServiceHostFunctionProcessorTest {
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() throws Exception {
     ServiceHostFunctionProcessor func = new ServiceHostFunctionProcessor();
     func.initialize( env, desc );
 
@@ -141,5 +139,4 @@ public class ServiceHostFunctionProcessorTest {
 
     func.destroy();
   }
-
 }

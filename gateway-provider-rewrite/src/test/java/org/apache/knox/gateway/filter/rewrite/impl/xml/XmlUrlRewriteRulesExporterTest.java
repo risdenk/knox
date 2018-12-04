@@ -25,8 +25,7 @@ import org.apache.knox.gateway.filter.rewrite.ext.UrlRewriteActionRewriteDescrip
 import org.apache.knox.gateway.filter.rewrite.ext.UrlRewriteCheckDescriptor;
 import org.apache.knox.gateway.filter.rewrite.ext.UrlRewriteControlDescriptor;
 import org.apache.knox.gateway.filter.rewrite.ext.UrlRewriteMatchDescriptor;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.transform.XmlConverters;
 
@@ -36,11 +35,11 @@ import java.io.StringWriter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlUrlRewriteRulesExporterTest {
-
+class XmlUrlRewriteRulesExporterTest {
   @Test
-  public void testEmptyRules() throws IOException {
+  void testEmptyRules() throws IOException {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     StringWriter writer = new StringWriter();
     UrlRewriteRulesDescriptorFactory.store( rules, "xml", writer );
@@ -50,7 +49,7 @@ public class XmlUrlRewriteRulesExporterTest {
   }
 
   @Test
-  public void testSingleNamedRule() throws IOException {
+  void testSingleNamedRule() throws IOException {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     rules.addRule( "first" ).scope( "test-scope" );
 
@@ -67,7 +66,7 @@ public class XmlUrlRewriteRulesExporterTest {
   }
 
   @Test
-  public void testMatchStep() throws Exception {
+  void testMatchStep() throws Exception {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteRuleDescriptor rule = rules.addRule( "test-rule" ).pattern("test-pattern-rule");
     UrlRewriteMatchDescriptor match = rule.addStep( "match" );
@@ -91,7 +90,7 @@ public class XmlUrlRewriteRulesExporterTest {
   }
 
   @Test
-  public void testControlStep() throws Exception {
+  void testControlStep() throws Exception {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteRuleDescriptor rule = rules.addRule( "test-rule" );
     UrlRewriteControlDescriptor control = rule.addStep( "control" );
@@ -112,7 +111,7 @@ public class XmlUrlRewriteRulesExporterTest {
   }
 
   @Test
-  public void testCheckStep() throws Exception {
+  void testCheckStep() throws Exception {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteRuleDescriptor rule = rules.addRule( "test-rule" );
     UrlRewriteCheckDescriptor step = rule.addStep( "check" );
@@ -135,7 +134,7 @@ public class XmlUrlRewriteRulesExporterTest {
   }
 
   @Test
-  public void testRewriteStep() throws Exception {
+  void testRewriteStep() throws Exception {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteRuleDescriptor rule = rules.addRule( "test-rule" );
     UrlRewriteActionRewriteDescriptorExt step = rule.addStep( "rewrite" );
@@ -156,7 +155,7 @@ public class XmlUrlRewriteRulesExporterTest {
   }
 
   @Test
-  public void testNestedStep() throws Exception {
+  void testNestedStep() throws Exception {
     UrlRewriteRulesDescriptor rules = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteRuleDescriptor rule = rules.addRule( "test-rule" );
 
@@ -165,33 +164,33 @@ public class XmlUrlRewriteRulesExporterTest {
     UrlRewriteCheckDescriptor matchCheck = match.addStep( "check" );
     UrlRewriteControlDescriptor matchControl = match.addStep( "control" );
     UrlRewriteActionDescriptor matchRewrite = match.addStep( "rewrite" );
-    Assert.assertNotNull(matchMatch);
-    Assert.assertNotNull(matchCheck);
-    Assert.assertNotNull(matchControl);
-    Assert.assertNotNull(matchRewrite);
+    assertNotNull(matchMatch);
+    assertNotNull(matchCheck);
+    assertNotNull(matchControl);
+    assertNotNull(matchRewrite);
 
     UrlRewriteCheckDescriptor check = rule.addStep( "check" );
     UrlRewriteMatchDescriptor checkMatch = check.addStep( "match" );
     UrlRewriteCheckDescriptor checkCheck = check.addStep( "check" );
     UrlRewriteControlDescriptor checkControl = check.addStep( "control" );
     UrlRewriteActionDescriptor checkRewrite = check.addStep( "rewrite" );
-    Assert.assertNotNull(checkMatch);
-    Assert.assertNotNull(checkCheck);
-    Assert.assertNotNull(checkControl);
-    Assert.assertNotNull(checkRewrite);
+    assertNotNull(checkMatch);
+    assertNotNull(checkCheck);
+    assertNotNull(checkControl);
+    assertNotNull(checkRewrite);
 
     UrlRewriteControlDescriptor control = rule.addStep( "control" );
     UrlRewriteMatchDescriptor controlMatch = control.addStep( "match" );
     UrlRewriteCheckDescriptor controlCheck = control.addStep( "check" );
     UrlRewriteControlDescriptor controlControl = control.addStep( "control" );
     UrlRewriteActionDescriptor controlRewrite = control.addStep( "rewrite" );
-    Assert.assertNotNull(controlMatch);
-    Assert.assertNotNull(controlCheck);
-    Assert.assertNotNull(controlControl);
-    Assert.assertNotNull(controlRewrite);
+    assertNotNull(controlMatch);
+    assertNotNull(controlCheck);
+    assertNotNull(controlControl);
+    assertNotNull(controlRewrite);
 
     UrlRewriteActionDescriptor rewrite = rule.addStep( "rewrite" );
-    Assert.assertNotNull(rewrite);
+    assertNotNull(rewrite);
 
     StringWriter writer = new StringWriter();
     UrlRewriteRulesDescriptorFactory.store( rules, "xml", writer );

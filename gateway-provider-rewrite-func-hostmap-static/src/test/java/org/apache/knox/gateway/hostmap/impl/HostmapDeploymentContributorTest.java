@@ -27,7 +27,7 @@ import org.easymock.EasyMock;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,12 +39,11 @@ import java.util.ServiceLoader;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class HostmapDeploymentContributorTest {
-
+class HostmapDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -58,7 +57,7 @@ public class HostmapDeploymentContributorTest {
   }
 
   @Test
-  public void testDeployment() throws IOException {
+  void testDeployment() throws IOException {
     WebArchive webArchive = ShrinkWrap.create( WebArchive.class, "test-acrhive" );
 
     UrlRewriteRulesDescriptorImpl rewriteRules = new UrlRewriteRulesDescriptorImpl();
@@ -97,7 +96,5 @@ public class HostmapDeploymentContributorTest {
 
     // Just make sure it doesn't blow up.
     contributor.finalizeContribution( context );
-
   }
-
 }

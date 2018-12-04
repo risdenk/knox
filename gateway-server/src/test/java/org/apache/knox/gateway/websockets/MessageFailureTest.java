@@ -22,10 +22,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.hamcrest.CoreMatchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
@@ -35,10 +34,12 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
  * Test for max message size.
  */
-public class MessageFailureTest {
+class MessageFailureTest {
   private static Server backend;
   private static ServerConnector connector;
   private static URI serverUri;
@@ -48,18 +49,14 @@ public class MessageFailureTest {
   private static ServerConnector proxyConnector;
   private static URI proxyUri;
 
-  public MessageFailureTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     startBackend();
     startProxy();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     /* ORDER MATTERS ! */
     proxy.stop();
     backend.stop();
@@ -68,8 +65,8 @@ public class MessageFailureTest {
   /*
    * Test for a message that bigger than configured value
    */
-  @Test(timeout = 8000)
-  public void testMessageTooBig() throws Exception {
+  @Test
+  void testMessageTooBig() throws Exception {
     final String bigMessage = RandomStringUtils.randomAscii(66001);
 
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -82,15 +79,15 @@ public class MessageFailureTest {
     client.awaitClose(CloseReason.CloseCodes.TOO_BIG.getCode(), 1000,
         TimeUnit.MILLISECONDS);
 
-    Assert.assertThat(client.close.getCloseCode().getCode(), CoreMatchers.is(CloseReason.CloseCodes.TOO_BIG.getCode()));
+    assertThat(client.close.getCloseCode().getCode(), CoreMatchers.is(CloseReason.CloseCodes.TOO_BIG.getCode()));
   }
 
   /**
    * Test for a message that bigger than Jetty default but smaller than limit
    * @throws Exception exception on failure
    */
-  @Test(timeout = 8000)
-  public void testMessageBiggerThanDefault() throws Exception {
+  @Test
+  void testMessageBiggerThanDefault() throws Exception {
     final String bigMessage = RandomStringUtils.randomAscii(66000);
 
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -103,15 +100,14 @@ public class MessageFailureTest {
     client.awaitClose(CloseReason.CloseCodes.TOO_BIG.getCode(), 1000,
             TimeUnit.MILLISECONDS);
 
-    Assert.assertThat(client.close.getCloseCode().getCode(), CoreMatchers.is(CloseReason.CloseCodes.TOO_BIG.getCode()));
-
+    assertThat(client.close.getCloseCode().getCode(), CoreMatchers.is(CloseReason.CloseCodes.TOO_BIG.getCode()));
   }
 
   /*
    * Test for a message within limit.
    */
-  @Test(timeout = 8000)
-  public void testMessageOk() throws Exception {
+  @Test
+  void testMessageOk() throws Exception {
     final String message = "Echo";
 
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -123,7 +119,7 @@ public class MessageFailureTest {
 
     client.messageQueue.awaitMessages(1, 1000, TimeUnit.MILLISECONDS);
 
-    Assert.assertThat(client.messageQueue.get(0), CoreMatchers.is("Echo"));
+    assertThat(client.messageQueue.get(0), CoreMatchers.is("Echo"));
   }
 
   private static void startBackend() throws Exception {

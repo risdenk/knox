@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,10 +28,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
-public class FunctionTest {
-
+class FunctionTest {
   @Test
-  public void testParse() throws Exception {
+  void testParse() {
     Function function;
 
     function = new Function( null );
@@ -121,7 +120,7 @@ public class FunctionTest {
   }
 
   @Test
-  public void testEvaluate() throws Exception {
+  void testEvaluate() {
     TestResolver resolver = new TestResolver();
     TestEvaluator evaluator = new TestEvaluator();
     List<String> values;
@@ -143,7 +142,6 @@ public class FunctionTest {
   }
 
   class TestResolver implements Resolver {
-
     @Override
     public List<String> resolve( String name ) {
       return Collections.singletonList("resolve(" + name + ")");
@@ -152,7 +150,6 @@ public class FunctionTest {
   }
 
   class TestEvaluator implements Evaluator {
-
     @Override
     public List<String> evaluate( String function, List<String> parameters ) {
       List<String> result = new ArrayList<>( parameters.size() );
@@ -161,7 +158,5 @@ public class FunctionTest {
       }
       return result;
     }
-
   }
-
 }

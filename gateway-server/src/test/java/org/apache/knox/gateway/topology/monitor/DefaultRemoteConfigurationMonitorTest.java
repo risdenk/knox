@@ -19,11 +19,12 @@ package org.apache.knox.gateway.topology.monitor;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.config.client.RemoteConfigurationRegistryClientService;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class DefaultRemoteConfigurationMonitorTest {
-  @Test(expected=IllegalStateException.class)
-  public void testInitWithoutRequiredConfig() {
+class DefaultRemoteConfigurationMonitorTest {
+  @Test
+  void testInitWithoutRequiredConfig() {
     GatewayConfig gatewayConfig = EasyMock.createNiceMock(GatewayConfig.class);
     EasyMock.expect(gatewayConfig.getGatewayProvidersConfigDir()).andReturn("./shared-providers").anyTimes();
     EasyMock.expect(gatewayConfig.getGatewayDescriptorsDir()).andReturn("./descriptors").anyTimes();
@@ -32,6 +33,8 @@ public class DefaultRemoteConfigurationMonitorTest {
     RemoteConfigurationRegistryClientService remoteConfigurationRegistryClientService =
         EasyMock.createNiceMock(RemoteConfigurationRegistryClientService.class);
 
-    new DefaultRemoteConfigurationMonitor(gatewayConfig, remoteConfigurationRegistryClientService);
+    Assertions.assertThrows(IllegalStateException.class,
+        () -> new DefaultRemoteConfigurationMonitor(gatewayConfig,
+            remoteConfigurationRegistryClientService));
   }
 }

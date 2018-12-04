@@ -30,7 +30,7 @@ import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.impl.DefaultCryptoService;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -41,14 +41,12 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-
-public class EncryptDecryptUriProcessorTest {
-
+class EncryptDecryptUriProcessorTest {
   @SuppressWarnings("rawtypes")
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteStepProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -73,13 +71,12 @@ public class EncryptDecryptUriProcessorTest {
   }
 
   @Test
-  public void testEncryptDecrypt() throws Exception {
+  void testEncryptDecrypt() throws Exception {
     String encryptedValueParamName = "address";
     String clusterName = "test-cluster-name";
     String passwordAlias = "encryptQueryString";
 
-    // Test encryption.  Result is in encryptedAdrress
-
+    // Test encryption.  Result is in encryptedAddress
     AliasService as = EasyMock.createNiceMock( AliasService.class );
     String secret = "asdf";
     EasyMock.expect( as.getPasswordFromAliasForCluster( clusterName, passwordAlias ) ).andReturn( secret.toCharArray() ).anyTimes();
@@ -153,5 +150,4 @@ public class EncryptDecryptUriProcessorTest {
     String dectryptedAdrress = decodedValue.getValue().resolve( decParam ).get( 0 );
     assertThat( dectryptedAdrress, is ( "host.yarn.com:8088" ) );
   }
-
 }

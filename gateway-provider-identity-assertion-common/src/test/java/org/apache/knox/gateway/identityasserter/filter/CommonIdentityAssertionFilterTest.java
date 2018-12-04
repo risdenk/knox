@@ -21,8 +21,8 @@ import org.apache.knox.gateway.identityasserter.common.filter.CommonIdentityAsse
 import org.apache.knox.gateway.security.GroupPrincipal;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
@@ -38,20 +38,16 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author larry
- *
- */
-public class CommonIdentityAssertionFilterTest {
+class CommonIdentityAssertionFilterTest {
   private String username;
   private String[] mappedGroups;
   private Filter filter;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     filter = new CommonIdentityAssertionFilter() {
       @Override
       public String mapUserPrincipal(String principalName) {
@@ -74,7 +70,7 @@ public class CommonIdentityAssertionFilterTest {
   }
 
   @Test
-  public void testSimpleFilter() throws ServletException, IOException {
+  void testSimpleFilter() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -86,8 +82,7 @@ public class CommonIdentityAssertionFilterTest {
 
     final FilterChain chain = new FilterChain() {
       @Override
-      public void doFilter(ServletRequest request, ServletResponse response)
-          throws IOException, ServletException {
+      public void doFilter(ServletRequest request, ServletResponse response) {
       }
     };
 
@@ -121,6 +116,7 @@ public class CommonIdentityAssertionFilterTest {
     assertEquals("LARRY", username);
     assertEquals(mappedGroups.length, 2);
     assertTrue(mappedGroups[0].equals("USERS") || mappedGroups[0].equals("ADMIN"));
-    assertTrue(mappedGroups[1], mappedGroups[1].equals("USERS") || mappedGroups[1].equals("ADMIN"));
+    assertTrue(mappedGroups[1].equals("USERS") || mappedGroups[1].equals("ADMIN"),
+        mappedGroups[1]);
   }
 }

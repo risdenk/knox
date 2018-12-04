@@ -18,18 +18,17 @@
 package org.apache.knox.gateway.deploy.impl;
 
 import org.apache.knox.gateway.deploy.ProviderDeploymentContributor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class GenericProviderDeploymentContributorTest {
-
+class GenericProviderDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -41,5 +40,4 @@ public class GenericProviderDeploymentContributorTest {
     }
     fail( "Failed to find " + GenericProviderDeploymentContributor.class.getName() + " via service loader." );
   }
-
 }

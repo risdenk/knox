@@ -27,21 +27,20 @@ import org.apache.knox.gateway.topology.Application;
 import org.apache.knox.gateway.topology.Service;
 import org.apache.knox.gateway.topology.Topology;
 import org.apache.knox.gateway.util.XmlUtils;
-import org.apache.knox.test.TestUtils;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.xml.HasXPath.hasXPath;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class DeploymentFactoryTest {
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testEmptyTopology() throws IOException, SAXException, ParserConfigurationException, TransformerException {
+class DeploymentFactoryTest {
+  @Test
+  void testEmptyTopology() throws IOException, SAXException, ParserConfigurationException, TransformerException {
     GatewayConfig config = new GatewayConfigImpl();
 
     Topology topology = new Topology();
@@ -54,8 +53,8 @@ public class DeploymentFactoryTest {
     assertThat( xml, hasXPath( "/topology/name", equalTo( "test-topology" ) ) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void test_validateNoAppsWithRootUrlsInServicesTopology() {
+  @Test
+  void test_validateNoAppsWithRootUrlsInServicesTopology() {
     DeploymentFactory.validateNoAppsWithRootUrlsInServicesTopology( null );
 
     Topology topology = new Topology();
@@ -157,8 +156,8 @@ public class DeploymentFactoryTest {
     }
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void test_validateNoAppsWithDuplicateUrlsInTopology() {
+  @Test
+  void test_validateNoAppsWithDuplicateUrlsInTopology() {
     DeploymentFactory.validateNoAppsWithDuplicateUrlsInTopology( null );
 
     Topology topology = new Topology();

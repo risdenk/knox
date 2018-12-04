@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.descriptor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -25,13 +25,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class GatewayDescriptorTest {
-
+class GatewayDescriptorTest {
   @Test
-  public void testGatewayDescriptorConstruction() {
-
+  void testGatewayDescriptorConstruction() {
     GatewayDescriptor descriptor = GatewayDescriptorFactory.create()
         .addParam().name( "cluster-param1-name" ).value( "cluster-param1-value" ).up()
         .addParam().name( "cluster-param2-name" ).value( "cluster-param2-value" ).up()
@@ -97,7 +95,7 @@ public class GatewayDescriptorTest {
   }
 
   @Test
-  public void testInvalidImportExportFormats() throws IOException {
+  void testInvalidImportExportFormats() throws IOException {
     try {
       GatewayDescriptorFactory.load( "INVALID", null );
       fail( "Expected IllegalArgumentException" );
@@ -111,7 +109,5 @@ public class GatewayDescriptorTest {
     } catch( IllegalArgumentException e ) {
       assertThat( e.getMessage(), containsString( "INVALID" ) );
     }
-
   }
-
 }

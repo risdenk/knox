@@ -17,13 +17,12 @@
  */
 package org.apache.knox.gateway.config.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class BeanConfigurationAdapterTest {
-
+class BeanConfigurationAdapterTest {
   public static class Bean {
     public String getValue() {
       return "beanValue";
@@ -31,10 +30,9 @@ public class BeanConfigurationAdapterTest {
   }
 
   @Test
-  public void test() {
+  void test() {
     Bean bean = new Bean();
     BeanConfigurationAdapter adapter = new BeanConfigurationAdapter( bean );
     assertThat( adapter.getConfigurationValue( "value" ).toString(), is( "beanValue" ) );
   }
-
 }

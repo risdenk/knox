@@ -17,10 +17,7 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 
@@ -30,11 +27,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class TemplateTest {
-
+class TemplateTest {
   @Test
-  public void testParseNonUrlKnox310() throws URISyntaxException {
+  void testParseNonUrlKnox310() throws URISyntaxException {
     String input;
     String output;
     Template template;
@@ -108,7 +103,7 @@ public class TemplateTest {
   }
 
   @Test
-  public void testToString() throws Exception {
+  void testToString() throws Exception {
     String text = "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment";
     Template template = Parser.parseTemplate( text );
     String actual = template.toString();
@@ -154,7 +149,7 @@ public class TemplateTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  void testHashCode() throws Exception {
     Template t1 = Parser.parseTemplate( "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment1" );
     Template t2 = Parser.parseTemplate( "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment1" );
     Template t3 = Parser.parseTemplate( "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment2" );
@@ -164,7 +159,7 @@ public class TemplateTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  void testEquals() throws Exception {
     Template t1 = Parser.parseTemplate( "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment1" );
     Template t2 = Parser.parseTemplate( "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment1" );
     Template t3 = Parser.parseTemplate( "scheme://username:password@host:port/top/mid/bot/file?query=value#fragment2" );
@@ -172,5 +167,4 @@ public class TemplateTest {
     assertThat( t1.equals( t2 ), equalTo( true ) );
     assertThat( t1.equals( t3 ), equalTo( false ) );
   }
-
 }

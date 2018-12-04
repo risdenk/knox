@@ -23,13 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.knox.test.TestUtils;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PassAllHeadersNoEncodingDispatchTest {
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testGetDispatchUrl() throws Exception {
+class PassAllHeadersNoEncodingDispatchTest {
+  @Test
+  void testGetDispatchUrl() {
     HttpServletRequest request;
     Dispatch dispatch;
     String path;
@@ -98,6 +97,5 @@ public class PassAllHeadersNoEncodingDispatchTest {
     EasyMock.replay( request );
     uri = dispatch.getDispatchUrl( request );
     assertThat( uri.toASCIIString(), is( "http://test-host:8080/api/v1/clusters/mmolnar-knox2/configurations/service_config_versions?group_id%3E0&fields=*&_=1541527314780" ) );
-
   }
 }

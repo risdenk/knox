@@ -18,15 +18,11 @@
 package org.apache.knox.gateway.services.security;
 
 import org.apache.knox.gateway.config.GatewayConfig;
-import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.gateway.services.security.impl.ConfigurableEncryptor;
 import org.apache.knox.gateway.services.security.impl.DefaultCryptoService;
-import org.apache.knox.test.category.ManualTests;
-import org.apache.knox.test.category.MediumTests;
 import org.easymock.EasyMock;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
@@ -34,27 +30,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Category( { ManualTests.class, MediumTests.class } )
-public class CryptoServiceTest {
+class CryptoServiceTest {
   private static CryptoService cs;
   private static AliasService as;
 
-  @BeforeClass
-  public static void setupSuite() throws Exception {
+  @BeforeAll
+  static void setupSuite() {
     as = new AliasService() {
       @Override
-      public void init(GatewayConfig config, Map<String, String> options)
-          throws ServiceLifecycleException {
+      public void init(GatewayConfig config, Map<String, String> options) {
       }
 
       @Override
-      public void start() throws ServiceLifecycleException {
+      public void start() {
       }
 
       @Override
-      public void stop() throws ServiceLifecycleException {
+      public void stop() {
       }
 
       @Override
@@ -102,7 +96,7 @@ public class CryptoServiceTest {
       }
 
       @Override
-      public char[] getGatewayIdentityPassphrase() throws AliasServiceException {
+      public char[] getGatewayIdentityPassphrase() {
         return null;
       }
 
@@ -126,7 +120,7 @@ public class CryptoServiceTest {
   }
 
   @Test
-  public void testCryptoServiceAES() throws Exception {
+  void testCryptoServiceAES() throws Exception {
     GatewayConfig config = EasyMock.createNiceMock( GatewayConfig.class );
     EasyMock.expect(config.getAlgorithm()).andReturn("AES");
     EasyMock.expect(config.getPBEAlgorithm()).andReturn("PBKDF2WithHmacSHA1");
@@ -149,7 +143,7 @@ public class CryptoServiceTest {
   }
 
   @Test
-  public void testCryptoServiceDES() throws Exception {
+  void testCryptoServiceDES() throws Exception {
     GatewayConfig config = EasyMock.createNiceMock( GatewayConfig.class );
     EasyMock.expect(config.getAlgorithm()).andReturn("DES");
     EasyMock.expect(config.getPBEAlgorithm()).andReturn("PBKDF2WithHmacSHA1");
@@ -172,7 +166,7 @@ public class CryptoServiceTest {
   }
 
   @Test
-  public void testConfigurableEncryptor() throws Exception {
+  void testConfigurableEncryptor() throws Exception {
     GatewayConfig config = EasyMock.createNiceMock( GatewayConfig.class );
     EasyMock.expect(config.getAlgorithm()).andReturn("AES");
     EasyMock.expect(config.getPBEAlgorithm()).andReturn("PBKDF2WithHmacSHA1");
@@ -210,13 +204,13 @@ public class CryptoServiceTest {
   }
 
   @Test
-  //@Ignore
-  public void testEncryptionOfQueryStrings() throws Exception {
+  void testEncryptionOfQueryStrings() {
     String alias = "encrypt-url";
     String queryString = "url=http://localhost:50070/api/v1/blahblah";
 
     EncryptionResult result = cs.encryptForCluster("Test", alias, queryString.getBytes(StandardCharsets.UTF_8));
-    assertEquals("Resulted cipertext length should be a multiple of 16", 0, (result.cipher.length % 16));
+    assertEquals(0, result.cipher.length % 16,
+        "Resulted cipertext length should be a multiple of 16");
     byte[] decryptedQueryString = cs.decryptForCluster("Test", alias, result.cipher, result.iv, result.salt);
     assertEquals(queryString.getBytes(StandardCharsets.UTF_8).length, decryptedQueryString.length);
   }

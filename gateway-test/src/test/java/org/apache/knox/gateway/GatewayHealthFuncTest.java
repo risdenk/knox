@@ -28,10 +28,9 @@ import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.test.TestUtils;
 import org.apache.http.HttpStatus;
 import org.hamcrest.MatcherAssert;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +48,10 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GatewayHealthFuncTest {
+class GatewayHealthFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger(GatewayAdminFuncTest.class);
 
   public static GatewayConfig config;
@@ -60,23 +61,23 @@ public class GatewayHealthFuncTest {
   public static SimpleLdapDirectoryServer ldap;
   public static TcpTransport ldapTransport;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     TestUtils.LOG_ENTER();
     setupLdap();
     setupGateway();
     TestUtils.LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     TestUtils.LOG_ENTER();
     gateway.stop();
     ldap.stop(true);
     TestUtils.LOG_EXIT();
   }
 
-  public static void setupLdap() throws Exception {
+  private static void setupLdap() throws Exception {
     String basedir = System.getProperty("basedir");
     if (basedir == null) {
       basedir = new File(".").getCanonicalPath();
@@ -91,8 +92,7 @@ public class GatewayHealthFuncTest {
     LOG.info("LDAP port = " + ldapTransport.getPort());
   }
 
-  public static void setupGateway() throws Exception {
-
+  private static void setupGateway() throws Exception {
     File targetDir = new File(System.getProperty("user.dir"), "target");
     File gatewayDir = new File(targetDir, "gateway-home-" + UUID.randomUUID());
     gatewayDir.mkdirs();
@@ -164,8 +164,8 @@ public class GatewayHealthFuncTest {
         .gotoRoot();
   }
 
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT)
-  public void testPingResource() {
+  @Test
+  void testPingResource() {
     TestUtils.LOG_ENTER();
     String username = "guest";
     String password = "guest-password";
@@ -177,12 +177,12 @@ public class GatewayHealthFuncTest {
         .statusCode(HttpStatus.SC_OK)
         .contentType(MediaType.TEXT_PLAIN)
         .when().get(serviceUrl).asString();
-    Assert.assertEquals("OK", body.trim());
+    assertEquals("OK", body.trim());
     TestUtils.LOG_EXIT();
   }
 
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT)
-  public void testMetricsResource() {
+  @Test
+  void testMetricsResource() {
     TestUtils.LOG_ENTER();
     String username = "guest";
     String password = "guest-password";
@@ -195,9 +195,9 @@ public class GatewayHealthFuncTest {
         .when().get(serviceUrl).asString();
     //String version = JsonPath.from(body).getString("version");
     Map<String, String> hm = JsonPath.from(body).getMap("");
-    Assert.assertTrue(hm.size() >= 6);
-    Assert.assertTrue(hm.keySet().containsAll(new HashSet<>(Arrays.asList(new String[]{"timers", "histograms",
-        "counters", "gauges", "version", "meters"}))));
+    assertTrue(hm.size() >= 6);
+    assertTrue(hm.keySet().containsAll(new HashSet<>(Arrays.asList("timers", "histograms",
+        "counters", "gauges", "version", "meters"))));
     TestUtils.LOG_EXIT();
   }
 

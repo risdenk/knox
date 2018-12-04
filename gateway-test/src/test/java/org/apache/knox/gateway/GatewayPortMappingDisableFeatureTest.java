@@ -19,15 +19,13 @@ package org.apache.knox.gateway;
 import com.mycila.xmltool.XMLDoc;
 import com.mycila.xmltool.XMLTag;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.knox.test.mock.MockServer;
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -42,9 +40,8 @@ import static org.hamcrest.CoreMatchers.is;
  * Test that the Gateway Topology Port Mapping feature is disabled properly.
  *
  */
-@Category(ReleaseTest.class)
-public class GatewayPortMappingDisableFeatureTest {
-
+@Tag("release")
+class GatewayPortMappingDisableFeatureTest {
   // Specifies if the test requests should go through the gateway or directly to the services.
   // This is frequently used to verify the behavior of the test both with and without the gateway.
   private static final boolean USE_GATEWAY = true;
@@ -59,13 +56,6 @@ public class GatewayPortMappingDisableFeatureTest {
 
   private int eeriePort;
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
-
-  public GatewayPortMappingDisableFeatureTest() {
-    super();
-  }
-
   /**
    * Creates a deployment of a gateway instance that all test methods will share.  This method also creates a
    * registry of sorts for all of the services that will be used by the test methods.
@@ -77,11 +67,11 @@ public class GatewayPortMappingDisableFeatureTest {
    *
    * @throws Exception Thrown if any failure occurs.
    */
-  @Before
-  public void setup() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     LOG_ENTER();
 
-    eeriePort = getAvailablePort(1240, 49151);
+    eeriePort = TestUtils.findFreePort();
 
     ConcurrentHashMap<String, Integer> topologyPortMapping = new ConcurrentHashMap<>();
     topologyPortMapping.put("eerie", eeriePort);
@@ -103,8 +93,8 @@ public class GatewayPortMappingDisableFeatureTest {
     LOG_EXIT();
   }
 
-  @After
-  public void cleanup() throws Exception {
+  @AfterEach
+  void cleanup() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     driver.reset();
@@ -115,8 +105,8 @@ public class GatewayPortMappingDisableFeatureTest {
   /*
    * Test the standard case
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testBasicListOperation() throws IOException {
+  @Test
+  void testBasicListOperation() throws IOException {
     LOG_ENTER();
     test(driver.getUrl("WEBHDFS") );
     LOG_EXIT();
@@ -125,13 +115,11 @@ public class GatewayPortMappingDisableFeatureTest {
   /*
    * Test the multi port fail scenario when the feature is disabled.
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testMultiPortFailOperation() throws IOException {
+  @Test
+  void testMultiPortFailOperation() {
     LOG_ENTER();
-    exception.expect(ConnectException.class);
-    exception.expectMessage("Connection refused");
-
-    test("http://localhost:" + eeriePort + "/webhdfs" );
+    Assertions.assertThrows(ConnectException.class,
+        () -> test("http://localhost:" + eeriePort + "/webhdfs" ));
     LOG_EXIT();
   }
 
@@ -220,22 +208,5 @@ public class GatewayPortMappingDisableFeatureTest {
         .addTag("role").addText(role)
         .addTag("url").addText("http://localhost:" + masterServer.getPort() + "/webhdfs")
         .gotoRoot();
-  }
-
-  /**
-   * This utility method will return the next available port
-   * that can be used.
-   * @param min min port to check
-   * @param max max port to check
-   * @return Port that is available.
-   */
-  public static int getAvailablePort(final int min, final int max) {
-    for (int i = min; i <= max; i++) {
-      if (!GatewayServer.isPortInUse(i)) {
-        return i;
-      }
-    }
-    // too bad
-    return -1;
   }
 }

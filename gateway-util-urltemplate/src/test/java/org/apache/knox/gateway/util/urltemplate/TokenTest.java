@@ -17,16 +17,14 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TokenTest {
-
+class TokenTest {
   @Test
-  public void testConstructorAndGetters() throws Exception {
-
+  void testConstructorAndGetters() throws Exception {
     Token token = new Token( "test-parameter-name", "test-original-value", "test-effective-value", true );
 
     assertThat( token.parameterName, is( "test-parameter-name" ) );
@@ -36,7 +34,5 @@ public class TokenTest {
     assertThat( token.getParameterName(), is( "test-parameter-name" ) );
     assertThat( token.getOriginalPattern(), is( "test-original-value" ) );
     assertThat( token.getEffectivePattern(), is( "test-effective-value" ) );
-
   }
-
 }

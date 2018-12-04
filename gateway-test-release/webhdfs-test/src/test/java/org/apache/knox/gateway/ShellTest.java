@@ -17,9 +17,6 @@
  */
 package org.apache.knox.gateway;
 
-import org.apache.knox.test.category.ReleaseTest;
-import org.junit.experimental.categories.Category;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -38,17 +35,17 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.ssl.KeyStoreTestUtil;
 import org.apache.knox.test.TestUtils;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertNotNull;
-
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Category(ReleaseTest.class)
-public class ShellTest {
+@Tag("release")
+class ShellTest {
   private static MiniDFSCluster miniDFSCluster;
   private static HdfsConfiguration configuration;
   private static int nameNodeHttpPort;
@@ -57,8 +54,8 @@ public class ShellTest {
   private static GatewayTestDriver driver = new GatewayTestDriver();
   private static File baseDir;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     nameNodeHttpPort = TestUtils.findFreePort();
     configuration = new HdfsConfiguration();
     baseDir = new File(KeyStoreTestUtil.getClasspathDir(ShellTest.class));
@@ -86,14 +83,14 @@ public class ShellTest {
     driver.setupGateway(config, "cluster", createTopology(), true);
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     miniDFSCluster.shutdown();
     driver.cleanup();
   }
 
   @Test
-  public void basicInsecureShell() throws Exception {
+  void basicInsecureShell() throws Exception {
     testPutGetScript("InsecureWebHdfsPutGet.groovy");
   }
 
@@ -119,7 +116,7 @@ public class ShellTest {
   }
 
   @Test
-  public void basicSecureShell() throws Exception {
+  void basicSecureShell() throws Exception {
     testPutGetScript("WebHdfsPutGet.groovy");
   }
 

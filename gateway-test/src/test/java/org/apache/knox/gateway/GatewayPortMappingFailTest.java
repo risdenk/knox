@@ -17,13 +17,12 @@
 package org.apache.knox.gateway;
 
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.knox.test.mock.MockServer;
 import org.apache.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,9 +34,8 @@ import static org.apache.knox.test.TestUtils.LOG_EXIT;
 /**
  * Test the fail cases for the Port Mapping Feature
  */
-@Category(ReleaseTest.class)
-public class GatewayPortMappingFailTest {
-
+@Tag("release")
+class GatewayPortMappingFailTest {
   // Specifies if the test requests should go through the gateway or directly to the services.
   // This is frequently used to verify the behavior of the test both with and without the gateway.
   private static final boolean USE_GATEWAY = true;
@@ -53,13 +51,6 @@ public class GatewayPortMappingFailTest {
   private static int eeriePort;
 
   /**
-   * Create an instance
-   */
-  public GatewayPortMappingFailTest() {
-    super();
-  }
-
-  /**
    * Creates a deployment of a gateway instance that all test methods will share.  This method also creates a
    * registry of sorts for all of the services that will be used by the test methods.
    * The createTopology method is used to create the topology file that would normally be read from disk.
@@ -70,11 +61,11 @@ public class GatewayPortMappingFailTest {
    *
    * @throws Exception Thrown if any failure occurs.
    */
-  @BeforeClass
-  public static void setup() throws Exception {
+  @BeforeAll
+  static void setUp() throws Exception {
     LOG_ENTER();
 
-    eeriePort = GatewayPortMappingFuncTest.getAvailablePort(1240, 49151);
+    eeriePort = TestUtils.findFreePort();
 
     ConcurrentHashMap<String, Integer> topologyPortMapping = new ConcurrentHashMap<>();
     topologyPortMapping.put("eerie", eeriePort);
@@ -94,8 +85,8 @@ public class GatewayPortMappingFailTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void cleanup() throws Exception {
+  @AfterAll
+  static void cleanup() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     driver.reset();
@@ -103,15 +94,14 @@ public class GatewayPortMappingFailTest {
     LOG_EXIT();
   }
 
-
   /*
    * Fail when trying to use this feature on the standard port.
    * Here we do not have Default Topology Feature not enabled.
    *
    * http://localhost:{gatewayPort}/webhdfs/v1
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testMultiPortOperationFail() throws IOException {
+  @Test
+  void testMultiPortOperationFail() throws IOException {
     LOG_ENTER();
     final String url = "http://localhost:" + driver.getGatewayPort() + "/webhdfs" ;
 
@@ -141,6 +131,4 @@ public class GatewayPortMappingFailTest {
 
     LOG_EXIT();
   }
-
-
 }

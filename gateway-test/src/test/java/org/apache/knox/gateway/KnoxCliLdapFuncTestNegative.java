@@ -22,12 +22,11 @@ import com.mycila.xmltool.XMLTag;
 import org.apache.knox.gateway.services.DefaultGatewayServices;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.gateway.util.KnoxCLI;
-import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.log.NoOpAppender;
 import org.apache.log4j.Appender;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,9 +43,9 @@ import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class KnoxCliLdapFuncTestNegative {
+class KnoxCliLdapFuncTestNegative {
   public static GatewayTestConfig config;
   public static GatewayServer gateway;
   public static String gatewayUrl;
@@ -57,8 +56,8 @@ public class KnoxCliLdapFuncTestNegative {
   private static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private static final String uuid = UUID.randomUUID().toString();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     System.setOut(new PrintStream(outContent, false, StandardCharsets.UTF_8.name()));
     System.setErr(new PrintStream(errContent, false, StandardCharsets.UTF_8.name()));
@@ -67,14 +66,14 @@ public class KnoxCliLdapFuncTestNegative {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + uuid );
     gatewayDir.mkdirs();
@@ -223,8 +222,8 @@ public class KnoxCliLdapFuncTestNegative {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testBadTopology() throws Exception {
+  @Test
+  void testBadTopology() throws Exception {
     LOG_ENTER();
 
     //    Test 4: Authenticate a user with a bad topology configured with nothing required for group lookup in the topology
@@ -242,7 +241,6 @@ public class KnoxCliLdapFuncTestNegative {
     assertThat(outContent.toString(StandardCharsets.UTF_8.name()), containsString("Your topology file may be incorrectly configured for group lookup"));
     assertThat(outContent.toString(StandardCharsets.UTF_8.name()), containsString("Warn: "));
     assertFalse(outContent.toString(StandardCharsets.UTF_8.name()).contains("analyst"));
-
 
     outContent.reset();
     username = "bad-name";

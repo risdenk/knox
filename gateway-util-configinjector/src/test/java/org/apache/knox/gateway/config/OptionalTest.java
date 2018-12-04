@@ -17,14 +17,13 @@
  */
 package org.apache.knox.gateway.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class OptionalTest {
-
-  class FieldTarget {
+class OptionalTest {
+  private class FieldTarget {
     @Configure
     @Optional
     private int num = -1;
@@ -37,7 +36,7 @@ public class OptionalTest {
   }
 
   @Test
-  public void testDefaultInject() {
+  void testDefaultInject() {
     FieldTarget fieldTarget = new FieldTarget();
     ConfigurationInjectorBuilder.configuration()
         .target( fieldTarget )
@@ -54,5 +53,4 @@ public class OptionalTest {
         .inject();
     assertThat( fieldTarget.num, is(-1) );
   }
-
 }

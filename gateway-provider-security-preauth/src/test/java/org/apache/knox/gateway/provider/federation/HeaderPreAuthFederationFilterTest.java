@@ -23,7 +23,7 @@ import org.apache.knox.gateway.preauth.filter.IPValidator;
 import org.apache.knox.gateway.preauth.filter.PreAuthService;
 import org.apache.knox.gateway.preauth.filter.PreAuthValidator;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeaderPreAuthFederationFilterTest {
   @Test
-  public void testDefaultValidator() throws ServletException {
+  void testDefaultValidator() throws ServletException {
     HeaderPreAuthFederationFilter hpaff = new HeaderPreAuthFederationFilter();
     final HttpServletRequest request = EasyMock.createNiceMock(HttpServletRequest.class);
     final FilterConfig filterConfig = EasyMock.createNiceMock(FilterConfig.class);
@@ -54,7 +54,7 @@ public class HeaderPreAuthFederationFilterTest {
   }
 
   @Test
-  public void testIPValidator() throws ServletException {
+  void testIPValidator() throws ServletException {
     HeaderPreAuthFederationFilter hpaff = new HeaderPreAuthFederationFilter();
 
     final FilterConfig filterConfig = EasyMock.createNiceMock(FilterConfig.class);
@@ -82,7 +82,7 @@ public class HeaderPreAuthFederationFilterTest {
   }
 
   @Test
-  public void testCustomValidatorPositive() throws ServletException {
+  void testCustomValidatorPositive() throws ServletException {
     HeaderPreAuthFederationFilter hpaff = new HeaderPreAuthFederationFilter();
     final HttpServletRequest request = EasyMock.createNiceMock(HttpServletRequest.class);
     final FilterConfig filterConfig = EasyMock.createNiceMock(FilterConfig.class);
@@ -104,7 +104,7 @@ public class HeaderPreAuthFederationFilterTest {
   }
 
   @Test
-  public void testCustomValidatorNegative() throws ServletException {
+  void testCustomValidatorNegative() throws ServletException {
     HeaderPreAuthFederationFilter hpaff = new HeaderPreAuthFederationFilter();
     final HttpServletRequest request = EasyMock.createNiceMock(HttpServletRequest.class);
     final FilterConfig filterConfig = EasyMock.createNiceMock(FilterConfig.class);

@@ -17,18 +17,17 @@
  */
 package org.apache.knox.gateway.ha.provider.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class DefaultURLManagerTest {
-
+class DefaultURLManagerTest {
    @Test
-   public void testActiveURLManagement() {
+   void testActiveURLManagement() {
       ArrayList<String> urls = new ArrayList<>();
       String url1 = "http://host1";
       urls.add(url1);
@@ -49,7 +48,7 @@ public class DefaultURLManagerTest {
     * Verify that a service with HaProvider configuration, but only a single URL does not break the HaProvider.
     */
    @Test
-   public void testSingleURLManagement() {
+   void testSingleURLManagement() {
       ArrayList<String> urls = new ArrayList<>();
       String url1 = "http://host1";
       urls.add(url1);
@@ -64,7 +63,7 @@ public class DefaultURLManagerTest {
    }
 
    @Test
-   public void testMarkingFailedURL() {
+   void testMarkingFailedURL() {
       ArrayList<String> urls = new ArrayList<>();
       String url1 = "http://host1:4555";
       urls.add(url1);
@@ -94,7 +93,7 @@ public class DefaultURLManagerTest {
     * KNOX-1283
     */
    @Test
-   public void testMarkFailedWithEmptyURLs() {
+   void testMarkFailedWithEmptyURLs() {
       ArrayList<String> urls = new ArrayList<>();
       DefaultURLManager manager = new DefaultURLManager();
       manager.setURLs(urls);
@@ -105,5 +104,4 @@ public class DefaultURLManagerTest {
          fail("Empty URL list should not result in NPE.");
       }
    }
-
 }

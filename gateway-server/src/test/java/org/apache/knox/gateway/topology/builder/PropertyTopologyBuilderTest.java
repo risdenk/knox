@@ -16,43 +16,25 @@
  */
 package org.apache.knox.gateway.topology.builder;
 
-import java.util.Enumeration;
-
 import org.apache.knox.gateway.topology.Topology;
 import org.apache.knox.gateway.topology.builder.property.Property;
-import org.apache.knox.test.log.NoOpAppender;
-import org.apache.log4j.Appender;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class PropertyTopologyBuilderTest {
-
-  private static Enumeration<Appender> realAppenders;
-
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    realAppenders = NoOpAppender.setUpAndReturnOriginalAppenders();
-  }
-
-  @AfterClass
-  public static void tearDownAfterClass() {
-    NoOpAppender.resetOriginalAppenders( realAppenders );
-  }
-
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongProperty() {
+class PropertyTopologyBuilderTest {
+  @Test
+  void testBuildFailedForWrongProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "miss_prop", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
   @Test
-  public void testBuildSuccessfulForTopologyProperty() {
+  void testBuildSuccessfulForTopologyProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.name", "topology" ) );
     Topology topology = propertyTopologyBuilder.build();
@@ -60,43 +42,43 @@ public class PropertyTopologyBuilderTest {
     assertThat( topology, notNullValue() );
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongTopologyProperty() {
+  @Test
+  void testBuildFailedForWrongTopologyProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.miss_prop", "value" ) );
-    propertyTopologyBuilder.build();
-  }
-
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongGatewayToken() {
-    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
-    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.miss_prop", "value" ) );
-    propertyTopologyBuilder.build();
-  }
-
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongProviderToken1() {
-    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
-    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider", "value" ) );
-    propertyTopologyBuilder.build();
-  }
-
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongProviderToken2() {
-    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
-    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication", "value" ) );
-    propertyTopologyBuilder.build();
-  }
-
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongProviderToken3() {
-    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
-    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
   @Test
-  public void testBuildSuccessfulForProviderProperty() {
+  void testBuildFailedForWrongGatewayToken() {
+    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
+    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.miss_prop", "value" ) );
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
+  }
+
+  @Test
+  void testBuildFailedForWrongProviderToken1() {
+    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
+    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider", "value" ) );
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
+  }
+
+  @Test
+  void testBuildFailedForWrongProviderToken2() {
+    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
+    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication", "value" ) );
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
+  }
+
+  @Test
+  void testBuildFailedForWrongProviderToken3() {
+    PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
+    propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider", "value" ) );
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
+  }
+
+  @Test
+  void testBuildSuccessfulForProviderProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider.enabled", "value" ) );
     Topology topology = propertyTopologyBuilder.build();
@@ -106,68 +88,66 @@ public class PropertyTopologyBuilderTest {
     assertThat( topology.getProviders().iterator().next().isEnabled(), is( false ) );
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongProviderProperty() {
+  @Test
+  void testBuildFailedForWrongProviderProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider.miss_prop", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongProviderParamToken1() {
+  @Test
+  void testBuildFailedForWrongProviderParamToken1() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider.param", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForEmptyProviderParamName() {
+  @Test
+  void testBuildFailedForEmptyProviderParamName() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider.param.", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForEmptyProviderParamValue() {
+  @Test
+  void testBuildFailedForEmptyProviderParamValue() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.provider.authentication.ShiroProvider.param.name1", "" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongServiceToken1() {
+  @Test
+  void testBuildFailedForWrongServiceToken1() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.service", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongServiceToken2() {
+  @Test
+  void testBuildFailedForWrongServiceToken2() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.service.WEBHDFS", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongServiceToken3() {
+  @Test
+  void testBuildFailedForWrongServiceToken3() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.service.WEBHDFS.", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildSuccessfulForServiceProperty() {
+  @Test
+  void testBuildSuccessfulForServiceProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.service.WEBHDFS..url", "http://host:50070/webhdfs" ) );
-    Topology topology = propertyTopologyBuilder.build();
-
-    assertThat( topology, notNullValue() );
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 
-  @Test( expected = IllegalArgumentException.class )
-  public void testBuildFailedForWrongServiceProperty() {
+  @Test
+  void testBuildFailedForWrongServiceProperty() {
     PropertyTopologyBuilder propertyTopologyBuilder = new PropertyTopologyBuilder();
     propertyTopologyBuilder.addProperty( new Property( "topology.gateway.service.WEBHDFS..miss_prop", "value" ) );
-    propertyTopologyBuilder.build();
+    Assertions.assertThrows(IllegalArgumentException.class, propertyTopologyBuilder::build);
   }
 }

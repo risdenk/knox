@@ -22,8 +22,8 @@ import org.apache.knox.test.mock.MockServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletTester;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import javax.servlet.DispatcherType;
 import java.net.URL;
@@ -40,7 +40,7 @@ public class UrlRewriteServletContextListenerTest {
     return ClassLoader.getSystemResource( name );
   }
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     String descriptorUrl = getTestResource( "rewrite.xml" ).toExternalForm();
 
@@ -64,7 +64,7 @@ public class UrlRewriteServletContextListenerTest {
     server.start();
   }
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     server.stop();
   }

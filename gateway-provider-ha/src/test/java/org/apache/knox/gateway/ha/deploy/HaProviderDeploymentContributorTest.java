@@ -32,7 +32,7 @@ import org.apache.knox.gateway.topology.Topology;
 import org.easymock.EasyMock;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,15 +44,15 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class HaProviderDeploymentContributorTest {
+class HaProviderDeploymentContributorTest {
 
    @Test
-   public void testServiceLoader() throws Exception {
+   void testServiceLoader() {
       ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
       Iterator iterator = loader.iterator();
       assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -70,7 +70,7 @@ public class HaProviderDeploymentContributorTest {
     * level still work.
     */
    @Test
-   public void testProviderLevelParams() throws Exception {
+   void testProviderLevelParams() {
       // Define some provider params
       Map<String, String> providerParams = new HashMap<>();
 
@@ -115,7 +115,7 @@ public class HaProviderDeploymentContributorTest {
     * Simple test verifying that HaProvider service params specified ONLY at the service level works.
     */
    @Test
-   public void testServiceLevelParamOverrides_NoProviderParams() throws Exception {
+   void testServiceLevelParamOverrides_NoProviderParams() {
       // Define some provider params
       Map<String, String> providerParams = new HashMap<>();
 
@@ -170,7 +170,7 @@ public class HaProviderDeploymentContributorTest {
     * Verify a mixture of provider-level params and service-level params.
     */
    @Test
-   public void testServiceLevelParamOverrides_SubsetProviderParams() throws Exception {
+   void testServiceLevelParamOverrides_SubsetProviderParams() {
       // Define some provider params
       Map<String, String> providerParams = new HashMap<>();
 
@@ -219,8 +219,7 @@ public class HaProviderDeploymentContributorTest {
    }
 
    @Test
-   public void testServiceLevelParamOverrides_MultipleMixed() throws Exception {
-
+   void testServiceLevelParamOverrides_MultipleMixed() {
       // Define some provider params
       Map<String, String> providerParams = new HashMap<>();
 
@@ -447,6 +446,7 @@ public class HaProviderDeploymentContributorTest {
          descriptors.put(name, descriptor);
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public <T> T getDescriptor(String name) {
          return (T)descriptors.get(name);

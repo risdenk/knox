@@ -23,7 +23,7 @@ import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,13 +36,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SecureQueryDecodeProcessorTest {
-
+class SecureQueryDecodeProcessorTest {
   @Test
-  public void testSimpleQueryDecode() throws Exception {
+  void testSimpleQueryDecode() throws Exception {
     UrlRewriteEnvironment environment = new UrlRewriteEnvironment() {
       @Override
-      public URL getResource( String name ) throws IOException {
+      public URL getResource( String name ) {
         return null;
       }
 
@@ -58,7 +57,7 @@ public class SecureQueryDecodeProcessorTest {
     };
 
     String encQuery = Base64.getEncoder().encodeToString( "test-query".getBytes(StandardCharsets.UTF_8) );
-    encQuery = encQuery.replaceAll( "\\=", "" );
+    encQuery = encQuery.replaceAll( "=", "" );
     String inString = "http://host:0/root/path?_=" + encQuery;
     Template inTemplate = Parser.parseLiteral( inString );
 
@@ -78,7 +77,7 @@ public class SecureQueryDecodeProcessorTest {
   }
 
   @Test
-  public void testDecodeQueryWithNonEncodedParams() throws Exception {
+  void testDecodeQueryWithNonEncodedParams() throws Exception {
     UrlRewriteEnvironment environment = new UrlRewriteEnvironment() {
       @Override
       public URL getResource( String name ) throws IOException {
@@ -98,7 +97,7 @@ public class SecureQueryDecodeProcessorTest {
 
     String inQuery = "test-query=test-value";
     String encQuery = Base64.getEncoder().encodeToString( inQuery.getBytes( StandardCharsets.UTF_8 ) );
-    encQuery = encQuery.replaceAll( "\\=", "" );
+    encQuery = encQuery.replaceAll( "=", "" );
     String inString = "http://host:0/root/path?_=" + encQuery + "&clear-param=clear-value";
     Template inTemplate = Parser.parseLiteral( inString );
 
@@ -119,6 +118,4 @@ public class SecureQueryDecodeProcessorTest {
     assertThat( outActual, containsString( "clear-param=clear-value" ) );
     assertThat( outActual, not( containsString( encQuery ) ) );
   }
-
-
 }

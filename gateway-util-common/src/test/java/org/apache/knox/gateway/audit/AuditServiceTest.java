@@ -31,9 +31,9 @@ import org.apache.knox.test.log.CollectAppender;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.LoggingEvent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class AuditServiceTest {
+class AuditServiceTest {
   private static AuditService auditService = AuditServiceFactory.getAuditService();
   private static CorrelationService correlationService = CorrelationServiceFactory.getCorrelationService();
   private static Auditor auditor = AuditServiceFactory.getAuditService().getAuditor( "audit.forward", AuditConstants.KNOX_COMPONENT_NAME, AuditConstants.KNOX_SERVICE_NAME );
@@ -54,13 +54,13 @@ public class AuditServiceTest {
   private String remoteHostname = "localhost";
   private String targetServiceName = "service";
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     tearDown();
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     CollectAppender.queue.clear();
     LogManager.shutdown();
     String absolutePath = "target/audit";
@@ -76,7 +76,7 @@ public class AuditServiceTest {
   }
 
   @Test
-  public void testMultipleRequestEvents() {
+  void testMultipleRequestEvents() {
     int iterations = 1000;
 
     AuditContext ac = auditService.createContext();
@@ -122,7 +122,7 @@ public class AuditServiceTest {
   }
 
   @Test
-  public void testSequentialRequests() {
+  void testSequentialRequests() {
     AuditContext ac = auditService.createContext();
     ac.setUsername( username );
     ac.setProxyUsername( proxyUsername );

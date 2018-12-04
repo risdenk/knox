@@ -32,18 +32,19 @@ import org.apache.knox.gateway.services.security.token.impl.JWT;
 import org.apache.knox.gateway.services.security.token.TokenServiceException;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Some unit tests for the DefaultTokenAuthorityService.
  */
-public class DefaultTokenAuthorityServiceTest {
+class DefaultTokenAuthorityServiceTest {
   @Test
-  public void testTokenCreation() throws Exception {
+  void testTokenCreation() throws Exception {
     Principal principal = EasyMock.createNiceMock(Principal.class);
     EasyMock.expect(principal.getName()).andReturn("john.doe@example.com");
 
@@ -84,12 +85,11 @@ public class DefaultTokenAuthorityServiceTest {
     JWT token = ta.issueToken(principal, "RS256");
     assertEquals("KNOXSSO", token.getIssuer());
     assertEquals("john.doe@example.com", token.getSubject());
-
     assertTrue(ta.verifyToken(token));
   }
 
   @Test
-  public void testTokenCreationAudience() throws Exception {
+  void testTokenCreationAudience() throws Exception {
     Principal principal = EasyMock.createNiceMock(Principal.class);
     EasyMock.expect(principal.getName()).andReturn("john.doe@example.com");
 
@@ -136,7 +136,7 @@ public class DefaultTokenAuthorityServiceTest {
   }
 
   @Test
-  public void testTokenCreationNullAudience() throws Exception {
+  void testTokenCreationNullAudience() throws Exception {
     Principal principal = EasyMock.createNiceMock(Principal.class);
     EasyMock.expect(principal.getName()).andReturn("john.doe@example.com");
 
@@ -182,7 +182,7 @@ public class DefaultTokenAuthorityServiceTest {
   }
 
   @Test
-  public void testTokenCreationSignatureAlgorithm() throws Exception {
+  void testTokenCreationSignatureAlgorithm() throws Exception {
     Principal principal = EasyMock.createNiceMock(Principal.class);
     EasyMock.expect(principal.getName()).andReturn("john.doe@example.com");
 
@@ -228,8 +228,8 @@ public class DefaultTokenAuthorityServiceTest {
     assertTrue(ta.verifyToken(token));
   }
 
-  @Test (expected = TokenServiceException.class)
-  public void testTokenCreationBadSignatureAlgorithm() throws Exception {
+  @Test
+  void testTokenCreationBadSignatureAlgorithm() throws Exception {
     Principal principal = EasyMock.createNiceMock(Principal.class);
     EasyMock.expect(principal.getName()).andReturn("john.doe@example.com");
 
@@ -266,11 +266,12 @@ public class DefaultTokenAuthorityServiceTest {
     ta.setKeystoreService(ks);
 
     ta.init(config, new HashMap<>());
-    ta.issueToken(principal, "none");
+    Assertions.assertThrows(TokenServiceException.class,
+        () -> ta.issueToken(principal, "none"));
   }
 
   @Test
-  public void testTokenCreationCustomSigningKey() throws Exception {
+  void testTokenCreationCustomSigningKey() throws Exception {
     /*
      Generated testSigningKeyName.jks with the following commands:
      cd gateway-server/src/test/resources/keystores/

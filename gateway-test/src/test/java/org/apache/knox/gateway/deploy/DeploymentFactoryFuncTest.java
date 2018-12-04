@@ -48,15 +48,13 @@ import org.apache.knox.test.log.NoOpAppender;
 import org.apache.log4j.Appender;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
-import static org.apache.knox.test.TestUtils.LONG_TIMEOUT;
-import static org.apache.knox.test.TestUtils.MEDIUM_TIMEOUT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -64,14 +62,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.xml.HasXPath.hasXPath;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class DeploymentFactoryFuncTest {
-
-  @Test( timeout = LONG_TIMEOUT )
-  public void testGenericProviderDeploymentContributor() throws ParserConfigurationException, SAXException, IOException {
+class DeploymentFactoryFuncTest {
+  @Test
+  void testGenericProviderDeploymentContributor() throws ParserConfigurationException, SAXException, IOException {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
@@ -141,8 +138,8 @@ public class DeploymentFactoryFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = LONG_TIMEOUT )
-  public void testInvalidGenericProviderDeploymentContributor() {
+  @Test
+  void testInvalidGenericProviderDeploymentContributor() {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
@@ -196,8 +193,8 @@ public class DeploymentFactoryFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = LONG_TIMEOUT )
-  public void testSimpleTopology() throws IOException, SAXException, ParserConfigurationException {
+  @Test
+  void testSimpleTopology() throws IOException, SAXException, ParserConfigurationException {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     //Testing without x-forwarded headers filter
@@ -319,8 +316,8 @@ public class DeploymentFactoryFuncTest {
   }
 
 
-  @Test( timeout = LONG_TIMEOUT )
-  public void testWebXmlGeneration() throws IOException, SAXException, ParserConfigurationException {
+  @Test
+  void testWebXmlGeneration() throws IOException, SAXException, ParserConfigurationException {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     File targetDir = new File(System.getProperty("user.dir"), "target");
@@ -399,8 +396,8 @@ public class DeploymentFactoryFuncTest {
         ".rewrite.api.UrlRewriteServletContextListener")));
   }
 
-  @Test( timeout = LONG_TIMEOUT )
-  public void testDeploymentWithServiceParams() throws Exception {
+  @Test
+  void testDeploymentWithServiceParams() throws Exception {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     File targetDir = new File(System.getProperty("user.dir"), "target");
@@ -488,8 +485,8 @@ public class DeploymentFactoryFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = MEDIUM_TIMEOUT )
-  public void testDeploymentWithApplication() throws Exception {
+  @Test
+  void testDeploymentWithApplication() throws Exception {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     File targetDir = new File(System.getProperty("user.dir"), "target");
@@ -545,8 +542,8 @@ public class DeploymentFactoryFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = MEDIUM_TIMEOUT )
-  public void testDeploymentWithServicesAndApplications() throws Exception {
+  @Test
+  void testDeploymentWithServicesAndApplications() throws Exception {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     File targetDir = new File(System.getProperty("user.dir"), "target");
@@ -631,8 +628,8 @@ public class DeploymentFactoryFuncTest {
    * and service uses anonymous authentication in which case we should
    * add AnonymousFilter to the filter chain.
    */
-  @Test( timeout = LONG_TIMEOUT )
-  public void testServiceAnonAuth() throws IOException, SAXException, ParserConfigurationException {
+  @Test
+  void testServiceAnonAuth() throws IOException, SAXException, ParserConfigurationException {
     LOG_ENTER();
     final GatewayTestConfig config = new GatewayTestConfig();
     config.setXForwardedEnabled(false);

@@ -17,15 +17,13 @@
  */
 package org.apache.knox.gateway.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PropertiesMethodSampleTest {
-
   public static class Target {
-
     private String user = "nobody";
     private String home = "nowhere";
     private String temp = "nowhere";
@@ -36,6 +34,7 @@ public class PropertiesMethodSampleTest {
       user = value;
     }
 
+    @SuppressWarnings("unused")
     @Configure
     public void setDirs(
         @Alias("user.dir") String home,
@@ -46,12 +45,11 @@ public class PropertiesMethodSampleTest {
   }
 
   @Test
-  public void sample() {
+  void sample() {
     Target target = new Target();
     ConfigurationInjectorBuilder.configuration().target( target ).source( System.getProperties() ).inject();
     assertThat( target.user, is( System.getProperty( "user.name" ) ) );
     assertThat( target.home, is( System.getProperty( "user.dir" ) ) );
     assertThat( target.temp, is( System.getProperty( "java.io.tmpdir" ) ) );
   }
-
 }

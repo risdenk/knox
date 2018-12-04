@@ -18,22 +18,21 @@
 package org.apache.knox.gateway.ha.provider.impl;
 
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HaDescriptorFactoryTest {
-
+class HaDescriptorFactoryTest {
    @Test
-   public void testCreateDescriptor() {
+   void testCreateDescriptor() {
       assertNotNull(HaDescriptorFactory.createDescriptor());
    }
 
    @Test
-   public void testCreateServiceConfig() {
+   void testCreateServiceConfig() {
       HaServiceConfig serviceConfig = HaDescriptorFactory.createServiceConfig("foo", "enabled=true;maxFailoverAttempts=42;failoverSleep=50;maxRetryAttempts=1;retrySleep=1000");
       assertNotNull(serviceConfig);
       assertTrue(serviceConfig.isEnabled());
@@ -51,6 +50,5 @@ public class HaDescriptorFactoryTest {
       assertEquals(1000, serviceConfig.getFailoverSleep());
       assertEquals(5, serviceConfig.getMaxRetryAttempts());
       assertEquals(3000, serviceConfig.getRetrySleep());
-
    }
 }

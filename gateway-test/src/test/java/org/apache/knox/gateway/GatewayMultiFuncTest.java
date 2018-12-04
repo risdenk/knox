@@ -38,12 +38,11 @@ import org.apache.knox.gateway.services.ServiceType;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.gateway.services.topology.TopologyService;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.knox.test.mock.MockServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +65,8 @@ import static org.hamcrest.core.Is.is;
 import static org.xmlmatchers.XmlMatchers.hasXPath;
 import static org.xmlmatchers.transform.XmlConverters.the;
 
-@Category(ReleaseTest.class)
-public class GatewayMultiFuncTest {
+@Tag("release")
+class GatewayMultiFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayMultiFuncTest.class );
   private static final Class<?> DAT = GatewayMultiFuncTest.class;
 
@@ -80,16 +79,16 @@ public class GatewayMultiFuncTest {
   private static TopologyService topos;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     driver.setupLdap(0);
     setupGateway();
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     gateway.stop();
     driver.cleanup();
@@ -97,7 +96,7 @@ public class GatewayMultiFuncTest {
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -124,7 +123,7 @@ public class GatewayMultiFuncTest {
     startGatewayServer();
   }
 
-  public static void startGatewayServer() throws Exception {
+  private static void startGatewayServer() throws Exception {
     services = new DefaultGatewayServices();
     Map<String,String> options = new HashMap<>();
     options.put( "persist-master", "false" );
@@ -148,8 +147,8 @@ public class GatewayMultiFuncTest {
     params.put( "LDAP_URL", driver.getLdapUrl() );
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testDefaultJsonMimeTypeHandlingKnox678() throws Exception {
+  @Test
+  void testDefaultJsonMimeTypeHandlingKnox678() throws Exception {
     LOG_ENTER();
 
     MockServer mock = new MockServer( "REPEAT", true );
@@ -198,8 +197,8 @@ public class GatewayMultiFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testPostWithContentTypeKnox681() throws Exception {
+  @Test
+  void testPostWithContentTypeKnox681() throws Exception {
     LOG_ENTER();
 
     MockServer mock = new MockServer( "REPEAT", true );
@@ -283,8 +282,8 @@ public class GatewayMultiFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testLdapSearchConfigEnhancementsKnox694() throws Exception {
+  @Test
+  void testLdapSearchConfigEnhancementsKnox694() throws Exception {
     LOG_ENTER();
 
     String topoStr;

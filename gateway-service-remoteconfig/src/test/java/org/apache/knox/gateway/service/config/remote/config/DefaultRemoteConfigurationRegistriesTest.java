@@ -18,7 +18,7 @@ package org.apache.knox.gateway.service.config.remote.config;
 
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -27,16 +27,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DefaultRemoteConfigurationRegistriesTest {
-
+class DefaultRemoteConfigurationRegistriesTest {
     /*
      * Test a single registry configuration with digest auth configuration.
      */
     @Test
-    public void testPropertiesRemoteConfigurationRegistriesSingleDigest() {
+    void testPropertiesRemoteConfigurationRegistriesSingleDigest() {
         Map<String, Properties> testProperties = new HashMap<>();
         Properties p = new Properties();
         p.setProperty(GatewayConfig.REMOTE_CONFIG_REGISTRY_TYPE, "ZooKeeper");
@@ -53,7 +52,7 @@ public class DefaultRemoteConfigurationRegistriesTest {
      * Test a single registry configuration with kerberos auth configuration.
      */
     @Test
-    public void testPropertiesRemoteConfigurationRegistriesSingleKerberos() {
+    void testPropertiesRemoteConfigurationRegistriesSingleKerberos() {
         Map<String, Properties> testProperties = new HashMap<>();
         Properties p = new Properties();
         p.setProperty(GatewayConfig.REMOTE_CONFIG_REGISTRY_TYPE, "ZooKeeper");
@@ -72,7 +71,7 @@ public class DefaultRemoteConfigurationRegistriesTest {
      * Test multiple registry configuration with varying auth configurations.
      */
     @Test
-    public void testPropertiesRemoteConfigurationRegistriesMultipleMixed() {
+    void testPropertiesRemoteConfigurationRegistriesMultipleMixed() {
         Map<String, Properties> testProperties = new HashMap<>();
 
         Properties kerb = new Properties();

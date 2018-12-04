@@ -44,11 +44,9 @@ import java.util.Set;
  * connect to an actual remote configuration registry.
  */
 public class LocalFileSystemRemoteConfigurationRegistryClientService implements RemoteConfigurationRegistryClientService {
-
     public static final String TYPE = "LocalFileSystem";
 
     private Map<String, RemoteConfigurationRegistryClient> clients = new HashMap<>();
-
 
     @Override
     public void setAliasService(AliasService aliasService) {
@@ -61,7 +59,7 @@ public class LocalFileSystemRemoteConfigurationRegistryClientService implements 
     }
 
     @Override
-    public void init(GatewayConfig config, Map<String, String> options) throws ServiceLifecycleException {
+    public void init(GatewayConfig config, Map<String, String> options) {
         List<RemoteConfigurationRegistryConfig> registryConfigurations =
                                         RemoteConfigurationRegistriesAccessor.getRemoteRegistryConfigurations(config);
         for (RemoteConfigurationRegistryConfig registryConfig : registryConfigurations) {
@@ -73,7 +71,7 @@ public class LocalFileSystemRemoteConfigurationRegistryClientService implements 
     }
 
     @Override
-    public void start() throws ServiceLifecycleException {
+    public void start() {
     }
 
     @Override
@@ -268,5 +266,4 @@ public class LocalFileSystemRemoteConfigurationRegistryClientService implements 
             }
         };
     }
-
 }

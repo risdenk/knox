@@ -43,5 +43,4 @@ public class TestProviderDeploymentContributor extends
   public void contributeFilter( DeploymentContext context, Provider provider, Service service, ResourceDescriptor resource, List<FilterParamDescriptor> params ) {
     resource.addFilter().name( getName() ).role( getRole() ).impl( TestServiceDispatchFilter.class.getName() );
   }
-
 }

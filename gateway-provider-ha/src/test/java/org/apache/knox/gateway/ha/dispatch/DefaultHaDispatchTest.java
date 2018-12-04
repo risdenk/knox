@@ -30,8 +30,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.params.BasicHttpParams;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -42,10 +41,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DefaultHaDispatchTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+class DefaultHaDispatchTest {
   @Test
-  public void testConnectivityFailover() throws Exception {
+  void testConnectivityFailover() throws Exception {
     String serviceName = "OOZIE";
     HaDescriptor descriptor = HaDescriptorFactory.createDescriptor();
     descriptor.addServiceConfig(HaDescriptorFactory.createServiceConfig(serviceName, "true", "1", "1000", "2", "1000", null, null));
@@ -87,7 +88,7 @@ public class DefaultHaDispatchTest {
       }
     }).once();
     EasyMock.replay(filterConfig, servletContext, outboundRequest, inboundRequest, outboundResponse);
-    Assert.assertEquals(uri1.toString(), provider.getActiveURL(serviceName));
+    assertEquals(uri1.toString(), provider.getActiveURL(serviceName));
     DefaultHaDispatch dispatch = new DefaultHaDispatch();
     HttpClientBuilder builder = HttpClientBuilder.create();
     CloseableHttpClient client = builder.build();
@@ -102,8 +103,8 @@ public class DefaultHaDispatchTest {
       //this is expected after the failover limit is reached
     }
     long elapsedTime = System.currentTimeMillis() - startTime;
-    Assert.assertEquals(uri2.toString(), provider.getActiveURL(serviceName));
+    assertEquals(uri2.toString(), provider.getActiveURL(serviceName));
     //test to make sure the sleep took place
-    Assert.assertTrue(elapsedTime > 1000);
+    assertTrue(elapsedTime > 1000);
   }
 }

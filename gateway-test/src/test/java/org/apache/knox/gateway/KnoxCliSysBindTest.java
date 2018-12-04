@@ -22,12 +22,11 @@ import com.mycila.xmltool.XMLTag;
 import org.apache.knox.gateway.services.DefaultGatewayServices;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.gateway.util.KnoxCLI;
-import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.log.NoOpAppender;
 import org.apache.log4j.Appender;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +44,7 @@ import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class KnoxCliSysBindTest {
+class KnoxCliSysBindTest {
   public static GatewayTestConfig config;
   public static GatewayServer gateway;
   public static String gatewayUrl;
@@ -56,8 +55,8 @@ public class KnoxCliSysBindTest {
   private static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private static final String uuid = UUID.randomUUID().toString();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     System.setOut(new PrintStream(outContent, false, StandardCharsets.UTF_8.name()));
     System.setErr(new PrintStream(errContent, false, StandardCharsets.UTF_8.name()));
@@ -66,14 +65,14 @@ public class KnoxCliSysBindTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + uuid );
     gatewayDir.mkdirs();
@@ -215,8 +214,8 @@ public class KnoxCliSysBindTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testLDAPAuth() throws Exception {
+  @Test
+  void testLDAPAuth() throws Exception {
     LOG_ENTER();
 
 //    Test 1: Make sure authentication is successful

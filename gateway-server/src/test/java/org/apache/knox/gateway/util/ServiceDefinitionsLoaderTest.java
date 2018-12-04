@@ -18,31 +18,29 @@
 package org.apache.knox.gateway.util;
 
 import org.apache.knox.gateway.deploy.ServiceDeploymentContributor;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceDefinitionsLoaderTest {
-
+class ServiceDefinitionsLoaderTest {
   @Test
-  public void testServiceDefinitionLoading() {
+  void testServiceDefinitionLoading() {
     URL url = ClassLoader.getSystemResource("services");
     Set<ServiceDeploymentContributor> contributors = ServiceDefinitionsLoader.loadServiceDefinitions(new File(url.getFile()));
     assertNotNull(contributors);
     assertEquals(2, contributors.size());
     for (ServiceDeploymentContributor contributor : contributors) {
       if (contributor.getName().equals("foo")) {
-        Assert.assertEquals("1.0.0", contributor.getVersion().toString());
+        assertEquals("1.0.0", contributor.getVersion().toString());
         assertEquals("FOO", contributor.getRole());
       } else if (contributor.getName().equals("bar")) {
-        Assert.assertEquals("2.0.0", contributor.getVersion().toString());
+        assertEquals("2.0.0", contributor.getVersion().toString());
         assertEquals("BAR", contributor.getRole());
       } else {
         fail("the loaded services don't match the test input");

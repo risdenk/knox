@@ -17,20 +17,19 @@
  */
 package org.apache.knox.gateway.filter.rewrite.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class FrontendFunctionDescriptorTest {
-
+class FrontendFunctionDescriptorTest {
   @SuppressWarnings("rawtypes")
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionDescriptor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -44,9 +43,8 @@ public class FrontendFunctionDescriptorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     FrontendFunctionDescriptor descriptor = new FrontendFunctionDescriptor();
     assertThat( descriptor.name(), is( "frontend" ) );
   }
-
 }

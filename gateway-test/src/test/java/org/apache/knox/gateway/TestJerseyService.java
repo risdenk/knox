@@ -24,11 +24,9 @@ import javax.ws.rs.core.MediaType;
 
 @Path( "/test-jersey-service/test-jersey-resource-path" )
 public class TestJerseyService {
-
   @GET
   @Produces( MediaType.TEXT_PLAIN )
   public String getResource() {
     return "test-jersey-resource-response";
   }
-
 }

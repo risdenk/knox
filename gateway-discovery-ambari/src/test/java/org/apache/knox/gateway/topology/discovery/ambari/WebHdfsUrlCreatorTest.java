@@ -17,22 +17,20 @@
 package org.apache.knox.gateway.topology.discovery.ambari;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WebHdfsUrlCreatorTest {
-
-
+class WebHdfsUrlCreatorTest {
   @Test
-  public void testHttpEndpointAddress() {
+  void testHttpEndpointAddress() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -61,9 +59,8 @@ public class WebHdfsUrlCreatorTest {
     assertEquals("http://" + HTTP_ADDRESS + "/webhdfs", urls.get(0));
   }
 
-
   @Test
-  public void testHttpsEndpointAddress() {
+  void testHttpsEndpointAddress() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -92,9 +89,8 @@ public class WebHdfsUrlCreatorTest {
     assertEquals("https://" + HTTPS_ADDRESS + "/webhdfs", urls.get(0));
   }
 
-
   @Test
-  public void testFederatedHttpEndpointAddress() {
+  void testFederatedHttpEndpointAddress() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -136,9 +132,8 @@ public class WebHdfsUrlCreatorTest {
     assertTrue(urls.contains("http://" + "host4:20070" + "/webhdfs"));
   }
 
-
   @Test
-  public void testFederatedHttpsEndpointAddress() {
+  void testFederatedHttpsEndpointAddress() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -180,9 +175,8 @@ public class WebHdfsUrlCreatorTest {
     assertTrue(urls.contains("https://" + "host6:20470" + "/webhdfs"));
   }
 
-
   @Test
-  public void testFederatedHttpsWebHdfsEndpointAddressWithValidNS() {
+  void testFederatedHttpsWebHdfsEndpointAddressWithValidNS() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -230,9 +224,8 @@ public class WebHdfsUrlCreatorTest {
     assertTrue(urls.contains("https://" + "host4:20470" + "/webhdfs"));
   }
 
-
   @Test
-  public void testFederatedHttpsWebHdfsEndpointAddressWithInvalidNS() {
+  void testFederatedHttpsWebHdfsEndpointAddressWithInvalidNS() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -277,9 +270,8 @@ public class WebHdfsUrlCreatorTest {
     assertTrue(urls.isEmpty());
   }
 
-
   @Test
-  public void testFederatedHttpsNamenodeEndpointAddressWithValidDeclaredNS() {
+  void testFederatedHttpsNamenodeEndpointAddressWithValidDeclaredNS() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -333,9 +325,8 @@ public class WebHdfsUrlCreatorTest {
     assertTrue(urls.contains("hdfs://X"));
   }
 
-
   @Test
-  public void testFederatedHttpsNamenodeEndpointAddressWithInvalidDeclaredNS() {
+  void testFederatedHttpsNamenodeEndpointAddressWithInvalidDeclaredNS() {
     final String HTTP_ADDRESS  = "host1:20070";
     final String HTTPS_ADDRESS = "host2:20470";
 
@@ -383,5 +374,4 @@ public class WebHdfsUrlCreatorTest {
     assertNotNull(urls);
     assertTrue(urls.isEmpty());
   }
-
 }

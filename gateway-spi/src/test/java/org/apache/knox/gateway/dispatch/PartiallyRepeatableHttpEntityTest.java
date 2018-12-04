@@ -21,7 +21,8 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,8 +35,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class PartiallyRepeatableHttpEntityTest {
-
+class PartiallyRepeatableHttpEntityTest {
   // Variables
   // Consumers: C1, C2
   // Reads: FC - Full Content, PC - Partial Content, AC - Any Content
@@ -63,7 +63,7 @@ public class PartiallyRepeatableHttpEntityTest {
   //   C1 PC/IB; C2 PC/OB; C1 AC; EE
 
   @Test
-  public void testS__C1_FC_IB() throws IOException {
+  void testS__C1_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -79,7 +79,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testB__C1_FC_IB() throws IOException {
+  void testB__C1_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -95,7 +95,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testS__C1_FC_OB() throws IOException {
+  void testS__C1_FC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -111,7 +111,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testB__C1_FC_OB() throws IOException {
+  void testB__C1_FC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -127,7 +127,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testS_C1_FC_IB__C2_FC_IB() throws IOException {
+  void testS_C1_FC_IB__C2_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -146,7 +146,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testB_C1_FC_IB__C2_FC_IB() throws IOException {
+  void testB_C1_FC_IB__C2_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -164,8 +164,8 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( output, is( data ) );
   }
 
-  @Test (expected = IOException.class)
-  public void testS_C1_FC_OB__C2_AC__EE() throws Exception {
+  @Test
+  void testS_C1_FC_OB__C2_AC__EE() throws Exception {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -179,11 +179,11 @@ public class PartiallyRepeatableHttpEntityTest {
     output = byteRead( replay.getContent(), -1 );
     assertThat( output, is( data ) );
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
-  @Test (expected = IOException.class)
-  public void testB_C1_FC_OB__C2_AC__EE() throws Exception {
+  @Test
+  void testB_C1_FC_OB__C2_AC__EE() throws Exception {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -197,12 +197,12 @@ public class PartiallyRepeatableHttpEntityTest {
     output = blockRead( replay.getContent(), StandardCharsets.UTF_8, -1, 3 );
     assertThat( output, is( data ) );
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 FC/IB; C1 XC; C2 FC.
   @Test
-  public void testS_C1_FC_IB__C1_XC__C2_FC() throws IOException {
+  void testS_C1_FC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -224,7 +224,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 FC/IB; C1 XC; C2 FC.
   @Test
-  public void testB_C1_FC_IB__C1_XC__C2_FC() throws IOException {
+  void testB_C1_FC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -246,8 +246,8 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   //   C1 FC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testS_C1_FC_OB__C1_XC__C2_AC__EE() throws IOException {
+  @Test
+  void testS_C1_FC_OB__C1_XC__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -263,12 +263,12 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( text, is( "0123456789" ) );
     stream.close();
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 FC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_FC_OB__C1_XC__C2_AC_EE() throws IOException {
+  @Test
+  void testB_C1_FC_OB__C1_XC__C2_AC_EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -284,12 +284,12 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( text, is( "0123456789" ) );
     stream.close();
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 PC/IB.
   @Test
-  public void testS_C1_PC_IB() throws IOException {
+  void testS_C1_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -307,7 +307,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/IB.
   @Test
-  public void testB_C1_PC_IB() throws IOException {
+  void testB_C1_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -325,7 +325,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/OB.
   @Test
-  public void testS_C1_PC_OB() throws IOException {
+  void testS_C1_PC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -344,7 +344,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/OB.
   @Test
-  public void testB_C1_PC_OB() throws IOException {
+  void testB_C1_PC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -363,7 +363,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/IB; C2 FC.
   @Test
-  public void testS_C1_PC_IB__C2_FC() throws IOException {
+  void testS_C1_PC_IB__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -386,7 +386,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/IB; C2 FC.
   @Test
-  public void testB_C1_PC_IB__C2_FC() throws IOException {
+  void testB_C1_PC_IB__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -408,8 +408,8 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   //   C1 PC/OB; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testS_C1_PC_OB__C2_AC__EE() throws IOException {
+  @Test
+  void testS_C1_PC_OB__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -425,12 +425,12 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( text, is( "0123456" ) );
     stream.close();
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 PC/OB; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_OB__C2_AC__EE() throws IOException {
+  @Test
+  void testB_C1_PC_OB__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -446,12 +446,12 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( text, is( "0123456" ) );
     stream.close();
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 PC/IB; C1 XC; C2 FC.
   @Test
-  public void testS_C1_PC_IB__C1_XC__C2_FC() throws IOException {
+  void testS_C1_PC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -474,7 +474,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/IB; C1 XC; C2 FC.
   @Test
-  public void testB_C1_PC_IB__C1_XC__C2_FC() throws IOException {
+  void testB_C1_PC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -496,8 +496,8 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   //   C1 PC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testS_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
+  @Test
+  void testS_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -513,12 +513,12 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( text, is( "0123456" ) );
     stream.close();
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 PC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
+  @Test
+  void testB_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -534,12 +534,12 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( text, is( "0123456" ) );
     stream.close();
 
-    replay.getContent();
+    Assertions.assertThrows(IOException.class, replay::getContent);
   }
 
   //   C1 PC/IB; C2 PC/IB; C1 PC/IB; C2 PC/IB - Back and forth before buffer overflow is OK.
   @Test
-  public void testS_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
+  void testS_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -564,7 +564,7 @@ public class PartiallyRepeatableHttpEntityTest {
 
   //   C1 PC/IB; C2 PC/IB; C1 PC/IB; C2 PC/IB - Back and forth before buffer overflow is OK.
   @Test
-  public void testB_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
+  void testB_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -587,8 +587,8 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   //   C1 PC/IB; C2 PC/OB; C1 AC; EE
-  @Test (expected = IOException.class)
-  public void testS_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
+  @Test
+  void testS_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -607,12 +607,13 @@ public class PartiallyRepeatableHttpEntityTest {
     text = byteRead( stream2, 6 );
     assertThat( text, is( "012345" ) );
 
-    byteRead( stream1, 1 );
+    Assertions.assertThrows(IOException.class,
+        () -> byteRead( stream1, 1 ));
   }
 
   //   C1 PC/IB; C2 PC/OB; C1 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
+  @Test
+  void testB_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -631,11 +632,12 @@ public class PartiallyRepeatableHttpEntityTest {
     text = blockRead( stream2, StandardCharsets.UTF_8, 6, 4 );
     assertThat( text, is( "012345" ) );
 
-    blockRead( stream1, StandardCharsets.UTF_8, 6, 4 );
+    Assertions.assertThrows(IOException.class,
+        () -> blockRead( stream1, StandardCharsets.UTF_8, 6, 4 ));
   }
 
   @Test
-  public void testWriteTo() throws Exception {
+  void testWriteTo() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -651,7 +653,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testIsRepeatable() throws Exception {
+  void testIsRepeatable() throws Exception {
     String text = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -669,7 +671,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testIsChunked() throws Exception {
+  void testIsChunked() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -687,7 +689,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testGetContentLength() throws Exception {
+  void testGetContentLength() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -705,7 +707,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testGetContentType() throws Exception {
+  void testGetContentType() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -723,7 +725,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testGetContentEncoding() throws Exception {
+  void testGetContentEncoding() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -741,7 +743,7 @@ public class PartiallyRepeatableHttpEntityTest {
   }
 
   @Test
-  public void testIsStreaming() throws Exception {
+  void testIsStreaming() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     InputStreamEntity streaming;
@@ -762,8 +764,8 @@ public class PartiallyRepeatableHttpEntityTest {
     assertThat( replay.isStreaming(), is( true ) );
   }
 
-  @Test (expected = UnsupportedOperationException.class)
-  public void testConsumeContent() throws Exception {
+  @Test
+  void testConsumeContent() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     PartiallyRepeatableHttpEntity replay;
@@ -772,7 +774,8 @@ public class PartiallyRepeatableHttpEntityTest {
     basic.setContent( new ByteArrayInputStream( input.getBytes( StandardCharsets.UTF_8 ) ) );
     replay = new PartiallyRepeatableHttpEntity( basic, 5 );
 
-    replay.consumeContent();
+    Assertions.assertThrows(UnsupportedOperationException.class,
+        replay::consumeContent);
   }
 
   private static String byteRead( InputStream stream, int total ) throws IOException {

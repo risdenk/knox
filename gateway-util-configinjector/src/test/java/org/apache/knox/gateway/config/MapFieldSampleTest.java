@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MapFieldSampleTest {
-
   public static class Target {
     @Configure
     private int retryLimit = 3;
@@ -36,10 +35,9 @@ public class MapFieldSampleTest {
   static { config.put( "retryLimit", "5" ); }
 
   @Test
-  public void sample() {
+  void sample() {
     Target target = new Target();
     ConfigurationInjectorBuilder.configuration().target( target ).source( config ).inject();
     assertThat( target.retryLimit, is(5) );
   }
-
 }

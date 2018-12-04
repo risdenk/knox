@@ -19,8 +19,7 @@ package org.apache.knox.gateway.webappsec;
 import org.apache.knox.gateway.webappsec.filter.XContentTypeOptionsFilter;
 
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -34,15 +33,16 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class XContentTypeOptionsFilterTest {
-
+class XContentTypeOptionsFilterTest {
   private String options;
   private Collection<String> headers;
 
   @Test
-  public void testDefaultOptionsValue() throws Exception {
+  void testDefaultOptionsValue() throws Exception {
     try {
       final String expectedDefaultValue = XContentTypeOptionsFilter.DEFAULT_OPTION_VALUE;
 
@@ -58,18 +58,18 @@ public class XContentTypeOptionsFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
-      Assert.assertEquals(XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " value incorrect.",
-                          expectedDefaultValue, options);
-      Assert.assertEquals(XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " count incorrect.",
-                          1, headers.size());
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals(expectedDefaultValue, options,
+          XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " value incorrect.");
+      assertEquals(1, headers.size(),
+          XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " count incorrect.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testConfiguredOptionsValue() throws Exception {
+  void testConfiguredOptionsValue() throws Exception {
     try {
       final String customOption = "myContentTypeOpts";
 
@@ -86,11 +86,11 @@ public class XContentTypeOptionsFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
-      Assert.assertEquals(XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " value incorrect",
-                          customOption, options);
-      Assert.assertEquals(XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " count incorrect.",
-                          1, headers.size());
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals(customOption, options,
+          XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " value incorrect");
+      assertEquals(1, headers.size(),
+          XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER + " count incorrect.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
@@ -134,8 +134,5 @@ public class XContentTypeOptionsFilterTest {
       options = ((HttpServletResponse)response).getHeader(XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER);
       headers = ((HttpServletResponse)response).getHeaders(XContentTypeOptionsFilter.X_CONTENT_TYPE_OPTIONS_HEADER);
     }
-
   }
-
-
 }

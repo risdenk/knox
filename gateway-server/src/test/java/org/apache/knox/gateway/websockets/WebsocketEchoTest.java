@@ -36,9 +36,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.ContainerProvider;
 import javax.websocket.Session;
@@ -88,7 +88,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @since 0.10
  */
-public class WebsocketEchoTest {
+class WebsocketEchoTest {
   private static final String TEST_KEY_ALIAS = "test-identity";
 
   /**
@@ -123,24 +123,19 @@ public class WebsocketEchoTest {
   private static Path keystoresDir;
   private static Path keystoreFile;
 
-  public WebsocketEchoTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     topoDir = createDir();
     dataDir = Paths.get(topoDir.getAbsolutePath(), "data").toAbsolutePath();
     securityDir = dataDir.resolve("security");
     keystoresDir = securityDir.resolve("keystores");
     keystoreFile = keystoresDir.resolve("tls.jks");
-
     startWebsocketServer();
     startGatewayServer();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() {
+  @AfterAll
+  static void tearDownAfterClass() {
     try {
       gatewayServer.stop();
       backendServer.stop();
@@ -156,8 +151,7 @@ public class WebsocketEchoTest {
    * Test direct connection to websocket server without gateway
    */
   @Test
-  public void testDirectEcho() throws Exception {
-
+  void testDirectEcho() throws Exception {
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
     WebsocketClient client = new WebsocketClient();
 
@@ -171,7 +165,7 @@ public class WebsocketEchoTest {
    * Test websocket proxying through gateway.
    */
   @Test
-  public void testGatewayEcho() throws Exception {
+  void testGatewayEcho() throws Exception {
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
     WebsocketClient client = new WebsocketClient();
@@ -188,7 +182,7 @@ public class WebsocketEchoTest {
    * Test websocket rewrite rules proxying through gateway.
    */
   @Test
-  public void testGatewayRewriteEcho() throws Exception {
+  void testGatewayRewriteEcho() throws Exception {
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
     WebsocketClient client = new WebsocketClient();

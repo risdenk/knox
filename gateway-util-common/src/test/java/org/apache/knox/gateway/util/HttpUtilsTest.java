@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -29,9 +29,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class HttpUtilsTest {
+class HttpUtilsTest {
   @Test
-  public void testParseQueryString_BugKnox599() throws Exception {
+  void testParseQueryString_BugKnox599() throws Exception {
     Map<String,List<String>> map;
 
     map = HttpUtils.splitQuery( null );

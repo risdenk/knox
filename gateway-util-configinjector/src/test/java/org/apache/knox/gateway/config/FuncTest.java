@@ -18,7 +18,7 @@
 package org.apache.knox.gateway.config;
 
 import org.apache.knox.gateway.config.impl.MappedConfigurationBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +28,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FuncTest {
-
   public static class TestBean {
     @Configure
     String stringMember = "stringDefault";
@@ -42,12 +41,14 @@ public class FuncTest {
     @Configure
     Integer integerMember = 1;
 
+    @SuppressWarnings("unused")
     @Configure
     public void setStringProp( String s ) {
       stringPropField = s;
     }
     protected String stringPropField = "stringDefault";
 
+    @SuppressWarnings("unused")
     @Configure
     @Alias("altStringProp")
     public void setNamedStringProp( String s ) {
@@ -55,6 +56,7 @@ public class FuncTest {
     }
     protected String stringPropFieldAlt = "stringDefault";
 
+    @SuppressWarnings("unused")
     @Configure
     public void setNamedArgMethod( @Configure @Alias("altArgStringProp") String s ) {
       stringPropFieldAltArg = s;
@@ -77,8 +79,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testMapOfStrings() {
-
+  void testMapOfStrings() {
     Map<String,String> testConfig = new HashMap<>();
     testConfig.put( "stringMember", "stringValue" );
     testConfig.put( "intMember", "2" );
@@ -106,8 +107,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testProperties() {
-
+  void testProperties() {
     Properties testConfig = new Properties();
     testConfig.put( "stringMember", "stringValue" );
     testConfig.put( "intMember", "2" );
@@ -135,7 +135,6 @@ public class FuncTest {
   }
 
   public static class TestAdapter implements ConfigurationAdapter {
-
     private Map<String,String> config;
 
     public TestAdapter( Map<String,String> config ) {
@@ -150,8 +149,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testExplicitProvider() {
-
+  void testExplicitProvider() {
     Map<String,String> testConfig = new HashMap<>();
     testConfig.put( "stringMember", "stringValue" );
     testConfig.put( "intMember", "2" );
@@ -179,8 +177,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testMapOfObjects() {
-
+  void testMapOfObjects() {
     Map<Object,Object> testConfig = new HashMap<>();
     testConfig.put( "stringMember", "stringValue" );
     testConfig.put( "intMember", 42 );
@@ -208,6 +205,7 @@ public class FuncTest {
   }
 
   public class Target {
+    @SuppressWarnings("unused")
     @Configure @Alias("user.name")
     private String user;
   }
@@ -220,21 +218,21 @@ public class FuncTest {
   }
 
   @Test
-  public void testFactoryConfigurationDirect() {
+  void testFactoryConfigurationDirect() {
     Target target = new Target();
     ConfigurationInjectorBuilder.configuration().target( target ).source( System.getProperties() ).inject();
     assertThat( target.user, is( System.getProperty( "user.name" ) ) );
   }
 
   @Test
-  public void testFactoryConfigurationAdapter() {
+  void testFactoryConfigurationAdapter() {
     Target target = new Target();
     ConfigurationInjectorBuilder.configuration().target( target ).source( new Adapter() ).inject();
     assertThat( target.user, is( System.getProperty( "user.name" ) ) );
   }
 
   @Test
-  public void testMissingRequiredFieldConfiguration() {
+  void testMissingRequiredFieldConfiguration() {
     class RequiredFieldTarget {
       @SuppressWarnings("unused")
       @Configure
@@ -250,7 +248,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testMissingOptionalFieldConfiguration() {
+  void testMissingOptionalFieldConfiguration() {
     class OptionalFieldTarget {
       @Configure
       @Optional
@@ -262,8 +260,9 @@ public class FuncTest {
   }
 
   @Test
-  public void testMissingRequiredConfigurationParameter() {
+  void testMissingRequiredConfigurationParameter() {
     class Target {
+      @SuppressWarnings("unused")
       private String field;
       @Configure
       public void setRequired(String value) {
@@ -280,7 +279,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testMissingRequiredConfigurationParameterWithDefault() {
+  void testMissingRequiredConfigurationParameterWithDefault() {
     class Target {
       private String field;
       @Configure
@@ -294,7 +293,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testTwoMissingRequiredConfigurationParameterWithDefault() {
+  void testTwoMissingRequiredConfigurationParameterWithDefault() {
     class Target {
       private String field1;
       private String field2;
@@ -311,8 +310,9 @@ public class FuncTest {
   }
 
   @Test
-  public void testFieldBinding() {
+  void testFieldBinding() {
     class Target {
+      @SuppressWarnings("unused")
       @Configure
       private String user;
     }
@@ -326,11 +326,10 @@ public class FuncTest {
     ConfigurationBinding binding = new Binding();
     ConfigurationInjectorBuilder.configuration().target( target ).source( source ).binding( binding ).inject();
     assertThat( target.user, is(System.getProperty("user.name")));
-
   }
 
   @Test
-  public void testFieldBindingUsingBuilderBinding() {
+  void testFieldBindingUsingBuilderBinding() {
     class Target {
       @Configure
       private String user;
@@ -339,11 +338,10 @@ public class FuncTest {
     Properties source = System.getProperties();
     ConfigurationInjectorBuilder.configuration().target( target ).source( source ).bind( "user", "user.name" ).inject();
     assertThat( target.user, is(System.getProperty("user.name")));
-
   }
 
   @Test
-  public void testFieldBindingUsingBuilderBindingFactory() {
+  void testFieldBindingUsingBuilderBindingFactory() {
     class Target {
       @Configure
       private String user;
@@ -354,7 +352,6 @@ public class FuncTest {
         .configuration().bind( "user", "user.name" ).binding();
     ConfigurationInjectorBuilder.configuration().target( target ).source( source ).binding( binding ).inject();
     assertThat( target.user, is( System.getProperty( "user.name" ) ) );
-
   }
 
   public static class UserBean {
@@ -364,7 +361,7 @@ public class FuncTest {
   }
 
   @Test
-  public void testBeanAdapter() {
+  void testBeanAdapter() {
     Target target = new Target();
     UserBean bean = new UserBean();
     ConfigurationInjectorBuilder.configuration()
@@ -373,7 +370,5 @@ public class FuncTest {
         .bind( "user.name", "principal" )
         .inject();
     assertThat( target.user, is( "test-user" ) );
-
   }
-
 }

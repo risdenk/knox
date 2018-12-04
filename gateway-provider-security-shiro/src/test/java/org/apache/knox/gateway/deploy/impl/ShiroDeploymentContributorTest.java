@@ -30,9 +30,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,12 +39,11 @@ import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ShiroDeploymentContributorTest {
-
+class ShiroDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -59,7 +57,7 @@ public class ShiroDeploymentContributorTest {
   }
 
   @Test
-  public void testDeployment() throws IOException {
+  void testDeployment() {
     WebArchive webArchive = ShrinkWrap.create( WebArchive.class, "test-archive" );
 
     Map<String,String> providerParams = new HashMap<>();
@@ -100,5 +98,4 @@ public class ShiroDeploymentContributorTest {
     assertThat( context.getWebAppDescriptor().getOrCreateSessionConfig().getOrCreateCookieConfig().isHttpOnly(), is( true ) );
     assertThat( context.getWebAppDescriptor().getOrCreateSessionConfig().getOrCreateCookieConfig().isSecure(), is( true ) );
   }
-
 }

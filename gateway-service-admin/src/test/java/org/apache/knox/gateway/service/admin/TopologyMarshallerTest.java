@@ -25,7 +25,7 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.knox.gateway.topology.Application;
 import org.apache.knox.gateway.topology.Topology;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -33,10 +33,9 @@ import static org.xmlmatchers.transform.XmlConverters.the;
 import static org.xmlmatchers.xpath.HasXPath.hasXPath;
 import static org.xmlmatchers.xpath.XpathReturnType.returningAString;
 
-public class TopologyMarshallerTest {
-
+class TopologyMarshallerTest {
   @Test
-  public void testTopologyMarshalling() throws Exception {
+  void testTopologyMarshalling() throws Exception {
     Topology topology = new Topology();
     Application app = new Application();
     app.setName( "test-app-name" );
@@ -57,5 +56,4 @@ public class TopologyMarshallerTest {
     xml = writer.toString();
     assertThat( the( xml ), hasXPath( "/topology/application/name", returningAString(), is("test-app-name") ) );
   }
-
 }

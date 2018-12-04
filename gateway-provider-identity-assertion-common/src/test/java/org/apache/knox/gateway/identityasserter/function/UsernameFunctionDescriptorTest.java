@@ -19,24 +19,23 @@ package org.apache.knox.gateway.identityasserter.function;
 
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteFunctionDescriptor;
 import org.apache.knox.gateway.identityasserter.common.function.UsernameFunctionDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class UsernameFunctionDescriptorTest {
-
+class UsernameFunctionDescriptorTest {
   @Test
-  public void testName() throws Exception {
+  void testName() {
     UsernameFunctionDescriptor descriptor = new UsernameFunctionDescriptor();
     assertThat( descriptor.name(), is( "username" ) );
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionDescriptor.class );
     for (Object object : loader) {
       if (object instanceof UsernameFunctionDescriptor) {
@@ -45,5 +44,4 @@ public class UsernameFunctionDescriptorTest {
     }
     fail( "Failed to find UsernameFunctionDescriptor via service loader." );
   }
-
 }

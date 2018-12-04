@@ -28,7 +28,7 @@ import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.impl.DefaultCryptoService;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.http.client.indirect.IndirectBasicAuthClient;
 
@@ -40,15 +40,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This class simulates a full authentication process using pac4j.
  */
-public class Pac4jProviderTest {
-
+class Pac4jProviderTest {
     private static final String LOCALHOST = "127.0.0.1";
     private static final String HADOOP_SERVICE_URL = "https://" + LOCALHOST + ":8443/gateway/sandox/webhdfs/v1/tmp?op=LISTSTATUS";
     private static final String KNOXSSO_SERVICE_URL = "https://" + LOCALHOST + ":8443/gateway/idp/api/v1/websso";
@@ -60,7 +59,7 @@ public class Pac4jProviderTest {
     private static final String USERNAME = "jleleu";
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final AliasService aliasService = EasyMock.createNiceMock(AliasService.class);
         EasyMock.expect(aliasService.getPasswordFromAliasForCluster(CLUSTER_NAME, KnoxSessionStore.PAC4J_PASSWORD, true))
             .andReturn(PAC4J_PASSWORD.toCharArray()).anyTimes();
@@ -158,7 +157,7 @@ public class Pac4jProviderTest {
     }
 
     @Test
-    public void testValidIdAttribute() throws Exception {
+    void testValidIdAttribute() throws Exception {
         final AliasService aliasService = EasyMock.createNiceMock(AliasService.class);
         EasyMock.expect(aliasService.getPasswordFromAliasForCluster(CLUSTER_NAME, KnoxSessionStore.PAC4J_PASSWORD, true))
             .andReturn(PAC4J_PASSWORD.toCharArray()).anyTimes();
@@ -256,7 +255,7 @@ public class Pac4jProviderTest {
         assertEquals(USERNAME, adapter.getTestIdentifier());
     }
     @Test
-    public void testInvalidIdAttribute() throws Exception {
+    void testInvalidIdAttribute() throws Exception {
         final AliasService aliasService = EasyMock.createNiceMock(AliasService.class);
         EasyMock.expect(aliasService.getPasswordFromAliasForCluster(CLUSTER_NAME, KnoxSessionStore.PAC4J_PASSWORD, true))
             .andReturn(PAC4J_PASSWORD.toCharArray()).anyTimes();
@@ -353,5 +352,4 @@ public class Pac4jProviderTest {
         assertNull(userProfileCookie.getValue());
         assertEquals(USERNAME, adapter.getTestIdentifier());
     }
-
 }

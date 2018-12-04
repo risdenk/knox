@@ -16,29 +16,29 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.apache.knox.gateway.shirorealm;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class KnoxPamRealmTest {
+class KnoxPamRealmTest {
   @Test
-  public void setService() {
+  void setService() {
     KnoxPamRealm realm = new KnoxPamRealm();
     realm.setService("knox-pam-os-service");
-    //assertEquals(realm.getService(), "knox-pam-os-service");
+    assertEquals(realm.getService(), "knox-pam-os-service");
   }
 
   @Test
-  public void testDoGetAuthenticationInfo() {
+  void testDoGetAuthenticationInfo() {
     KnoxPamRealm realm = new KnoxPamRealm();
     realm.setService("sshd");  // pam settings being used: /etc/pam.d/sshd
 
@@ -60,10 +60,5 @@ public class KnoxPamRealmTest {
 
     // verify success
     assertNotNull(authInfo.getCredentials());
-  }
-
-  public static void main(String[] args) throws Exception {
-    KnoxPamRealmTest pamTest = new KnoxPamRealmTest();
-    pamTest.testDoGetAuthenticationInfo();
   }
 }

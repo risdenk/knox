@@ -17,10 +17,8 @@
  */
 package org.apache.knox.gateway.services.security.impl;
 
-
-public class TestCMFMasterService extends CMFMasterService {
-
-  public TestCMFMasterService(String serviceName) {
+public class MockCMFMasterService extends CMFMasterService {
+  public MockCMFMasterService(String serviceName) {
     super(serviceName);
   }
 

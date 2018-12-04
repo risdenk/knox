@@ -18,8 +18,7 @@ package org.apache.knox.gateway.webappsec;
 
 import org.apache.knox.gateway.webappsec.filter.XSSProtectionFilter;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,20 +28,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class XSSProtectionFilterTest {
-
+class XSSProtectionFilterTest {
   private String options;
   private Collection<String> headers;
 
   @Test
-  public void testDefaultOptionsValue() throws Exception {
+  void testDefaultOptionsValue() throws Exception {
     try {
       final String expectedDefaultValue = XSSProtectionFilter.DEFAULT_VALUE;
 
@@ -58,16 +57,17 @@ public class XSSProtectionFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
-      Assert.assertEquals(XSSProtectionFilter.X_XSS_PROTECTION + " value incorrect.", expectedDefaultValue, options);
-      Assert.assertEquals(XSSProtectionFilter.X_XSS_PROTECTION + " count incorrect.", 1, headers.size());
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals(expectedDefaultValue, options,
+          XSSProtectionFilter.X_XSS_PROTECTION + " value incorrect.");
+      assertEquals(1, headers.size(), XSSProtectionFilter.X_XSS_PROTECTION + " count incorrect.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testConfiguredOptionsValue() throws Exception {
+  void testConfiguredOptionsValue() throws Exception {
     try {
       final String customOption = "1;report=http://example.com/report_URI";
 
@@ -84,9 +84,10 @@ public class XSSProtectionFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
-      Assert.assertEquals(XSSProtectionFilter.X_XSS_PROTECTION + " value incorrect", customOption, options);
-      Assert.assertEquals(XSSProtectionFilter.X_XSS_PROTECTION + " count incorrect.", 1, headers.size());
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals(customOption, options,
+          XSSProtectionFilter.X_XSS_PROTECTION + " value incorrect");
+      assertEquals(1, headers.size(), XSSProtectionFilter.X_XSS_PROTECTION + " count incorrect.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
@@ -118,20 +119,16 @@ public class XSSProtectionFilterTest {
     public Enumeration<String> getInitParameterNames() {
       return null;
     }
-
   }
 
   class TestFilterChain implements FilterChain {
     boolean doFilterCalled;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response) {
       doFilterCalled = true;
       options = ((HttpServletResponse)response).getHeader(XSSProtectionFilter.X_XSS_PROTECTION);
       headers = ((HttpServletResponse)response).getHeaders(XSSProtectionFilter.X_XSS_PROTECTION);
     }
-
   }
-
-
 }

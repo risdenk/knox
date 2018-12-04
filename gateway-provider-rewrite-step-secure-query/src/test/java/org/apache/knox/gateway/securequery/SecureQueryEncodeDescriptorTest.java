@@ -17,19 +17,17 @@
  */
 package org.apache.knox.gateway.securequery;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SecureQueryEncodeDescriptorTest {
-
+class SecureQueryEncodeDescriptorTest {
   @Test
-  public void testGetAndSet() {
+  void testGetAndSet() {
     SecureQueryEncodeDescriptor descriptor = new SecureQueryEncodeDescriptor();
     assertThat( descriptor.type(), is( "encode-query" ) );
     assertThat( descriptor.getParam(), nullValue() );
   }
-
 }

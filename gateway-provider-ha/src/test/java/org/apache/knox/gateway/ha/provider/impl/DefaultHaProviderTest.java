@@ -19,22 +19,21 @@ package org.apache.knox.gateway.ha.provider.impl;
 
 import org.apache.knox.gateway.ha.provider.HaDescriptor;
 import org.apache.knox.gateway.ha.provider.HaProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isIn;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class DefaultHaProviderTest {
-
+class DefaultHaProviderTest {
    @Test
-   public void testDescriptor() {
+   void testDescriptor() {
       try {
          new DefaultHaProvider(null);
          fail("provider construction should have failed with null descriptor");
@@ -50,7 +49,7 @@ public class DefaultHaProviderTest {
    }
 
    @Test
-   public void testAddingService() {
+   void testAddingService() {
       HaDescriptor descriptor = new DefaultHaDescriptor();
       HaProvider provider = new DefaultHaProvider(descriptor);
       ArrayList<String> urls = new ArrayList<>();
@@ -64,7 +63,7 @@ public class DefaultHaProviderTest {
    }
 
    @Test
-   public void testActiveUrl() {
+   void testActiveUrl() {
       HaDescriptor descriptor = new DefaultHaDescriptor();
       HaProvider provider = new DefaultHaProvider(descriptor);
       ArrayList<String> urls = new ArrayList<>();

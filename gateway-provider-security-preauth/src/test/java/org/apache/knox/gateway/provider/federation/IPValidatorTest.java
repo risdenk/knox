@@ -20,24 +20,24 @@ package org.apache.knox.gateway.provider.federation;
 import org.apache.knox.gateway.preauth.filter.IPValidator;
 import org.apache.knox.gateway.preauth.filter.PreAuthValidationException;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IPValidatorTest {
+class IPValidatorTest {
   @Test
-  public void testName() {
+  void testName() {
     IPValidator ipv = new IPValidator();
     assertEquals(ipv.getName(), IPValidator.IP_VALIDATION_METHOD_VALUE);
   }
 
   @Test
-  public void testIPAddressPositive() throws PreAuthValidationException {
+  void testIPAddressPositive() throws PreAuthValidationException {
     IPValidator ipv = new IPValidator();
 
     final FilterConfig filterConfig = EasyMock.createMock(FilterConfig.class);
@@ -52,7 +52,7 @@ public class IPValidatorTest {
   }
 
   @Test
-  public void testIPAddressNegative() throws PreAuthValidationException {
+  void testIPAddressNegative() throws PreAuthValidationException {
     IPValidator ipv = new IPValidator();
 
     final FilterConfig filterConfig = EasyMock.createMock(FilterConfig.class);

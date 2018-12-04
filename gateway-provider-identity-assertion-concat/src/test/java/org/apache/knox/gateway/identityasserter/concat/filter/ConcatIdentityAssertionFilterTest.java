@@ -17,9 +17,6 @@
  */
 package org.apache.knox.gateway.identityasserter.concat.filter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.security.Principal;
 
 import javax.security.auth.Subject;
@@ -29,12 +26,14 @@ import javax.servlet.ServletContext;
 import org.apache.knox.gateway.security.GroupPrincipal;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ConcatIdentityAssertionFilterTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+class ConcatIdentityAssertionFilterTest {
   @Test
-  public void testPrefixAndSuffix() throws Exception {
+  void testPrefixAndSuffix() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);

@@ -18,19 +18,18 @@
 package org.apache.knox.gateway.inboundurl.api;
 
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteFunctionDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class InboundUrlFunctionDescriptorTest {
-
+class InboundUrlFunctionDescriptorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionDescriptor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -44,5 +43,4 @@ public class InboundUrlFunctionDescriptorTest {
     }
     fail( "Failed to find " + InboundUrlFunctionDescriptor.class.getName() + " via service loader." );
   }
-
 }

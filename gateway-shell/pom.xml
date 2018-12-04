@@ -111,5 +111,4 @@
             <artifactId>forbiddenapis</artifactId>
         </dependency>
     </dependencies>
-
 </project>

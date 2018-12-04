@@ -20,7 +20,7 @@ package org.apache.knox.gateway.identityasserter.regex.filter;
 import org.apache.knox.gateway.security.GroupPrincipal;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.FilterConfig;
@@ -31,12 +31,11 @@ import java.security.Principal;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RegexIdentityAssertionFilterTest {
-
+class RegexIdentityAssertionFilterTest {
   @Test
-  public void testExtractUsernameFromEmail() throws Exception {
+  void testExtractUsernameFromEmail() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
@@ -85,11 +84,10 @@ public class RegexIdentityAssertionFilterTest {
     filter.init( config );
     actual = filter.mapUserPrincipal( "member@us.apache.org" );
     assertEquals( actual, "prefix_member_suffix" );
-
   }
 
   @Test
-  public void testMapDomain() throws Exception {
+  void testMapDomain() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
@@ -128,7 +126,7 @@ public class RegexIdentityAssertionFilterTest {
   }
 
   @Test
-  public void testOrRegexInputForEmailAndSimple() throws Exception {
+  void testOrRegexInputForEmailAndSimple() throws Exception {
     FilterConfig config;
     ServletContext context;
     String actual;
@@ -150,7 +148,5 @@ public class RegexIdentityAssertionFilterTest {
 
     actual = filter.mapUserPrincipal( "test-simple-name@test-email-domain" );
     assertThat( actual, is("prefix_test-simple-name_suffix" ) );
-
   }
-
 }

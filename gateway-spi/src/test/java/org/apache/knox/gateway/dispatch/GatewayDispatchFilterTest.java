@@ -19,12 +19,11 @@ package org.apache.knox.gateway.dispatch;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.test.mock.MockHttpServletResponse;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -32,16 +31,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-public class GatewayDispatchFilterTest {
-
+class GatewayDispatchFilterTest {
   /*
    * Verify that a whitelist violation results in a HTTP 400 response.
    */
   @Test
-  public void testServiceDispatchWhitelistViolation() throws Exception {
+  void testServiceDispatchWhitelistViolation() throws Exception {
     final String serviceRole = "KNOXSSO";
 
     GatewayConfig config = EasyMock.createNiceMock(GatewayConfig.class);
@@ -66,12 +63,11 @@ public class GatewayDispatchFilterTest {
     assertEquals(400, response.getStatus());
   }
 
-
   /*
    * If the dispatch service is not configured to honor the whitelist, the dispatching should be permitted.
    */
   @Test
-  public void testServiceDispatchWhitelistNoServiceRoles() throws Exception {
+  void testServiceDispatchWhitelistNoServiceRoles() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.emptyList(),
                                    "^https?://localhost.*$",
@@ -85,7 +81,7 @@ public class GatewayDispatchFilterTest {
    * disallowed.
    */
   @Test
-  public void testServiceDispatchWhitelistNoWhiteListForRole_invalid() throws Exception {
+  void testServiceDispatchWhitelistNoWhiteListForRole_invalid() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    null,
@@ -100,7 +96,7 @@ public class GatewayDispatchFilterTest {
    * disallowed.
    */
   @Test
-  public void testServiceDispatchWhitelistNoWhiteListForRole_invalid_alt_localhost() throws Exception {
+  void testServiceDispatchWhitelistNoWhiteListForRole_invalid_alt_localhost() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    "127.0.0.1",
@@ -115,7 +111,7 @@ public class GatewayDispatchFilterTest {
    * dispatch should be disallowed.
    */
   @Test
-  public void testServiceDispatchWhitelistNoWhiteListForRole_invalid_domain() throws Exception {
+  void testServiceDispatchWhitelistNoWhiteListForRole_invalid_domain() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    "knoxbox.test.org",
@@ -131,7 +127,7 @@ public class GatewayDispatchFilterTest {
    * allowed.
    */
   @Test
-  public void testServiceDispatchWhitelistNoWhiteListForRole_valid() throws Exception {
+  void testServiceDispatchWhitelistNoWhiteListForRole_valid() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    null,
@@ -146,7 +142,7 @@ public class GatewayDispatchFilterTest {
    * allowed.
    */
   @Test
-  public void testServiceDispatchWhitelistNoWhiteListForRole_encodedurl_valid() throws Exception {
+  void testServiceDispatchWhitelistNoWhiteListForRole_encodedurl_valid() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    null,
@@ -155,14 +151,13 @@ public class GatewayDispatchFilterTest {
                                    true);
   }
 
-
   /*
    * If the dispatch service is configured to honor the whitelist, but DEFAULT whitelist is configured, then the default
    * whitelist should be applied. If the dispatch URL does match the default whitelist, then the dispatch should be
    * allowed.
    */
   @Test
-  public void testServiceDispatchWhitelistNoWhiteListForRole_encodedurl_invalid() throws Exception {
+  void testServiceDispatchWhitelistNoWhiteListForRole_encodedurl_invalid() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    "DEFAULT",
@@ -171,12 +166,11 @@ public class GatewayDispatchFilterTest {
                                    false);
   }
 
-
   /*
    * An empty whitelist should be treated as the default whitelist.
    */
   @Test
-  public void testServiceDispatchWhitelistEmptyWhitelist() throws Exception {
+  void testServiceDispatchWhitelistEmptyWhitelist() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    "",
@@ -185,13 +179,12 @@ public class GatewayDispatchFilterTest {
                                    false); // Should be disallowed because nothing can match an empty whitelist
   }
 
-
   /*
    * If a custom whitelist is configured, and the requested service role is among those configured to honor that
    * whitelist, the request should be disallowed if the URL does NOT match the whitelist.
    */
   @Test
-  public void testServiceDispatchWhitelistCustomWhitelist_invalid() throws Exception {
+  void testServiceDispatchWhitelistCustomWhitelist_invalid() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    "^.*mydomain\\.org.*$;^.*myotherdomain.com.*",
@@ -206,7 +199,7 @@ public class GatewayDispatchFilterTest {
    * whitelist, the request should be permitted if the URL matches the whitelist.
    */
   @Test
-  public void testServiceDispatchWhitelistCustomWhitelist_valid() throws Exception {
+  void testServiceDispatchWhitelistCustomWhitelist_valid() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Collections.singletonList(serviceRole),
                                    "^.*mydomain\\.org.*$;^.*myotherdomain.com.*;^.*onmylist\\.org.*$",
@@ -220,7 +213,7 @@ public class GatewayDispatchFilterTest {
    * dispatches should be permitted.
    */
   @Test
-  public void testServiceDispatchWhitelistCustomWhitelistNoServiceRoles() throws Exception {
+  void testServiceDispatchWhitelistCustomWhitelistNoServiceRoles() throws Exception {
     final String serviceRole = "TESTROLE";
     doTestServiceDispatchWhitelist(Arrays.asList("MYROLE","SOMEOTHER_ROLE"), // Different roles than the one requested
                                    "^.*mydomain\\.org.*$;^.*myotherdomain.com.*",
@@ -228,7 +221,6 @@ public class GatewayDispatchFilterTest {
                                    "http://www.onmylist.org:9999",
                                     true);
   }
-
 
   private void doTestServiceDispatchWhitelist(List<String> whitelistedServices,
                                               String       whitelist,
@@ -273,7 +265,7 @@ public class GatewayDispatchFilterTest {
     int status;
 
     @Override
-    public void sendError(int i) throws IOException {
+    public void sendError(int i) {
       status = i;
     }
 

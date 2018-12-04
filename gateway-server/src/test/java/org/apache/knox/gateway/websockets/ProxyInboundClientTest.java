@@ -20,10 +20,9 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
@@ -37,26 +36,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test {@link ProxyInboundClient} class.
  * @since 0.14.0
  */
-public class ProxyInboundClientTest {
+class ProxyInboundClientTest {
   private static Server server;
   private static URI serverUri;
 
   private String receivedMessage;
   private byte[] receivedBinaryMessage;
 
-  /* create an instance */
-  public ProxyInboundClientTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     server = new Server();
     ServerConnector connector = new ServerConnector(server);
     server.addConnector(connector);
@@ -78,8 +74,8 @@ public class ProxyInboundClientTest {
     serverUri = new URI(String.format(Locale.ROOT, "ws://%s:%d/",host,port));
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() {
+  @AfterAll
+  static void tearDownAfterClass() {
     try {
       server.stop();
     } catch (Exception e) {
@@ -87,9 +83,8 @@ public class ProxyInboundClientTest {
     }
   }
 
-  //@Test(timeout = 3000)
   @Test
-  public void testClientInstance() throws IOException, DeploymentException {
+  void testClientInstance() throws IOException, DeploymentException {
     final String textMessage = "Echo";
 
     final AtomicBoolean isTestComplete = new AtomicBoolean(false);
@@ -125,7 +120,7 @@ public class ProxyInboundClientTest {
       }
     });
 
-    Assert.assertThat(client, instanceOf(javax.websocket.Endpoint.class));
+    assertThat(client, instanceOf(javax.websocket.Endpoint.class));
 
     Session session = container.connectToServer(client, serverUri);
 
@@ -135,11 +130,12 @@ public class ProxyInboundClientTest {
       /* just wait for the test to finish */
     }
 
-    Assert.assertEquals("The received text message is not the same as the sent", textMessage, receivedMessage);
+    assertEquals(textMessage, receivedMessage,
+        "The received text message is not the same as the sent");
   }
 
-  @Test(timeout = 3000)
-  public void testBinarymessage() throws IOException, DeploymentException {
+  @Test
+  void testBinarymessage() throws IOException, DeploymentException {
     final String textMessage = "Echo";
     final ByteBuffer binarymessage = ByteBuffer.wrap(textMessage.getBytes(StandardCharsets.UTF_8));
 
@@ -178,7 +174,7 @@ public class ProxyInboundClientTest {
       }
     });
 
-    Assert.assertThat(client, instanceOf(javax.websocket.Endpoint.class));
+    assertThat(client, instanceOf(javax.websocket.Endpoint.class));
 
     Session session = container.connectToServer(client, serverUri);
 
@@ -188,7 +184,7 @@ public class ProxyInboundClientTest {
       /* just wait for the test to finish */
     }
 
-    Assert.assertEquals("Binary message does not match", textMessage, new String(receivedBinaryMessage, StandardCharsets.UTF_8));
+    assertEquals(textMessage, new String(receivedBinaryMessage, StandardCharsets.UTF_8),
+        "Binary message does not match");
   }
-
 }

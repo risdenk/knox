@@ -21,15 +21,14 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import org.apache.knox.gateway.deploy.ProviderDeploymentContributor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class SwitchCaseIdentityAsserterDeploymentContributorTest {
-
+class SwitchCaseIdentityAsserterDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader<ProviderDeploymentContributor> loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator<ProviderDeploymentContributor> iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );

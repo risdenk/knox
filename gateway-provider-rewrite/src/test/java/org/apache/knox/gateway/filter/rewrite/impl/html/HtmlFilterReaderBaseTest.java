@@ -35,8 +35,8 @@ import org.apache.knox.gateway.filter.rewrite.impl.UrlRewriteFilterContentDescri
 import org.apache.knox.gateway.filter.rewrite.impl.xml.XmlRewriteRulesDigester;
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteActionDescriptorBase;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
@@ -57,14 +57,13 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.xmlmatchers.XmlMatchers.hasXPath;
 import static org.xmlmatchers.transform.XmlConverters.the;
 
-public class HtmlFilterReaderBaseTest {
-
+class HtmlFilterReaderBaseTest {
   public static class NoopXmlFilterReader extends HtmlFilterReaderBase {
-    public NoopXmlFilterReader( Reader reader ) throws IOException, ParserConfigurationException {
+    NoopXmlFilterReader( Reader reader ) throws IOException, ParserConfigurationException {
       super( reader );
     }
 
@@ -87,7 +86,7 @@ public class HtmlFilterReaderBaseTest {
   public static class MapXmlFilterReader extends HtmlFilterReaderBase {
     private Map<String,String> map;
 
-    public MapXmlFilterReader( Reader reader, Map<String,String> map ) throws IOException, ParserConfigurationException {
+    MapXmlFilterReader( Reader reader, Map<String,String> map ) throws IOException, ParserConfigurationException {
       super( reader );
       this.map = map;
     }
@@ -110,7 +109,7 @@ public class HtmlFilterReaderBaseTest {
 
   public static class MatchRuleXmlFilterReader extends HtmlFilterReaderBase {
     private Map<String, Map<String,String>> rules;
-    public MatchRuleXmlFilterReader( Reader reader, Map<String, Map<String,String>> rules, UrlRewriteFilterContentDescriptor config ) throws IOException, ParserConfigurationException {
+    MatchRuleXmlFilterReader( Reader reader, Map<String, Map<String,String>> rules, UrlRewriteFilterContentDescriptor config ) throws IOException, ParserConfigurationException {
       super( reader, config );
       this.rules = rules;
     }
@@ -141,7 +140,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimple() throws IOException, ParserConfigurationException {
+  void testSimple() throws IOException, ParserConfigurationException {
     String inputXml = "<root/>";
     StringReader inputReader = new StringReader( inputXml );
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader( inputReader );
@@ -150,7 +149,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimpleNested() throws IOException, ParserConfigurationException {
+  void testSimpleNested() throws IOException, ParserConfigurationException {
     String inputXml = "<root><child1><child11/><child12/></child1><child2><child21/><child22/></child2></root>";
     StringReader inputReader = new StringReader( inputXml );
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader( inputReader );
@@ -165,7 +164,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimpleWithNamespace() throws IOException, ParserConfigurationException {
+  void testSimpleWithNamespace() throws IOException, ParserConfigurationException {
     String inputXml = "<ns:root xmlns:ns='http://hortonworks.com/xml/ns'></ns:root>";
     StringReader inputReader = new StringReader( inputXml );
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader( inputReader );
@@ -177,7 +176,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimpleTextNode() throws IOException, ParserConfigurationException {
+  void testSimpleTextNode() throws IOException, ParserConfigurationException {
     String inputXml = "<root>text</root>";
     StringReader inputReader = new StringReader( inputXml );
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader( inputReader );
@@ -186,7 +185,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimpleAttribute() throws IOException, ParserConfigurationException {
+  void testSimpleAttribute() throws IOException, ParserConfigurationException {
     String inputXml = "<root name='value'/>";
     StringReader inputReader = new StringReader( inputXml );
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader( inputReader );
@@ -195,7 +194,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimpleBooleanAttribute() throws IOException, ParserConfigurationException {
+  void testSimpleBooleanAttribute() throws IOException, ParserConfigurationException {
     String inputXml = "<root name/>";
     StringReader inputReader = new StringReader(inputXml);
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader(inputReader);
@@ -204,7 +203,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testComplexBooleanAttribute() throws IOException, ParserConfigurationException {
+  void testComplexBooleanAttribute() throws IOException, ParserConfigurationException {
     String inputXml = "<root boolean non-boolean='value' empty=''/>";
     StringReader inputReader = new StringReader(inputXml);
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader(inputReader);
@@ -213,7 +212,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testMappedText() throws IOException, ParserConfigurationException {
+  void testMappedText() throws IOException, ParserConfigurationException {
     Map<String,String> map = new HashMap<>();
     map.put( "input-text", "output-text" );
     String inputXml = "<root>input-text</root>";
@@ -224,7 +223,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testMappedAttribute() throws IOException, ParserConfigurationException {
+  void testMappedAttribute() throws IOException, ParserConfigurationException {
     Map<String,String> map = new HashMap<>();
     map.put( "input-text", "output-text" );
     String inputXml = "<root attribute='input-text'/>";
@@ -235,7 +234,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testCombined() throws IOException, ParserConfigurationException {
+  void testCombined() throws IOException, ParserConfigurationException {
     Map<String,String> map = new HashMap<>();
     map.put( "attr1-input", "attr1-output" );
     map.put( "attr2-input", "attr2-output" );
@@ -291,7 +290,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testSimpleJavaScriptText() throws IOException, ParserConfigurationException {
+  void testSimpleJavaScriptText() throws IOException, ParserConfigurationException {
     String inputXml = "<root><script type=\"text/javascript\">input-js-text</script></root>";
     StringReader inputReader = new StringReader( inputXml );
     HtmlFilterReaderBase filterReader = new NoopXmlFilterReader( inputReader );
@@ -300,7 +299,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testMatchedJavaScriptText() throws IOException, ParserConfigurationException {
+  void testMatchedJavaScriptText() throws IOException, ParserConfigurationException {
     Map<String, Map<String, String>> rules = new HashMap<>();
     Map<String, String> map = new HashMap<>();
     map.put( "(https?://[^/':,]+:[\\d]+)?/cluster/app", "https://knoxhost:8443/cluster/app" );
@@ -334,7 +333,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testMRJobHistoryUIJavaScriptText() throws IOException, ParserConfigurationException {
+  void testMRJobHistoryUIJavaScriptText() throws IOException, ParserConfigurationException {
     Map<String, Map<String, String>> rules = new HashMap<>();
     Map<String, String> map = new HashMap<>();
     map.put( "https?://[^/':,]+:[\\d]+", "https://knoxhost:8443/gateway/nodemanagerui/node?host=knoxhost" );
@@ -363,18 +362,17 @@ public class HtmlFilterReaderBaseTest {
     assertThat( outputXml, is( expectedOutput ) );
   }
 
-  public static class XmlRewriteRulesDescriptorDigesterTest {
-
+  static class XmlRewriteRulesDescriptorDigesterTest {
     private static DigesterLoader loader = DigesterLoader.newLoader( new XmlRewriteRulesDigester() );
     private static Digester digester = loader.newDigester( new ExtendedBaseRules() );
 
-    @Before
-    public void setupTest() {
+    @BeforeEach
+    void setUp() {
       digester.setValidating( false );
     }
 
     @Test
-    public void testRuleParsing() throws IOException, SAXException {
+    void testRuleParsing() throws IOException, SAXException {
       Reader reader = new StringReader( "<rules/>" );
       UrlRewriteRulesDescriptor config = digester.parse( reader );
       assertThat( config.getRules().isEmpty(), is( true ) );
@@ -432,7 +430,7 @@ public class HtmlFilterReaderBaseTest {
     }
 
     @Test
-    public void testDirectionParsing() throws IOException, SAXException {
+    void testDirectionParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
 
@@ -557,7 +555,7 @@ public class HtmlFilterReaderBaseTest {
     }
 
     @Test
-    public void testFlowParsing() throws IOException, SAXException {
+    void testFlowParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
 
@@ -567,7 +565,7 @@ public class HtmlFilterReaderBaseTest {
     }
 
     @Test
-    public void testMatchParsing() throws IOException, SAXException {
+    void testMatchParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -606,7 +604,7 @@ public class HtmlFilterReaderBaseTest {
     }
 
     @Test
-    public void testCheckParsing() throws IOException, SAXException {
+    void testCheckParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -644,7 +642,7 @@ public class HtmlFilterReaderBaseTest {
     }
 
     @Test
-    public void testActionParsing() throws IOException, SAXException {
+    void testActionParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -678,7 +676,7 @@ public class HtmlFilterReaderBaseTest {
     }
 
     @Test
-    public void testControlParsing() throws IOException, SAXException {
+    void testControlParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -710,7 +708,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testTagNameLetterCase() throws Exception {
+  void testTagNameLetterCase() throws Exception {
     String inputXml = "<Root/>";
     StringReader inputReader = new StringReader( inputXml );
 
@@ -720,7 +718,7 @@ public class HtmlFilterReaderBaseTest {
   }
 
   @Test
-  public void testXmlWithHtmlTagNames() throws Exception {
+  void testXmlWithHtmlTagNames() throws Exception {
     String inputXml = "<root><br><table name=\"table1\"></table><table name=\"table2\"></table></br></root>";
     StringReader inputReader = new StringReader( inputXml );
 

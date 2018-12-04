@@ -17,13 +17,12 @@
  */
 package org.apache.knox.gateway.util;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class UrlsTest {
-
+class UrlsTest {
   /*
    * Domain name creation follows the following algorithm:
    * 1. if the incoming request hostname endsWith a configured domain suffix return the suffix - with prefixed dot
@@ -32,38 +31,37 @@ public class UrlsTest {
    * 4. if request hostname has more than two dots strip the first element and return the remainder as domain
    */
   @Test
-  public void testDomainNameCreation() throws Exception {
+  void testDomainNameCreation() throws Exception {
     // determine parent domain and wildcard the cookie domain with a dot prefix
     assertEquals(".local.com", Urls.getDomainName("http://www.local.com", null));
     assertEquals(".local.com", Urls.getDomainName("http://ljm.local.com", null));
 
     // test scenarios that will leverage the default cookie domain
-    Assert.assertNull(Urls.getDomainName("http://local.home", null));
-    Assert.assertNull(Urls.getDomainName("http://localhost", null)); // chrome may not allow this
+    assertNull(Urls.getDomainName("http://local.home", null));
+    assertNull(Urls.getDomainName("http://localhost", null)); // chrome may not allow this
 
     assertEquals(".home.test.com", Urls.getDomainName("http://local.home.test.com", null));
 
     // check the suffix config feature
     assertEquals(".test.com", Urls.getDomainName("http://local.home.test.com", ".test.com"));
-    Assert.assertEquals(".novalocal", Urls.getDomainName("http://34526yewt.novalocal", ".novalocal"));
+    assertEquals(".novalocal", Urls.getDomainName("http://34526yewt.novalocal", ".novalocal"));
 
     // make sure that even if the suffix doesn't start with a dot that the domain does
     // if we are setting a domain suffix then we want a specific domain for SSO and that
     // will require all hosts in the domain in order for it to work
-    Assert.assertEquals(".novalocal", Urls.getDomainName("http://34526yewt.novalocal", "novalocal"));
+    assertEquals(".novalocal", Urls.getDomainName("http://34526yewt.novalocal", "novalocal"));
 
     // ip addresses can not be wildcarded - may be a completely different domain
-    Assert.assertNull(Urls.getDomainName("http://127.0.0.1", null));
+    assertNull(Urls.getDomainName("http://127.0.0.1", null));
 
     /* Make sure we handle encoded characters properly here */
     assertEquals(".local.com", Urls.getDomainName("https://www.local.com:8443/gateway/manager/admin-ui?limit=25&query=hive_table+where+name%3D%22table_1%22", null));
     /* Make sure we handle un-encoded characters safely */
     assertEquals(".local.com", Urls.getDomainName("https://www.local.com:8443/gateway/manager/admin-ui/?limit=25&query=\"table_1\"", null));
-
   }
 
   @Test
-  public void testTrimLeadingAndTrailingSlash() {
+  void testTrimLeadingAndTrailingSlash() {
     assertEquals( "", Urls.trimLeadingAndTrailingSlash( null ) );
     assertEquals( "", Urls.trimLeadingAndTrailingSlash( "" ) );
     assertEquals( "", Urls.trimLeadingAndTrailingSlash( "/" ) );
@@ -75,7 +73,7 @@ public class UrlsTest {
   }
 
   @Test
-  public void testTrimLeadingAndTrailingSlashJoin() throws Exception {
+  void testTrimLeadingAndTrailingSlashJoin() throws Exception {
     assertEquals( "", Urls.trimLeadingAndTrailingSlashJoin( null ) );
     assertEquals( "", Urls.trimLeadingAndTrailingSlashJoin( "" ) );
     assertEquals( "", Urls.trimLeadingAndTrailingSlashJoin( "", "" ) );
@@ -88,10 +86,9 @@ public class UrlsTest {
   }
 
   @Test
-  public void testURLEncoding() throws Exception {
+  void testURLEncoding() throws Exception {
     assertEquals( "%26", Urls.encode( "&" ) );
     assertEquals( "&query=hive_table", Urls.decode( "%26query=hive_table" ) );
     assertEquals( "%3F", Urls.encode( "?" ) );
   }
-
 }

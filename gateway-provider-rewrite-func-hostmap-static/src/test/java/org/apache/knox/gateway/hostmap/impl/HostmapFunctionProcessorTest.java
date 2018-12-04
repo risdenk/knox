@@ -34,7 +34,7 @@ import org.apache.knox.gateway.util.urltemplate.Resolver;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.apache.knox.test.TestUtils;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 import java.util.Collections;
@@ -44,12 +44,11 @@ import java.util.ServiceLoader;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class HostmapFunctionProcessorTest {
-
+class HostmapFunctionProcessorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -63,7 +62,7 @@ public class HostmapFunctionProcessorTest {
   }
 
   @Test
-  public void testBasicUseCase() throws Exception {
+  void testBasicUseCase() throws Exception {
     URL configUrl = TestUtils.getResourceUrl( this.getClass(), "hostmap.txt" );
 
     HostMapper hm = EasyMock.createNiceMock(HostMapper.class);
@@ -98,7 +97,7 @@ public class HostmapFunctionProcessorTest {
   }
 
   @Test
-  public void testHdfsUseCase() throws Exception {
+  void testHdfsUseCase() throws Exception {
     URL configUrl = TestUtils.getResourceUrl( this.getClass(), "hdfs-hostmap.txt" );
 
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
@@ -164,7 +163,7 @@ public class HostmapFunctionProcessorTest {
   }
 
   @Test
-  public void testUnmappedUseCase() throws Exception {
+  void testUnmappedUseCase() throws Exception {
     URL configUrl = TestUtils.getResourceUrl( this.getClass(), "hostmap.txt" );
 
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
@@ -190,7 +189,7 @@ public class HostmapFunctionProcessorTest {
   }
 
   @Test
-  public void testInvalidFunctionNameUseCase() throws Exception {
+   void testInvalidFunctionNameUseCase() throws Exception {
     URL configUrl = TestUtils.getResourceUrl( this.getClass(), "hostmap.txt" );
 
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
@@ -215,7 +214,7 @@ public class HostmapFunctionProcessorTest {
   }
 
   @Test
-  public void testInvalidFunctionNameAndEmptyHostmapUseCase() throws Exception {
+  void testInvalidFunctionNameAndEmptyHostmapUseCase() throws Exception {
     URL configUrl = TestUtils.getResourceUrl( this.getClass(), "empty-hostmap.txt" );
 
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
@@ -240,7 +239,7 @@ public class HostmapFunctionProcessorTest {
   }
 
   @Test
-  public void testEmptyHostmapUseCase() throws Exception {
+  void testEmptyHostmapUseCase() throws Exception {
     URL configUrl = TestUtils.getResourceUrl( this.getClass(), "empty-hostmap.txt" );
 
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );

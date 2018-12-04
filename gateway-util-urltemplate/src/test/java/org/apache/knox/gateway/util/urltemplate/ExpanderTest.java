@@ -17,10 +17,7 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,14 +30,12 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class ExpanderTest {
-
+class ExpanderTest {
   @Test
-  public void testHostAndPortOnlyExpansionBugKnox381() throws Exception {
+  void testHostAndPortOnlyExpansionBugKnox381() throws Exception {
     String text = "{host}:{port}";
     Template template = Parser.parseTemplate( text );
     MockParams params = new MockParams();
@@ -51,7 +46,7 @@ public class ExpanderTest {
   }
 
   @Test
-  public void testCompleteUrl() throws URISyntaxException {
+  void testCompleteUrl() throws URISyntaxException {
     String text;
     Template template;
     MockParams params;
@@ -82,7 +77,7 @@ public class ExpanderTest {
   }
 
   @Test
-  public void testBasicExpansion() throws Exception {
+  void testBasicExpansion() throws Exception {
     Template template;
     MockParams params;
     URI expanded;
@@ -177,21 +172,8 @@ public class ExpanderTest {
     assertThat( expanded.toString(), equalTo( "?query-name-1=queryParam-value-1&query-name-2=queryParam-value-2" ) ) ;
   }
 
-// Can't create a URI with just a scheme: new URI( "http:" )
-//  @Test
-//  public void testSchemeExpansion() throws URISyntaxException {
-//    Template template;
-//    Params params;
-//    URI expanded;
-//
-//    template = Parser.parse( "scheme:" );
-//    params = new Params();
-//    expanded = Expander.expand( template, params );
-//    assertThat( expanded.toString(), equalTo( "scheme:" ) ) ;
-//  }
-
   @Test
-  public void testAuthorityExpansion() throws URISyntaxException {
+  void testAuthorityExpansion() throws URISyntaxException {
     Template template;
     MockParams params;
     URI expanded;
@@ -218,7 +200,7 @@ public class ExpanderTest {
   }
 
   @Test
-  public void testPathExpansion() throws URISyntaxException {
+  void testPathExpansion() throws URISyntaxException {
     Template template;
     MockParams params;
     URI expanded;
@@ -251,7 +233,7 @@ public class ExpanderTest {
   }
 
   @Test
-  public void testQueryExpansion() throws URISyntaxException {
+  void testQueryExpansion() throws URISyntaxException {
     Template template;
     MockParams params;
     URI expanded;
@@ -281,11 +263,10 @@ public class ExpanderTest {
     params.addValue( "queryParam", "B" );
     expanded = Expander.expand( template, params, null );
     assertThat( expanded.toString(), equalTo( "?query=A&query=B" ) ) ;
-
   }
 
   @Test
-  public void testExtraParamHandling() throws Exception {
+  void testExtraParamHandling() throws Exception {
     String text;
     Template template;
     MockParams params;
@@ -349,9 +330,8 @@ public class ExpanderTest {
     assertThat( expandedString, containsString( "&" ) );
   }
 
-
   @Test
-  public void testBugKnox599() throws Exception {
+  void testBugKnox599() throws Exception {
     String text;
     Template template;
     MockParams params;
@@ -404,7 +384,7 @@ public class ExpanderTest {
   }
 
   @Test
-  public void testValuelessQueryParamParsingAndExpansionBugKnox599Knox447() throws Exception {
+  void testValuelessQueryParamParsingAndExpansionBugKnox599Knox447() throws Exception {
     URI inputUri, outputUri;
     Matcher<Void> matcher;
     Matcher<Void>.Match match;
@@ -432,11 +412,10 @@ public class ExpanderTest {
     assertThat(
         outputUri.toString(),
         equalToIgnoringCase( "https://webhcatTestHost.com:50111/templeton/v1/?version%2Fhive" ) );
-
   }
 
   @Test
-  public void testRedirectHeaderRewriteKnoxBug614() throws Exception {
+  void testRedirectHeaderRewriteKnoxBug614() throws Exception {
     URI inputUri, outputUri;
     Matcher<Void> matcher;
     Matcher<Void>.Match match;
@@ -468,7 +447,7 @@ public class ExpanderTest {
   }
 
   @Test
-  public void testLiteralsAndRegexInTemplates() throws Exception {
+  void testLiteralsAndRegexInTemplates() throws Exception {
     String output;
     Matcher<Void> matcher;
     Matcher<Void>.Match match;
@@ -539,5 +518,4 @@ public class ExpanderTest {
     output = Expander.expandToString( rewrite, match.getParams(), evaluator );
     assertThat( output, is( "${app.dir}/child/path" ) );
   }
-
 }

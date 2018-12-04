@@ -40,12 +40,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.util.EntityUtils;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,12 +74,11 @@ import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_KEYTAB_FILE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_SERVER_HTTPS_KEYSTORE_RESOURCE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_WEB_AUTHENTICATION_KERBEROS_PRINCIPAL_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.IPC_CLIENT_CONNECT_MAX_RETRIES_KEY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Category(ReleaseTest.class)
-public class SecureClusterTest {
-
+@Tag("release")
+class SecureClusterTest {
   private static MiniDFSCluster miniDFSCluster;
   private static MiniKdc kdc;
   private static HdfsConfiguration configuration;
@@ -90,8 +88,8 @@ public class SecureClusterTest {
   private static GatewayTestDriver driver = new GatewayTestDriver();
   private static File baseDir;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     nameNodeHttpPort = TestUtils.findFreePort();
     configuration = new HdfsConfiguration();
     baseDir = new File(KeyStoreTestUtil.getClasspathDir(SecureClusterTest.class));
@@ -114,7 +112,7 @@ public class SecureClusterTest {
     configuration = new HdfsConfiguration();
     SecurityUtil.setAuthenticationMethod(UserGroupInformation.AuthenticationMethod.KERBEROS, configuration);
     UserGroupInformation.setConfiguration(configuration);
-    assertTrue("Expected configuration to enable security", UserGroupInformation.isSecurityEnabled());
+    assertTrue(UserGroupInformation.isSecurityEnabled(), "Expected configuration to enable security");
     userName = UserGroupInformation.createUserForTesting("guest", new String[]{"users"}).getUserName();
     File keytabFile = new File(baseDir, userName + ".keytab");
     String keytab = keytabFile.getAbsolutePath();
@@ -175,8 +173,8 @@ public class SecureClusterTest {
     driver.setupGateway(config, "cluster", createTopology(), true);
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     if(kdc != null) {
       kdc.stop();
     }
@@ -189,7 +187,7 @@ public class SecureClusterTest {
   }
 
   @Test
-  public void basicGetUserHomeRequest() throws Exception {
+  void basicGetUserHomeRequest() throws Exception {
     setupLogging();
     CloseableHttpClient client = getHttpClient();
     String method = "GET";

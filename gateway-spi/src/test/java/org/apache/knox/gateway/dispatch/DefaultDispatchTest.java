@@ -23,10 +23,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,9 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.servlet.SynchronousServletOutputStreamAdapter;
-import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
 import org.apache.http.RequestLine;
@@ -52,16 +49,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.params.BasicHttpParams;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class DefaultDispatchTest {
-
+class DefaultDispatchTest {
   // Make sure Hadoop cluster topology isn't exposed to client when there is a connectivity issue.
   @Test
-  public void testJiraKnox58() throws URISyntaxException, IOException {
-
+  void testJiraKnox58() throws URISyntaxException, IOException {
     URI uri = new URI( "http://unreachable-host.invalid" );
     BasicHttpParams params = new BasicHttpParams();
 
@@ -80,7 +73,7 @@ public class DefaultDispatchTest {
     HttpServletResponse outboundResponse = EasyMock.createNiceMock( HttpServletResponse.class );
     EasyMock.expect( outboundResponse.getOutputStream() ).andAnswer( new IAnswer<SynchronousServletOutputStreamAdapter>() {
       @Override
-      public SynchronousServletOutputStreamAdapter answer() throws Throwable {
+      public SynchronousServletOutputStreamAdapter answer() {
         return new SynchronousServletOutputStreamAdapter() {
           @Override
           public void write( int b ) throws IOException {
@@ -107,7 +100,7 @@ public class DefaultDispatchTest {
   }
 
   @Test
-  public void testCallToSecureClusterWithDelegationToken() throws URISyntaxException, IOException {
+  void testCallToSecureClusterWithDelegationToken() throws IOException {
     DefaultDispatch defaultDispatch = new DefaultDispatch();
     ServletContext servletContext = EasyMock.createNiceMock( ServletContext.class );
     GatewayConfig gatewayConfig = EasyMock.createNiceMock( GatewayConfig.class );
@@ -120,12 +113,12 @@ public class DefaultDispatchTest {
     EasyMock.expect(inboundRequest.getServletContext()).andReturn( servletContext ).anyTimes();
     EasyMock.replay( gatewayConfig, servletContext, inboundRequest );
     HttpEntity httpEntity = defaultDispatch.createRequestEntity(inboundRequest);
-    assertFalse("buffering in the presence of delegation token",
-        (httpEntity instanceof PartiallyRepeatableHttpEntity));
+    assertFalse(httpEntity instanceof PartiallyRepeatableHttpEntity,
+        "buffering in the presence of delegation token");
   }
 
   @Test
-  public void testCallToNonSecureClusterWithoutDelegationToken() throws URISyntaxException, IOException {
+  void testCallToNonSecureClusterWithoutDelegationToken() throws IOException {
     DefaultDispatch defaultDispatch = new DefaultDispatch();
     ServletContext servletContext = EasyMock.createNiceMock( ServletContext.class );
     GatewayConfig gatewayConfig = EasyMock.createNiceMock( GatewayConfig.class );
@@ -138,12 +131,12 @@ public class DefaultDispatchTest {
     EasyMock.expect(inboundRequest.getServletContext()).andReturn( servletContext ).anyTimes();
     EasyMock.replay( gatewayConfig, servletContext, inboundRequest );
     HttpEntity httpEntity = defaultDispatch.createRequestEntity(inboundRequest);
-    assertFalse("buffering in non secure cluster",
-        (httpEntity instanceof PartiallyRepeatableHttpEntity));
+    assertFalse(httpEntity instanceof PartiallyRepeatableHttpEntity,
+        "buffering in non secure cluster");
   }
 
   @Test
-  public void testCallToSecureClusterWithoutDelegationToken() throws URISyntaxException, IOException {
+  void testCallToSecureClusterWithoutDelegationToken() throws IOException {
     DefaultDispatch defaultDispatch = new DefaultDispatch();
     defaultDispatch.setReplayBufferSize(10);
     ServletContext servletContext = EasyMock.createNiceMock( ServletContext.class );
@@ -157,12 +150,12 @@ public class DefaultDispatchTest {
     EasyMock.expect(inboundRequest.getServletContext()).andReturn( servletContext ).anyTimes();
     EasyMock.replay( gatewayConfig, servletContext, inboundRequest );
     HttpEntity httpEntity = defaultDispatch.createRequestEntity(inboundRequest);
-    assertTrue("not buffering in the absence of delegation token",
-        (httpEntity instanceof PartiallyRepeatableHttpEntity));
+    assertTrue(httpEntity instanceof PartiallyRepeatableHttpEntity,
+        "not buffering in the absence of delegation token");
   }
 
   @Test
-  public void testUsingDefaultBufferSize() throws URISyntaxException, IOException {
+  void testUsingDefaultBufferSize() throws IOException {
     DefaultDispatch defaultDispatch = new DefaultDispatch();
     ServletContext servletContext = EasyMock.createNiceMock( ServletContext.class );
     GatewayConfig gatewayConfig = EasyMock.createNiceMock( GatewayConfig.class );
@@ -176,8 +169,8 @@ public class DefaultDispatchTest {
     EasyMock.expect(inboundRequest.getServletContext()).andReturn( servletContext ).anyTimes();
     EasyMock.replay( gatewayConfig, servletContext, inboundRequest );
     HttpEntity httpEntity = defaultDispatch.createRequestEntity(inboundRequest);
-    assertTrue("not buffering in the absence of delegation token",
-        (httpEntity instanceof PartiallyRepeatableHttpEntity));
+    assertTrue(httpEntity instanceof PartiallyRepeatableHttpEntity,
+        "not buffering in the absence of delegation token");
     assertEquals(defaultDispatch.getReplayBufferSize(), 16);
     assertEquals(defaultDispatch.getReplayBufferSizeInBytes(), 16384);
 
@@ -192,8 +185,8 @@ public class DefaultDispatchTest {
 
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGetDispatchUrl() throws Exception {
+  @Test
+  void testGetDispatchUrl() {
     HttpServletRequest request;
     Dispatch dispatch;
     String path;
@@ -238,7 +231,5 @@ public class DefaultDispatchTest {
     EasyMock.replay( request );
     uri = dispatch.getDispatchUrl( request );
     assertThat( uri.toASCIIString(), is( "http://test-host:42/test%2Cpath?test%26name=test%3Dvalue" ) );
-
   }
-
 }

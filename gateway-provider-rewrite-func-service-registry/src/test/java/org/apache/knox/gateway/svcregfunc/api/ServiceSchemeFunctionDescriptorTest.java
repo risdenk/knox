@@ -18,19 +18,18 @@
 package org.apache.knox.gateway.svcregfunc.api;
 
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteFunctionDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceSchemeFunctionDescriptorTest {
-
+class ServiceSchemeFunctionDescriptorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionDescriptor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -44,9 +43,8 @@ public class ServiceSchemeFunctionDescriptorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     ServiceSchemeFunctionDescriptor descriptor = new ServiceSchemeFunctionDescriptor();
     assertThat( descriptor.name(), is( "serviceScheme" ) );
   }
-
 }

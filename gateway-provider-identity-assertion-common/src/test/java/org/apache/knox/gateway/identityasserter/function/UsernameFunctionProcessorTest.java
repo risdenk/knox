@@ -35,8 +35,8 @@ import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.servlet.ServletTester;
 import org.eclipse.jetty.util.log.Log;
 import org.hamcrest.core.Is;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.DispatcherType;
@@ -47,7 +47,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -64,9 +63,9 @@ import java.util.ServiceLoader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class UsernameFunctionProcessorTest {
+class UsernameFunctionProcessorTest {
   private ServletTester server;
   private HttpTester.Request request;
   private HttpTester.Response response;
@@ -111,29 +110,29 @@ public class UsernameFunctionProcessorTest {
     response = null;
   }
 
-  @After
-  public void tearDown() throws Exception {
+  @AfterEach
+  void tearDown() throws Exception {
     if( server != null ) {
       server.stop();
     }
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  void testInitialize() throws Exception {
     UsernameFunctionProcessor processor = new UsernameFunctionProcessor();
     // Shouldn't fail.
     processor.initialize( null, null );
   }
 
   @Test
-  public void testDestroy() throws Exception {
+  void testDestroy() throws Exception {
     UsernameFunctionProcessor processor = new UsernameFunctionProcessor();
     // Shouldn't fail.
     processor.destroy();
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() throws Exception {
     final UsernameFunctionProcessor processor = new UsernameFunctionProcessor();
     assertThat( processor.resolve( null, null ), nullValue() );
     assertThat( processor.resolve( null, Collections.singletonList("test-input")), contains( "test-input" ) );
@@ -151,7 +150,7 @@ public class UsernameFunctionProcessorTest {
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     for (Object object : loader) {
       if (object instanceof UsernameFunctionProcessor) {
@@ -162,7 +161,7 @@ public class UsernameFunctionProcessorTest {
   }
 
   @Test
-  public void testRequestUrlRewriteOfUsernameViaRewriteRule() throws Exception {
+  void testRequestUrlRewriteOfUsernameViaRewriteRule() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.url", "test-rule-username" );
     testSetup( "test-user", initParams );
@@ -203,11 +202,11 @@ public class UsernameFunctionProcessorTest {
     }
 
     @Override
-    public void init( FilterConfig filterConfig ) throws ServletException {
+    public void init( FilterConfig filterConfig ) {
     }
 
     @Override
-    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws ServletException {
       HttpServletRequest httpRequest = ((HttpServletRequest)request);
       StringBuffer sourceUrl = httpRequest.getRequestURL();
       String queryString = httpRequest.getQueryString();

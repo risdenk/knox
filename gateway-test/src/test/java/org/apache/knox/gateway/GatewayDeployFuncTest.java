@@ -24,15 +24,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.DefaultGatewayServices;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
-import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +53,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
-@Category(ReleaseTest.class)
-public class GatewayDeployFuncTest {
+@Tag("release")
+class GatewayDeployFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayDeployFuncTest.class );
 
   public static GatewayConfig config;
@@ -66,23 +64,22 @@ public class GatewayDeployFuncTest {
   public static String clusterUrl;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     driver.setupLdap(0);
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     LOG_EXIT();
   }
 
-  @Before
-  public void setupGateway() throws Exception {
-
+  @BeforeEach
+  void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -116,8 +113,8 @@ public class GatewayDeployFuncTest {
     clusterUrl = gatewayUrl + "/test-cluster";
   }
 
-  @After
-  public void cleanupGateway() throws Exception {
+  @AfterEach
+  void cleanupGateway() throws Exception {
     gateway.stop();
     FileUtils.deleteQuietly( gatewayHome );
   }
@@ -157,8 +154,8 @@ public class GatewayDeployFuncTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDeployRedeployUndeploy() throws InterruptedException, IOException {
+  @Test
+  void testDeployRedeployUndeploy() throws InterruptedException, IOException {
     LOG_ENTER();
     long sleep = 200;
     int numFilesInWebInf = 4; // # files in WEB-INF (ie gateway.xml, rewrite.xml, shiro.ini, web.xml)
@@ -284,7 +281,6 @@ public class GatewayDeployFuncTest {
   }
 
   private class RegexDirFilter implements FilenameFilter {
-
     Pattern pattern;
 
     RegexDirFilter( String regex ) {
@@ -296,5 +292,4 @@ public class GatewayDeployFuncTest {
       return pattern.matcher( name ).matches();
     }
   }
-
 }

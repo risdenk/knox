@@ -39,5 +39,4 @@
             <artifactId>gateway-provider-rewrite</artifactId>
         </dependency>
     </dependencies>
-
 </project>

@@ -25,20 +25,19 @@ import org.apache.knox.gateway.topology.Topology;
 import org.easymock.EasyMock;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ClientCertDeploymentContributorTest {
-
+class ClientCertDeploymentContributorTest {
   @SuppressWarnings("rawtypes")
   @Test
-  public void testServiceLoader() {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -52,7 +51,7 @@ public class ClientCertDeploymentContributorTest {
   }
 
   @Test
-  public void testDeployment() {
+  void testDeployment() {
     WebArchive webArchive = ShrinkWrap.create( WebArchive.class, "test-archive" );
 
     Provider provider = new Provider();

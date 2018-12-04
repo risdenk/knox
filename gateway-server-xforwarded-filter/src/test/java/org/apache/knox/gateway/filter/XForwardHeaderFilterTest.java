@@ -18,7 +18,7 @@
 package org.apache.knox.gateway.filter;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,11 +29,10 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class XForwardHeaderFilterTest {
-
+class XForwardHeaderFilterTest {
   public static class AssertXForwardedHeaders extends TestFilterAdapter {
     @Override
-    public void doFilter( HttpServletRequest request, HttpServletResponse response, FilterChain chain ) throws IOException, ServletException {
+    public void doFilter( HttpServletRequest request, HttpServletResponse response, FilterChain chain ) {
       assertThat( request.getHeader( "X-Forwarded-For" ), is( "127.0.0.1" ) );
       assertThat( request.getHeader( "X-Forwarded-Proto" ), is( "http" ) );
       assertThat( request.getHeader( "X-Forwarded-Port" ), is( "8888" ) );
@@ -44,7 +43,7 @@ public class XForwardHeaderFilterTest {
   }
 
   @Test
-  public void testXForwardHeaders() throws ServletException, IOException {
+  void testXForwardHeaders() throws ServletException, IOException {
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     EasyMock.expect( request.getRemoteAddr() ).andReturn( "127.0.0.1" ).anyTimes();
     EasyMock.expect( request.isSecure() ).andReturn( false ).anyTimes();
@@ -66,7 +65,7 @@ public class XForwardHeaderFilterTest {
 
   public static class AssertProxiedXForwardedHeaders extends TestFilterAdapter {
     @Override
-    public void doFilter( HttpServletRequest request, HttpServletResponse response, FilterChain chain ) throws IOException, ServletException {
+    public void doFilter( HttpServletRequest request, HttpServletResponse response, FilterChain chain ) {
       assertThat( request.getHeader( "X-Forwarded-For" ), is( "127.0.0.0,127.0.0.1" ) );
       assertThat( request.getHeader( "X-Forwarded-Proto" ), is( "https" ) );
       assertThat( request.getHeader( "X-Forwarded-Port" ), is( "9999" ) );
@@ -134,7 +133,7 @@ public class XForwardHeaderFilterTest {
   }
 
   @Test
-  public void testProxiedXForwardHeaders() throws ServletException, IOException {
+  void testProxiedXForwardHeaders() throws ServletException, IOException {
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
 
     EasyMock.expect( request.getHeader( "X-Forwarded-For" ) ).andReturn( "127.0.0.0" ).anyTimes();

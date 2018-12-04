@@ -17,9 +17,10 @@
  */
 package org.apache.knox.gateway.webappsec;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -34,17 +35,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.knox.gateway.webappsec.filter.StrictTransportFilter;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class StrictTransportFilterTest {
+class StrictTransportFilterTest {
   private static final String STRICT_TRANSPORT = "Strict-Transport-Security";
-  String options;
-  Collection<String> headerNames;
-  Collection<String> headers;
+  private String options;
+  private Collection<String> headers;
 
   @Test
-  public void testDefaultOptionsValue() throws Exception {
+  void testDefaultOptionsValue() throws Exception {
     try {
       StrictTransportFilter filter = new StrictTransportFilter();
       Properties props = new Properties();
@@ -60,19 +59,18 @@ public class StrictTransportFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.",
-          chain.doFilterCalled );
-      Assert.assertEquals("Options value incorrect should be max-age=31536000 but is: "
-                              + options, "max-age=31536000", options);
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals("max-age=31536000", options,
+          "Options value incorrect should be max-age=31536000 but is: " + options);
 
-      Assert.assertEquals("Strict-Transport-Security count not equal to 1.", 1, headers.size());
+      assertEquals(1, headers.size(), "Strict-Transport-Security count not equal to 1.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testConfiguredOptionsValue() throws Exception {
+  void testConfiguredOptionsValue() throws Exception {
     try {
       StrictTransportFilter filter = new StrictTransportFilter();
       Properties props = new Properties();
@@ -89,12 +87,12 @@ public class StrictTransportFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.",
-          chain.doFilterCalled );
-      Assert.assertEquals("Options value incorrect should be max-age=31536010; includeSubDomains but is: "
-                              + options, "max-age=31536010; includeSubDomains", options);
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals("max-age=31536010; includeSubDomains", options,
+          "Options value incorrect should be max-age=31536010; includeSubDomains but is: "
+              + options);
 
-      Assert.assertEquals("Strict-Transport-Security count not equal to 1.", 1, headers.size());
+      assertEquals(1, headers.size(), "Strict-Transport-Security count not equal to 1.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
@@ -132,11 +130,9 @@ public class StrictTransportFilterTest {
     boolean doFilterCalled;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response)
-        throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response) {
       doFilterCalled = true;
       options = ((HttpServletResponse)response).getHeader(STRICT_TRANSPORT);
-      headerNames = ((HttpServletResponse)response).getHeaderNames();
       headers = ((HttpServletResponse)response).getHeaders(STRICT_TRANSPORT);
     }
   }

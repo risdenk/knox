@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class NoopJsonFilterReader extends JsonFilterReader {
-
-  public NoopJsonFilterReader( Reader reader, UrlRewriteFilterContentDescriptor config ) throws IOException {
+  NoopJsonFilterReader( Reader reader, UrlRewriteFilterContentDescriptor config ) throws IOException {
     super( reader, config );
   }
 
@@ -37,5 +36,4 @@ public class NoopJsonFilterReader extends JsonFilterReader {
   protected String filterValueString(String name, String value, String rule ) {
     return value;
   }
-
 }

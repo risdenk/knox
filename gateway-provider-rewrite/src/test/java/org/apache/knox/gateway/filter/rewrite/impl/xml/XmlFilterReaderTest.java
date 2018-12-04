@@ -39,13 +39,12 @@ import org.apache.knox.gateway.filter.rewrite.ext.UrlRewriteMatchDescriptorExt;
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteActionDescriptorBase;
 import org.apache.knox.test.TestUtils;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,15 +64,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlmatchers.XmlMatchers.hasXPath;
 import static org.xmlmatchers.transform.XmlConverters.the;
 
-public class XmlFilterReaderTest {
-
+class XmlFilterReaderTest {
   public static class NoopXmlFilterReader extends XmlFilterReader {
-    public NoopXmlFilterReader( Reader reader, UrlRewriteFilterContentDescriptor config ) throws IOException, ParserConfigurationException, XMLStreamException {
+    NoopXmlFilterReader( Reader reader, UrlRewriteFilterContentDescriptor config ) throws IOException, XMLStreamException {
       super( reader, config );
     }
 
@@ -91,7 +89,7 @@ public class XmlFilterReaderTest {
   public static class MapXmlFilterReader extends XmlFilterReader {
     private Map<String,String> map;
 
-    public MapXmlFilterReader( Reader reader, Map<String,String> map ) throws IOException, ParserConfigurationException, XMLStreamException {
+    MapXmlFilterReader( Reader reader, Map<String,String> map ) throws IOException, XMLStreamException {
       super( reader, null );
       this.map = map;
     }
@@ -108,7 +106,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimple() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimple() throws IOException, XMLStreamException {
     String inputXml = "<root/>";
     StringReader inputReader = new StringReader( inputXml );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -117,7 +115,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleStreaming() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleStreaming() throws IOException, XMLStreamException {
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteFilterDescriptor filterConfig = rulesConfig.addFilter( "filter-1" );
     UrlRewriteFilterContentDescriptor contentConfig = filterConfig.addContent( "text/xml" );
@@ -130,7 +128,7 @@ public class XmlFilterReaderTest {
   }
 
 //  @Test
-//  public void testSimpleScoped() throws IOException, ParserConfigurationException, XMLStreamException {
+//  void testSimpleScoped() throws IOException, XMLStreamException {
 //    UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
 //    UrlRewriteFilterDescriptor filterConfig = rulesConfig.addFilter( "filter-1" );
 //    UrlRewriteFilterContentDescriptor contentConfig = filterConfig.addContent( "text/xml" );
@@ -143,7 +141,7 @@ public class XmlFilterReaderTest {
 //  }
 
   @Test
-  public void testSimpleBuffered() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleBuffered() throws IOException, XMLStreamException {
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteFilterDescriptor filterConfig = rulesConfig.addFilter( "filter-1" );
     UrlRewriteFilterContentDescriptor contentConfig = filterConfig.addContent( "text/xml" );
@@ -158,7 +156,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleNested() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleNested() throws IOException, XMLStreamException {
     String inputXml = "<root><child1><child11/><child12/></child1><child2><child21/><child22/></child2></root>";
     StringReader inputReader = new StringReader( inputXml );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -173,7 +171,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleWithNamespace() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleWithNamespace() throws IOException, XMLStreamException {
     String inputXml = "<ns:root xmlns:ns='http://hortonworks.com/xml/ns'></ns:root>";
     StringReader inputReader = new StringReader( inputXml );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -185,7 +183,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleTextNode() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleTextNode() throws IOException, XMLStreamException {
     String inputXml = "<root>text</root>";
     StringReader inputReader = new StringReader( inputXml );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -194,7 +192,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleAttribute() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleAttribute() throws IOException, XMLStreamException {
     String inputXml = "<root name='value'/>";
     StringReader inputReader = new StringReader( inputXml );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -203,7 +201,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleTextNodeBuffered() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleTextNodeBuffered() throws IOException, XMLStreamException {
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteFilterDescriptor filterConfig = rulesConfig.addFilter( "filter-1" );
     UrlRewriteFilterContentDescriptor contentConfig = filterConfig.addContent( "text/xml" );
@@ -218,7 +216,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSimpleAttributeBuffered() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSimpleAttributeBuffered() throws IOException, XMLStreamException {
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
     UrlRewriteFilterDescriptor filterConfig = rulesConfig.addFilter( "filter-1" );
     UrlRewriteFilterContentDescriptor contentConfig = filterConfig.addContent( "text/xml" );
@@ -233,7 +231,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testMappedText() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testMappedText() throws IOException, XMLStreamException {
     Map<String,String> map = new HashMap<>();
     map.put( "input-text", "output-text" );
     String inputXml = "<root>input-text</root>";
@@ -244,7 +242,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testMappedAttribute() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testMappedAttribute() throws IOException, XMLStreamException {
     Map<String,String> map = new HashMap<>();
     map.put( "input-text", "output-text" );
     String inputXml = "<root attribute='input-text'/>";
@@ -255,7 +253,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testCombined() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testCombined() throws IOException, XMLStreamException {
     Map<String,String> map = new HashMap<>();
     map.put( "attr1-input", "attr1-output" );
     map.put( "attr2-input", "attr2-output" );
@@ -310,18 +308,17 @@ public class XmlFilterReaderTest {
     assertThat( the( outputXml ), hasXPath( "/n1:root/n2:child2/text()", ns, equalTo( "child2-output" ) ) );
   }
 
-  public static class XmlRewriteRulesDescriptorDigesterTest {
-
+  static class XmlRewriteRulesDescriptorDigesterTest {
     private static DigesterLoader loader = newLoader( new XmlRewriteRulesDigester() );
     private static Digester digester = loader.newDigester( new ExtendedBaseRules() );
 
-    @Before
-    public void setupTest() {
+    @BeforeEach
+    void setUp() {
       digester.setValidating( false );
     }
 
     @Test
-    public void testRuleParsing() throws IOException, SAXException {
+    void testRuleParsing() throws IOException, SAXException {
       Reader reader = new StringReader( "<rules/>" );
       UrlRewriteRulesDescriptor config = digester.parse( reader );
       assertThat( config.getRules().isEmpty(), is( true ) );
@@ -401,7 +398,7 @@ public class XmlFilterReaderTest {
     }
 
     @Test
-    public void testDirectionParsing() throws IOException, SAXException {
+    void testDirectionParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
 
@@ -526,7 +523,7 @@ public class XmlFilterReaderTest {
     }
 
     @Test
-    public void testFlowParsing() throws IOException, SAXException {
+    void testFlowParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
 
@@ -536,7 +533,7 @@ public class XmlFilterReaderTest {
     }
 
     @Test
-    public void testMatchParsing() throws IOException, SAXException {
+    void testMatchParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -575,7 +572,7 @@ public class XmlFilterReaderTest {
     }
 
     @Test
-    public void testCheckParsing() throws IOException, SAXException {
+    void testCheckParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -613,7 +610,7 @@ public class XmlFilterReaderTest {
     }
 
     @Test
-    public void testActionParsing() throws IOException, SAXException {
+    void testActionParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -647,7 +644,7 @@ public class XmlFilterReaderTest {
     }
 
     @Test
-    public void testControlParsing() throws IOException, SAXException {
+    void testControlParsing() throws IOException, SAXException {
       Reader reader;
       UrlRewriteRulesDescriptor config;
       UrlRewriteRuleDescriptor rule;
@@ -679,7 +676,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testTagNameLetterCase() throws Exception {
+  void testTagNameLetterCase() throws Exception {
     String inputXml = "<Root/>";
     StringReader inputReader = new StringReader( inputXml );
 
@@ -689,7 +686,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testXmlWithHtmlTagNames() throws Exception {
+  void testXmlWithHtmlTagNames() throws Exception {
     String inputXml = "<root><br><table name=\"table1\"/><table name=\"table2\"/></br></root>";
     StringReader inputReader = new StringReader( inputXml );
 
@@ -700,7 +697,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testStreamedApplyForElements() throws Exception {
+  void testStreamedApplyForElements() throws Exception {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties-elements.xml" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -722,7 +719,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testStreamedApplyForElementsConfigShortcut() throws Exception {
+  void testStreamedApplyForElementsConfigShortcut() throws Exception {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties-elements.xml" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -744,7 +741,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testStreamedApplyForAttributes() throws Exception {
+  void testStreamedApplyForAttributes() throws Exception {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties-attributes.xml" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -766,7 +763,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testBufferedApplyForAttributes() throws Exception {
+  void testBufferedApplyForAttributes() throws Exception {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties-attributes.xml" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -789,7 +786,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testBufferedDetectApplyForElements() throws Exception {
+  void testBufferedDetectApplyForElements() throws Exception {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties-elements.xml" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -813,7 +810,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testBufferedDetectApplyForAttributes() throws Exception {
+  void testBufferedDetectApplyForAttributes() throws Exception {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties-attributes.xml" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -837,7 +834,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testInvalidConfigShouldThrowException() throws Exception {
+  void testInvalidConfigShouldThrowException() throws Exception {
     String input = "<root url='http://mock-host:42/test-input-path-1'><url>http://mock-host:42/test-input-path-2</url></root>";
 
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
@@ -861,7 +858,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testDefaultNamespace() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testDefaultNamespace() throws IOException, XMLStreamException {
     String input = "<root xmlns=\"ns\"><node attribute=\"attr\">nodevalue</node></root>";
     StringReader inputReader = new StringReader( input );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -873,7 +870,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testEscapeCharactersBugKnox616() throws Exception {
+  void testEscapeCharactersBugKnox616() throws Exception {
     String input, output;
     StringReader reader;
     XmlFilterReader filter;
@@ -928,7 +925,7 @@ public class XmlFilterReaderTest {
   }
 
   @Test
-  public void testSpecialTextNodeBugKnox394() throws IOException, ParserConfigurationException, XMLStreamException {
+  void testSpecialTextNodeBugKnox394() throws IOException, XMLStreamException {
     String inputXml = "<tag>${oozieTemplateMarkup}</tag>";
     StringReader inputReader = new StringReader( inputXml );
     XmlFilterReader filterReader = new NoopXmlFilterReader( inputReader, null );
@@ -937,8 +934,7 @@ public class XmlFilterReaderTest {
   }
 
   private class TestXmlFilterReader extends XmlFilterReader {
-
-    protected TestXmlFilterReader( Reader reader, UrlRewriteFilterContentDescriptor contentConfig ) throws IOException, ParserConfigurationException, XMLStreamException {
+    TestXmlFilterReader( Reader reader, UrlRewriteFilterContentDescriptor contentConfig ) throws IOException, XMLStreamException {
       super( reader, contentConfig );
     }
 

@@ -22,40 +22,29 @@ import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.service.config.remote.RemoteConfigurationRegistryConfig;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.easymock.EasyMock;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class RemoteConfigurationRegistryJAASConfigTest {
-
-    @Rule
-    public final TemporaryFolder testFolder = new TemporaryFolder();
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
-
+class RemoteConfigurationRegistryJAASConfigTest {
     @Test
-    public void testZooKeeperDigestContextEntry() throws Exception {
+    void testZooKeeperDigestContextEntry() throws Exception {
         List<RemoteConfigurationRegistryConfig> registryConfigs = new ArrayList<>();
         final String ENTRY_NAME       = "my_digest_context";
         final String DIGEST_PRINCIPAL = "myIdentity";
@@ -87,7 +76,7 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     @Test
-    public void testKerberosContextEntry() throws Exception {
+    void testKerberosContextEntry() throws Exception {
         List<RemoteConfigurationRegistryConfig> registryConfigs = new ArrayList<>();
         final String ENTRY_NAME = "my_kerberos_context";
         final String PRINCIPAL  = "myIdentity";
@@ -116,7 +105,7 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     @Test
-    public void testZooKeeperMultipleContextEntries() throws Exception {
+    void testZooKeeperMultipleContextEntries() throws Exception {
         List<RemoteConfigurationRegistryConfig> registryConfigs = new ArrayList<>();
         final String KERBEROS_ENTRY_NAME = "my_kerberos_context";
         final String KERBEROS_PRINCIPAL  = "myKerberosIdentity";
@@ -161,7 +150,7 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     @Test
-    public void testZooKeeperDigestContextEntryWithoutAliasService() throws Exception {
+    void testZooKeeperDigestContextEntryWithoutAliasService() {
         List<RemoteConfigurationRegistryConfig> registryConfigs = new ArrayList<>();
         final String ENTRY_NAME       = "my_digest_context";
         final String DIGEST_PRINCIPAL = "myIdentity";
@@ -185,15 +174,15 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     @Test
-    public void shouldRaiseAnErrorWithMeaningfulErrorMessageIfAuthLoginConfigCannotBeRead() throws Exception {
+    void shouldRaiseAnErrorWithMeaningfulErrorMessageIfAuthLoginConfigCannotBeRead() throws Exception {
       final List<RemoteConfigurationRegistryConfig> registryConfigs = new ArrayList<>();
       System.setProperty(GatewayConfig.KRB5_LOGIN_CONFIG, "nonExistingFilePath");
 
-      expectedException.expect(ConfigurationException.class);
-      expectedException.expectMessage(startsWith(RemoteConfigurationRegistryJAASConfig.JAAS_CONFIG_ERRROR_PREFIX));
-
       try {
-        RemoteConfigurationRegistryJAASConfig.configure(registryConfigs, null);
+        ConfigurationException configurationException =
+            Assertions.assertThrows(ConfigurationException.class,
+                () -> RemoteConfigurationRegistryJAASConfig.configure(registryConfigs, null));
+        assertTrue(configurationException.getMessage().startsWith(RemoteConfigurationRegistryJAASConfig.JAAS_CONFIG_ERRROR_PREFIX));
       } finally {
         System.clearProperty(GatewayConfig.KRB5_LOGIN_CONFIG);
         Configuration.setConfiguration(null);
@@ -201,16 +190,16 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     @Test
-    public void shouldRaiseAnErrorWithMeaningfulErrorMessageIfAuthLoginConfigCannotBeParsed() throws Exception {
+    void shouldRaiseAnErrorWithMeaningfulErrorMessageIfAuthLoginConfigCannotBeParsed() throws Exception {
       final List<RemoteConfigurationRegistryConfig> registryConfigs = new ArrayList<>();
       final String jaasConfigFilePath = writeInvalidJaasConf(false, "jaasConfWithInvalidKeytab", createTempKeytabFile("invalidKeytab"));
       System.setProperty(GatewayConfig.KRB5_LOGIN_CONFIG, jaasConfigFilePath);
 
-      expectedException.expect(ConfigurationException.class);
-      expectedException.expectMessage(startsWith(RemoteConfigurationRegistryJAASConfig.JAAS_CONFIG_ERRROR_PREFIX));
-
       try {
-        RemoteConfigurationRegistryJAASConfig.configure(registryConfigs, null);
+        ConfigurationException configurationException =
+            Assertions.assertThrows(ConfigurationException.class,
+                () -> RemoteConfigurationRegistryJAASConfig.configure(registryConfigs, null));
+        assertTrue(configurationException.getMessage().startsWith(RemoteConfigurationRegistryJAASConfig.JAAS_CONFIG_ERRROR_PREFIX));
       } finally {
         System.clearProperty(GatewayConfig.KRB5_LOGIN_CONFIG);
         Configuration.setConfiguration(null);
@@ -218,16 +207,16 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     @Test
-    public void shouldRaiseAnErrorWithMeaningfulErrorMessageIfReferencedKeytabFileDoesNotExists() throws Exception {
+    void shouldRaiseAnErrorWithMeaningfulErrorMessageIfReferencedKeytabFileDoesNotExists() throws Exception {
       final String jaasConfigFilePath = writeInvalidJaasConf(true, "jaasConfWithMissingKeytab", "nonExistingKeytabFile");
       System.setProperty(GatewayConfig.KRB5_LOGIN_CONFIG, jaasConfigFilePath);
 
-      expectedException.expect(ConfigurationException.class);
-      expectedException.expectMessage(startsWith("The specified keytab file"));
-      expectedException.expectMessage(endsWith("is either non-existing or cannot be read!"));
-
       try {
-        RemoteConfigurationRegistryJAASConfig.configure(new ArrayList<>(), null);
+        ConfigurationException configurationException =
+            Assertions.assertThrows(ConfigurationException.class,
+                () -> RemoteConfigurationRegistryJAASConfig.configure(new ArrayList<>(), null));
+        assertTrue(configurationException.getMessage().startsWith("The specified keytab file"));
+        assertTrue(configurationException.getMessage().endsWith("is either non-existing or cannot be read!"));
       } finally {
         System.clearProperty(GatewayConfig.KRB5_LOGIN_CONFIG);
         Configuration.setConfiguration(null);
@@ -235,13 +224,14 @@ public class RemoteConfigurationRegistryJAASConfigTest {
     }
 
     private String createTempKeytabFile(String keytabFileName) throws IOException {
-      final File keytabFile = testFolder.newFile(keytabFileName);
+      final File keytabFile = Files.createTempFile(keytabFileName, ".keytab").toFile();
       FileUtils.writeStringToFile(keytabFile, "dummyBinaryContent", StandardCharsets.UTF_8);
       return keytabFile.getAbsolutePath();
     }
 
     private String writeInvalidJaasConf(boolean valid, String jaasConfFileName, String keytabFileName) throws IOException {
-      final File jaasConfigFile = testFolder.newFile(jaasConfFileName);
+      final File jaasConfigFile = Files.createTempFile(jaasConfFileName, ".conf").toFile();
+      jaasConfigFile.deleteOnExit();
       final String jaasConfig = "com.sun.security.jgss.initiate {\n" +
         "com.sun.security.auth.module.Krb5LoginModule required\n" +
         "renewTGT=false\n" +
@@ -315,12 +305,12 @@ public class RemoteConfigurationRegistryJAASConfigTest {
                                               String                                entryName,
                                               String                                loginModule,
                                               String                                principal,
-                                              String                                password) throws Exception {
+                                              String                                password) {
         AppConfigurationEntry[] myContextEntries = config.getAppConfigurationEntry(entryName);
         assertNotNull(myContextEntries);
         assertEquals(1, myContextEntries.length);
         AppConfigurationEntry entry = myContextEntries[0];
-      assertEquals(entry.getLoginModuleName(), loginModule);
+        assertEquals(entry.getLoginModuleName(), loginModule);
         Map<String, ?> entryOpts = entry.getOptions();
         assertEquals(principal, entryOpts.get("username"));
         assertEquals(password, entryOpts.get("password"));
@@ -331,7 +321,7 @@ public class RemoteConfigurationRegistryJAASConfigTest {
                                                 String                                principal,
                                                 String                                keyTab,
                                                 boolean                               useKeyTab,
-                                                boolean                               useTicketCache) throws Exception {
+                                                boolean                               useTicketCache) {
         AppConfigurationEntry[] myContextEntries = config.getAppConfigurationEntry(entryName);
         assertNotNull(myContextEntries);
         assertEquals(1, myContextEntries.length);

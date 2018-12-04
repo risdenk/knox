@@ -20,8 +20,8 @@ package org.apache.knox.gateway.filter.rewrite.api;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,10 +44,9 @@ import org.apache.knox.gateway.util.urltemplate.Matcher;
 import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UrlRewriteProcessorTest {
-
+class UrlRewriteProcessorTest {
   private static URL getTestResourceUrl( String name ) throws FileNotFoundException {
     name = UrlRewriteProcessorTest.class.getName().replaceAll( "\\.", "/" ) + "/" + name;
     URL url = ClassLoader.getSystemResource( name );
@@ -67,7 +66,7 @@ public class UrlRewriteProcessorTest {
   }
 
   @Test
-  public void testBasicPathRewrite() throws IOException, URISyntaxException {
+  void testBasicPathRewrite() throws IOException, URISyntaxException {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     HttpServletResponse response = EasyMock.createNiceMock( HttpServletResponse.class );
@@ -90,7 +89,7 @@ public class UrlRewriteProcessorTest {
   }
 
   @Test
-  public void testMultipleIdenticalRewriteOutputRules() throws IOException, URISyntaxException {
+  void testMultipleIdenticalRewriteOutputRules() throws IOException, URISyntaxException {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     HttpServletResponse response = EasyMock.createNiceMock( HttpServletResponse.class );
@@ -128,7 +127,7 @@ public class UrlRewriteProcessorTest {
   }
 
   @Test
-  public void testIdenticalRewriteOutputRulesWithScopes() throws IOException, URISyntaxException {
+  void testIdenticalRewriteOutputRulesWithScopes() throws IOException, URISyntaxException {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     HttpServletResponse response = EasyMock.createNiceMock( HttpServletResponse.class );
@@ -208,7 +207,7 @@ public class UrlRewriteProcessorTest {
   }
 
   @Test
-  public void testRewriteViaRuleNameWithAmbiguousRules() throws IOException, URISyntaxException {
+  void testRewriteViaRuleNameWithAmbiguousRules() throws IOException, URISyntaxException {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     HttpServletResponse response = EasyMock.createNiceMock( HttpServletResponse.class );
@@ -240,7 +239,7 @@ public class UrlRewriteProcessorTest {
   }
 
   @Test
-  public void testRewriteViaRuleWithComplexFlow() throws Exception {
+  void testRewriteViaRuleWithComplexFlow() throws Exception {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     HttpServletResponse response = EasyMock.createNiceMock( HttpServletResponse.class );
@@ -270,7 +269,7 @@ public class UrlRewriteProcessorTest {
   }
 
   @Test
-  public void testRewriteViaRuleWithWildcardTemplateAndOptionalQuery() throws Exception {
+  void testRewriteViaRuleWithWildcardTemplateAndOptionalQuery() throws Exception {
     UrlRewriteEnvironment environment = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     HttpServletResponse response = EasyMock.createNiceMock( HttpServletResponse.class );
@@ -305,7 +304,7 @@ public class UrlRewriteProcessorTest {
    * Tests the rewrite pattern used for re-writing Solr urls passed through Knox.
    */
   @Test
-  public void testSolrRewrite() throws Exception {
+  void testSolrRewrite() throws Exception {
     URI inputUri, outputUri;
     Matcher<Void> matcher;
     Matcher<Void>.Match match;
@@ -346,9 +345,8 @@ public class UrlRewriteProcessorTest {
     assertEquals("true", reWrittenParams.get("indent"));
   }
 
-
   @Test
-  public void testSolrRewriteDefaultPort() throws Exception {
+  void testSolrRewriteDefaultPort() throws Exception {
     URI inputUri, outputUri;
     Matcher<Void> matcher;
     Matcher<Void>.Match match;
@@ -388,7 +386,6 @@ public class UrlRewriteProcessorTest {
     assertEquals("json", reWrittenParams.get("wt"));
     assertEquals("true", reWrittenParams.get("indent"));
   }
-
 
   /**
    * Turn a string containing URL parameters, e.g.

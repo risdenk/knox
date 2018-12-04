@@ -21,7 +21,7 @@ import static io.restassured.RestAssured.given;
 import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -33,12 +33,12 @@ import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.test.TestUtils;
 import org.apache.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.mycila.xmltool.XMLDoc;
 import com.mycila.xmltool.XMLTag;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Functional test to verify : KNOX-242 LDAP Enhancements
@@ -46,12 +46,12 @@ import com.mycila.xmltool.XMLTag;
  * https://issues.apache.org/jira/browse/KNOX-242
  *
  */
-public class Knox242FuncTest {
+class Knox242FuncTest {
   private static final GatewayTestDriver driver = new GatewayTestDriver();
   private static final String cluster = "test-cluster";
 
-  @BeforeClass
-  public static void setupSuite() throws Exception {
+  @BeforeAll
+  static void setupSuite() throws Exception {
     LOG_ENTER();
     //appenders = NoOpAppender.setUpAndReturnOriginalAppenders();
     String basedir = System.getProperty("basedir");
@@ -64,14 +64,14 @@ public class Knox242FuncTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void cleanupSuite() throws Exception {
+  @AfterAll
+  static void cleanupSuite() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     GatewayTestConfig config = new GatewayTestConfig();
     XMLTag topology = createTopology();
     driver.setupGateway(config, cluster, topology, true);
@@ -185,8 +185,8 @@ public class Knox242FuncTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testGroupMember() {
+  @Test
+  void testGroupMember() {
     LOG_ENTER();
     String username = "joe";
     String password = "joe-password";
@@ -203,8 +203,8 @@ public class Knox242FuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testNonGroupMember() {
+  @Test
+  void testNonGroupMember() {
     LOG_ENTER();
     String username = "guest";
     String password = "guest-password";
@@ -218,5 +218,4 @@ public class Knox242FuncTest {
         .when().get( serviceUrl );
     LOG_EXIT();
   }
-
 }

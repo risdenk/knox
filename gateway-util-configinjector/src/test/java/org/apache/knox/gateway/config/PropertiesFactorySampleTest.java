@@ -17,23 +17,21 @@
  */
 package org.apache.knox.gateway.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PropertiesFactorySampleTest {
-
   public static class Target {
     @Configure @Alias("user.name")
     private String user = "nobody";
   }
 
   @Test
-  public void sampleDirect() {
+  void sampleDirect() {
     Target target = new Target();
     ConfigurationInjectorBuilder.configuration().target( target ).source( System.getProperties() ).inject();
     assertThat( target.user, is( System.getProperty( "user.name" ) ) );
   }
-
 }

@@ -21,25 +21,25 @@ import org.apache.knox.test.log.CollectAppender;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
+import java.time.Duration;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class StoreAndForwardAppenderTest {
-
-  @Before
-  public void setup() throws IOException {
-    cleanup();
+class StoreAndForwardAppenderTest {
+  @BeforeEach
+  void setUp() {
+    tearDown();
   }
 
-  @After
-  public void cleanup() throws IOException {
+  @AfterEach
+  void tearDown() {
     LogManager.shutdown();
     String absolutePath = "target/audit";
     File db = new File( absolutePath + ".db" );
@@ -53,19 +53,20 @@ public class StoreAndForwardAppenderTest {
     PropertyConfigurator.configure( ClassLoader.getSystemResourceAsStream( "audit-log4j.properties" ) );
   }
 
-  @Test(timeout = 500000)
-  public void testAppender() throws Exception {
-    System.out.println( "Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName() );
+  @Test
+  void testAppender() {
+    Assertions.assertTimeout(Duration.ofMillis(500000), () -> {
+      System.out.println("Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName());
 
-    int iterations = 1000;
-    Logger logger = Logger.getLogger( "audit.store" );
-    for( int i = 1; i <= iterations; i++ ) {
-      logger.info( Integer.toString( i ) );
-    }
-    while( CollectAppender.queue.size() < iterations ) {
-      Thread.sleep( 20 );
-    }
-    assertThat( CollectAppender.queue.size(), is( iterations ) );
+      int iterations = 1000;
+      Logger logger = Logger.getLogger("audit.store");
+      for (int i = 1; i <= iterations; i++) {
+        logger.info(Integer.toString(i));
+      }
+      while (CollectAppender.queue.size() < iterations) {
+        Thread.sleep(20);
+      }
+      assertThat(CollectAppender.queue.size(), is(iterations));
+    });
   }
-
 }

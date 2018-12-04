@@ -32,14 +32,14 @@ import javax.servlet.ServletException;
 
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link HadoopGroupProviderFilter}
  *
  * @since 0.11.0
  */
-public class HadoopGroupProviderFilterTest {
+class HadoopGroupProviderFilterTest {
 
   /**
    * System username
@@ -51,18 +51,11 @@ public class HadoopGroupProviderFilterTest {
    */
   private static final String username = System.getProperty("user.name");
 
-  /**
-   * Hadoop Groups implementation.
-   */
-  public HadoopGroupProviderFilterTest() {
-    super();
-  }
-
   /*
    * Test that valid groups are retrieved for a legitimate user.
    */
   @Test
-  public void testGroups() throws ServletException {
+  void testGroups() throws ServletException {
 
     final FilterConfig config = EasyMock.createNiceMock(FilterConfig.class);
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
@@ -94,8 +87,7 @@ public class HadoopGroupProviderFilterTest {
    * Test that no groups are retrieved for a dummy user.
    */
   @Test
-  public void testUnknownUser() throws ServletException {
-
+  void testUnknownUser() throws ServletException {
     final FilterConfig config = EasyMock.createNiceMock(FilterConfig.class);
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
@@ -128,10 +120,9 @@ public class HadoopGroupProviderFilterTest {
    * {@link LdapGroupsMapping} and in case of bad config we get empty groups
    * (Hadoop way).
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings("rawtypes")
   @Test
-  public void badConfigTest() throws ServletException {
-
+  void badConfigTest() throws ServletException {
     final List<String> keysList = Arrays.asList("hadoop.security.group.mapping",
         "hadoop.security.group.mapping.ldap.bind.user",
         "hadoop.security.group.mapping.ldap.bind.password",
@@ -198,7 +189,5 @@ public class HadoopGroupProviderFilterTest {
      * empty groups
      */
     assertThat(groups.length, is(0));
-
   }
-
 }

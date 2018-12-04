@@ -36,7 +36,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletTester;
 import org.eclipse.jetty.util.log.Log;
 import org.hamcrest.core.Is;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.DispatcherType;
@@ -47,7 +47,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -61,7 +60,7 @@ import java.util.Queue;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ServiceRegistryFunctionsTest {
+class ServiceRegistryFunctionsTest {
   private ServletTester server;
   private HttpTester.Request request;
   private HttpTester.Response response;
@@ -118,7 +117,7 @@ public class ServiceRegistryFunctionsTest {
   }
 
   @Test
-  public void testServiceRegistryFunctionsOnXmlRequestBody() throws Exception {
+  void testServiceRegistryFunctionsOnXmlRequestBody() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.body", "oozie-conf" );
     testSetup( "test-user", initParams );
@@ -150,7 +149,7 @@ public class ServiceRegistryFunctionsTest {
   }
 
   @Test
-  public void testServiceRegistryFunctionsOnJsonRequestBody() throws Exception {
+  void testServiceRegistryFunctionsOnJsonRequestBody() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.body", "oozie-conf" );
     testSetup( "test-user", initParams );
@@ -190,11 +189,11 @@ public class ServiceRegistryFunctionsTest {
     }
 
     @Override
-    public void init( FilterConfig filterConfig ) throws ServletException {
+    public void init( FilterConfig filterConfig ) {
     }
 
     @Override
-    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws ServletException {
       HttpServletRequest httpRequest = ((HttpServletRequest)request);
       StringBuffer sourceUrl = httpRequest.getRequestURL();
       String queryString = httpRequest.getQueryString();

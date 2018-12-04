@@ -22,7 +22,7 @@ import org.apache.knox.gateway.preauth.filter.IPValidator;
 import org.apache.knox.gateway.preauth.filter.PreAuthService;
 import org.apache.knox.gateway.preauth.filter.PreAuthValidator;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -31,16 +31,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class PreAuthServiceTest {
+class PreAuthServiceTest {
   @Test
-  public void testValidatorMap() {
+  void testValidatorMap() {
     Map<String, PreAuthValidator> valMap = PreAuthService.getValidatorMap();
     assertNotNull(valMap.get(IPValidator.IP_VALIDATION_METHOD_VALUE));
     assertEquals(valMap.get(IPValidator.IP_VALIDATION_METHOD_VALUE).getName(), IPValidator.IP_VALIDATION_METHOD_VALUE);
@@ -52,7 +52,7 @@ public class PreAuthServiceTest {
   }
 
   @Test
-  public void testDefaultValidator() throws ServletException {
+  void testDefaultValidator() throws ServletException {
     final FilterConfig filterConfig = EasyMock.createMock(FilterConfig.class);
     EasyMock.expect(filterConfig.getInitParameter(PreAuthService.VALIDATION_METHOD_PARAM))
         .andReturn(DefaultValidator.DEFAULT_VALIDATION_METHOD_VALUE);
@@ -68,7 +68,7 @@ public class PreAuthServiceTest {
   }
 
   @Test
-  public void testIPValidator() throws ServletException {
+  void testIPValidator() throws ServletException {
     final HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
     EasyMock.expect(request.getRemoteAddr()).andReturn("10.1.23.42");
     EasyMock.replay(request);
@@ -93,7 +93,7 @@ public class PreAuthServiceTest {
   }
 
   @Test
-  public void testMultipleValidatorsPositive() throws ServletException {
+  void testMultipleValidatorsPositive() throws ServletException {
     final HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
     EasyMock.expect(request.getRemoteAddr()).andReturn("10.1.23.42");
     EasyMock.replay(request);
@@ -120,7 +120,7 @@ public class PreAuthServiceTest {
   }
 
   @Test
-  public void testMultipleValidatorsNegative() {
+  void testMultipleValidatorsNegative() {
     final FilterConfig filterConfig = EasyMock.createMock(FilterConfig.class);
     EasyMock.expect(filterConfig.getInitParameter(PreAuthService.VALIDATION_METHOD_PARAM)).andReturn
         (DefaultValidator.DEFAULT_VALIDATION_METHOD_VALUE + ",  NOT_EXISTED_VALIDATOR" );

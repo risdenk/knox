@@ -30,8 +30,8 @@ import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletTester;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -59,8 +59,7 @@ import static org.hamcrest.core.Is.is;
 import static org.xmlmatchers.XmlMatchers.hasXPath;
 import static org.xmlmatchers.transform.XmlConverters.the;
 
-public class UrlRewriteServletFilterTest {
-
+class UrlRewriteServletFilterTest {
   private ServletTester server;
   private HttpTester.Request request;
   private HttpTester.Response response;
@@ -103,15 +102,15 @@ public class UrlRewriteServletFilterTest {
     response = null;
   }
 
-  @After
-  public void tearDown() throws Exception {
+  @AfterEach
+  void tearDown() throws Exception {
     if( server != null ) {
       server.stop();
     }
   }
 
   @Test
-  public void testInboundRequestUrlRewrite() throws Exception {
+  void testInboundRequestUrlRewrite() throws Exception {
     testSetUp( null );
     // Setup the server side request/response interaction.
     interaction.expect()
@@ -133,7 +132,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testInboundHeaderRewrite() throws Exception {
+  void testInboundHeaderRewrite() throws Exception {
     testSetUp( null );
     // Setup the server side request/response interaction.
     interaction.expect()
@@ -157,7 +156,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testOutboundHeaderRewrite() throws Exception {
+  void testOutboundHeaderRewrite() throws Exception {
     testSetUp( null );
     // Setup the server side request/response interaction.
     interaction.expect()
@@ -182,7 +181,7 @@ public class UrlRewriteServletFilterTest {
 
 //  @Ignore( "Need to figure out how to handle cookies since domain and path are separate." )
 //  @Test
-//  public void testRequestCookieRewrite() throws Exception {
+//  void testRequestCookieRewrite() throws Exception {
 //    setUpAndReturnOriginalAppenders( null );
 //    // Setup the server side request/response interaction.
 //    interaction.expect()
@@ -209,7 +208,7 @@ public class UrlRewriteServletFilterTest {
 
 //  @Ignore( "Need to figure out how to handle cookies since domain and path are separate." )
 //  @Test
-//  public void testResponseCookieRewrite() throws Exception {
+//  void testResponseCookieRewrite() throws Exception {
 //    setUpAndReturnOriginalAppenders( null );
 //    // Setup the server side request/response interaction.
 //    interaction.expect()
@@ -235,7 +234,7 @@ public class UrlRewriteServletFilterTest {
 //  }
 
   @Test
-  public void testInboundJsonBodyRewrite() throws Exception {
+  void testInboundJsonBodyRewrite() throws Exception {
     testSetUp( null );
 
     String inputJson = "{\"url\":\"http://mock-host:1/test-input-path\"}";
@@ -264,7 +263,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testInboundXmlBodyRewrite() throws Exception {
+  void testInboundXmlBodyRewrite() throws Exception {
     testSetUp( null );
     String input = "<root attribute=\"http://mock-host:1/test-input-path\">http://mock-host:1/test-input-path</root>";
     String output;
@@ -297,7 +296,7 @@ public class UrlRewriteServletFilterTest {
 
   // MatcherAssert.assertThat( XmlConverters.the( outputHtml ), XmlMatchers.hasXPath( "/html" ) );
   @Test
-  public void testOutboundJsonBodyRewrite() throws Exception {
+  void testOutboundJsonBodyRewrite() throws Exception {
     testSetUp( null );
 
     String input = "{\"url\":\"http://mock-host:1/test-input-path\"}";
@@ -326,7 +325,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testOutboundHtmlBodyRewrite() throws Exception {
+  void testOutboundHtmlBodyRewrite() throws Exception {
     testSetUp( null );
 
     String input = "<html><head></head><body><a href=\"http://mock-host:1/test-input-path\">link text</a></body></html>";
@@ -355,7 +354,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testInboundHtmlFormRewrite() throws Exception {
+  void testInboundHtmlFormRewrite() throws Exception {
     testSetUp( null );
 
     String input = "Name=Jonathan+Doe&Age=23&Formula=a+%2B+b+%3D%3D+13%25%21&url=http%3A%2F%2Fmock-host%3A1%2Ftest-input-path";
@@ -384,7 +383,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testRequestUrlRewriteWithFilterInitParam() throws Exception {
+  void testRequestUrlRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.url", "test-rule-2" );
     testSetUp( initParams );
@@ -417,7 +416,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testRequestHeaderRewriteWithFilterInitParam() throws Exception {
+  void testRequestHeaderRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.headers", "test-filter-2" );
     testSetUp( initParams );
@@ -458,7 +457,7 @@ public class UrlRewriteServletFilterTest {
 //  }
 
   @Test
-  public void testRequestJsonBodyRewriteWithFilterInitParam() throws Exception {
+  void testRequestJsonBodyRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     //initParams.put( "url, "" );
     initParams.put( "request.body", "test-filter-2" );
@@ -492,7 +491,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testRequestXmlBodyRewriteWithFilterInitParam() throws Exception {
+  void testRequestXmlBodyRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.body", "test-filter-2" );
     testSetUp( initParams );
@@ -525,7 +524,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testRequestXmlBodyRewriteWithFilterInitParamForInvalidFilterConfig() throws Exception {
+  void testRequestXmlBodyRewriteWithFilterInitParamForInvalidFilterConfig() throws Exception {
     Enumeration<Appender> realAppenders = NoOpAppender.setUpAndReturnOriginalAppenders();
     try {
 
@@ -564,7 +563,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testRequestFormBodyRewriteWithFilterInitParam() throws Exception {
+  void testRequestFormBodyRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "request.body", "test-filter-2" );
     testSetUp( initParams );
@@ -596,7 +595,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testResponseHeaderRewriteWithFilterInitParam() throws Exception {
+  void testResponseHeaderRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "response.headers", "test-filter-2" );
     testSetUp( initParams );
@@ -638,7 +637,7 @@ public class UrlRewriteServletFilterTest {
 //  }
 
   @Test
-  public void testResponseJsonBodyRewriteWithFilterInitParam() throws Exception {
+  void testResponseJsonBodyRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     //initParams.put( "url, "" );
     initParams.put( "response.body", "test-filter-2" );
@@ -671,7 +670,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testResponseHtmlBodyRewriteWithFilterInitParam() throws Exception {
+  void testResponseHtmlBodyRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     //initParams.put( "url, "" );
     initParams.put( "response.body", "test-filter-4" );
@@ -722,7 +721,7 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testResponseXmlBodyRewriteWithFilterInitParam() throws Exception {
+  void testResponseXmlBodyRewriteWithFilterInitParam() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "response.body", "test-filter-2" );
     testSetUp( initParams );
@@ -756,11 +755,9 @@ public class UrlRewriteServletFilterTest {
   }
 
   @Test
-  public void testResponseHtmlBodyRewriteCSSImport() throws Exception {
+  void testResponseHtmlBodyRewriteCSSImport() throws Exception {
     Map<String,String> initParams = new HashMap<>();
-    //initParams.put( "url, "" );
     initParams.put( "response.body", "test-filter-5" );
-    //initParams.put( "response", "" );
     testSetUp( initParams );
 
     String responseHtml = "<html>" +
@@ -798,7 +795,6 @@ public class UrlRewriteServletFilterTest {
 
     assertThat( response.getStatus(), is( 200 ) );
     String content = response.getContent();
-//    assertThat( the( content ), hasXPath( "//style/text()", equalTo( "@import \\\"http://0.0.0.0:0/stylesheets/pretty.css\\\";" ) ) );
     assertThat(content, anyOf( is(responseHtmlOne), is(responseHtmlTwo)));
   }
 
@@ -808,7 +804,7 @@ public class UrlRewriteServletFilterTest {
    * @since 0.14.0
    */
   @Test
-  public void testResponseHtmlBodyRewritePrefixFunctionTestPrefix() throws Exception {
+  void testResponseHtmlBodyRewritePrefixFunctionTestPrefix() throws Exception {
 
     Map<String,String> initParams = new HashMap<>();
     testSetUp( initParams );
@@ -846,8 +842,7 @@ public class UrlRewriteServletFilterTest {
    * KNOX-1305
    */
   @Test
-  public void testFunctionTestPostfix() throws Exception {
-
+  void testFunctionTestPostfix() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "response.headers", "test-filter-6" );
     testSetUp( initParams );
@@ -886,8 +881,7 @@ public class UrlRewriteServletFilterTest {
    * KNOX-1305
    */
   @Test
-  public void testFunctionTestInfix() throws Exception {
-
+  void testFunctionTestInfix() throws Exception {
     Map<String,String> initParams = new HashMap<>();
     initParams.put( "response.headers", "test-filter-6" );
     testSetUp( initParams );
@@ -924,7 +918,7 @@ public class UrlRewriteServletFilterTest {
    * See KNOX-791
    */
   @Test
-  public void testResponseHtmlAttributeEscaping() throws Exception {
+  void testResponseHtmlAttributeEscaping() throws Exception {
     final Map<String, String> initParams = new HashMap<>();
     initParams.put("response.body", "test-filter-4");
     testSetUp(initParams);
@@ -961,7 +955,7 @@ public class UrlRewriteServletFilterTest {
 
   private static class SetupFilter implements Filter {
     @Override
-    public void init( FilterConfig filterConfig ) throws ServletException {
+    public void init( FilterConfig filterConfig ) {
     }
 
     @Override
@@ -986,5 +980,4 @@ public class UrlRewriteServletFilterTest {
     public void destroy() {
     }
   }
-
 }

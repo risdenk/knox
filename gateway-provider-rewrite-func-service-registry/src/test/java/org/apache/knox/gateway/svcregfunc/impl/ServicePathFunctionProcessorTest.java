@@ -27,8 +27,8 @@ import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.registry.ServiceRegistry;
 import org.apache.knox.gateway.svcregfunc.api.ServicePathFunctionDescriptor;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -40,18 +40,17 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServicePathFunctionProcessorTest {
+class ServicePathFunctionProcessorTest {
+  private ServiceRegistry reg;
+  private GatewayServices svc;
+  private UrlRewriteEnvironment env;
+  private UrlRewriteContext ctx;
+  private ServicePathFunctionDescriptor desc;
 
-  ServiceRegistry reg;
-  GatewayServices svc;
-  UrlRewriteEnvironment env;
-  UrlRewriteContext ctx;
-  ServicePathFunctionDescriptor desc;
-
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     reg = EasyMock.createNiceMock( ServiceRegistry.class );
     EasyMock.expect( reg.lookupServiceURL( "test-cluster", "test-service" ) ).andReturn( "test-scheme://test-host:777/test-path" ).anyTimes();
 
@@ -76,7 +75,7 @@ public class ServicePathFunctionProcessorTest {
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -90,13 +89,13 @@ public class ServicePathFunctionProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     ServicePathFunctionProcessor func = new ServicePathFunctionProcessor();
     assertThat( func.name(), is( "servicePath" ) );
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  void testInitialize() throws Exception {
     ServicePathFunctionProcessor func = new ServicePathFunctionProcessor();
     try {
       func.initialize( null, desc );
@@ -120,7 +119,7 @@ public class ServicePathFunctionProcessorTest {
   }
 
   @Test
-  public void testDestroy() throws Exception {
+  void testDestroy() throws Exception {
     ServicePathFunctionProcessor func = new ServicePathFunctionProcessor();
     func.initialize( env, desc );
     func.destroy();
@@ -130,15 +129,12 @@ public class ServicePathFunctionProcessorTest {
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() throws Exception {
     ServicePathFunctionProcessor func = new ServicePathFunctionProcessor();
     func.initialize( env, desc );
 
-//    assertThat( func.resolve( ctx, "test-service" ), is( "/test-path" ) );
     assertThat( func.resolve( ctx, Collections.singletonList("invalid-test-service")), contains( "invalid-test-service" ) );
-//    assertThat( func.resolve( ctx, null ), nullValue() );
 
     func.destroy();
   }
-
 }

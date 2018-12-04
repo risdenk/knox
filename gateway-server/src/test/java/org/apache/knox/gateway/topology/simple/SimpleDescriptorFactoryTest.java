@@ -16,7 +16,7 @@
  */
 package org.apache.knox.gateway.topology.simple;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -33,12 +33,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SimpleDescriptorFactoryTest {
-
+class SimpleDescriptorFactoryTest {
     private enum FileType {
         JSON,
         YAML,
@@ -46,63 +45,61 @@ public class SimpleDescriptorFactoryTest {
     }
 
     @Test
-    public void testParseJSONSimpleDescriptor() throws Exception {
+    void testParseJSONSimpleDescriptor() {
         testParseSimpleDescriptor(FileType.JSON);
     }
 
     @Test
-    public void testParseYAMLSimpleDescriptor() throws Exception {
+    void testParseYAMLSimpleDescriptor() {
         testParseSimpleDescriptor(FileType.YML);
         testParseSimpleDescriptor(FileType.YAML);
     }
 
     @Test
-    public void testParseJSONSimpleDescriptorWithServiceVersions() throws Exception {
+    void testParseJSONSimpleDescriptorWithServiceVersions() throws Exception {
         testParseSimpleDescriptorWithServiceVersions(FileType.JSON);
     }
 
     @Test
-    public void testParseYAMLSimpleDescriptorWithServiceVersions() throws Exception {
+    void testParseYAMLSimpleDescriptorWithServiceVersions() throws Exception {
         testParseSimpleDescriptorWithServiceVersions(FileType.YML);
         testParseSimpleDescriptorWithServiceVersions(FileType.YAML);
     }
 
     @Test
-    public void testParseJSONSimpleDescriptorWithServiceParams() throws Exception {
+    void testParseJSONSimpleDescriptorWithServiceParams() throws Exception {
         testParseSimpleDescriptorWithServiceParams(FileType.JSON);
     }
 
     @Test
-    public void testParseYAMLSimpleDescriptorWithServiceParams() throws Exception {
+    void testParseYAMLSimpleDescriptorWithServiceParams() throws Exception {
         testParseSimpleDescriptorWithServiceParams(FileType.YML);
         testParseSimpleDescriptorWithServiceParams(FileType.YAML);
     }
 
     @Test
-    public void testParseJSONSimpleDescriptorWithApplications() throws Exception {
+    void testParseJSONSimpleDescriptorWithApplications() throws Exception {
         testParseSimpleDescriptorWithApplications(FileType.JSON);
     }
 
     @Test
-    public void testParseYAMLSimpleDescriptorApplications() throws Exception {
+    void testParseYAMLSimpleDescriptorApplications() throws Exception {
         testParseSimpleDescriptorWithApplications(FileType.YML);
         testParseSimpleDescriptorWithApplications(FileType.YAML);
     }
 
-
     @Test
-    public void testParseJSONSimpleDescriptorWithServicesAndApplications() throws Exception {
+    void testParseJSONSimpleDescriptorWithServicesAndApplications() throws Exception {
         testParseSimpleDescriptorWithServicesAndApplications(FileType.JSON);
     }
 
     @Test
-    public void testParseYAMLSimpleDescriptorWithServicesAndApplications() throws Exception {
+    void testParseYAMLSimpleDescriptorWithServicesAndApplications() throws Exception {
         testParseSimpleDescriptorWithServicesAndApplications(FileType.YML);
         testParseSimpleDescriptorWithServicesAndApplications(FileType.YAML);
     }
 
-
-    private void testParseSimpleDescriptor(FileType type) throws Exception {
+    private void testParseSimpleDescriptor(FileType type) {
         final String   discoveryType    = "AMBARI";
         final String   discoveryAddress = "http://c6401.ambari.apache.org:8080";
         final String   discoveryUser    = "joeblow";
@@ -144,7 +141,7 @@ public class SimpleDescriptorFactoryTest {
         }
     }
 
-    private void testParseSimpleDescriptorWithServiceVersions(FileType type) throws Exception {
+    private void testParseSimpleDescriptorWithServiceVersions(FileType type) {
         final String   discoveryType    = "AMBARI";
         final String   discoveryAddress = "http://c6401.ambari.apache.org:8080";
         final String   discoveryUser    = "joeblow";
@@ -192,9 +189,7 @@ public class SimpleDescriptorFactoryTest {
         }
     }
 
-
     private void testParseSimpleDescriptorWithServiceParams(FileType type) throws Exception {
-
         final String   discoveryType    = "AMBARI";
         final String   discoveryAddress = "http://c6401.ambari.apache.org:8080";
         final String   discoveryUser    = "admin";
@@ -255,7 +250,6 @@ public class SimpleDescriptorFactoryTest {
     }
 
     private void testParseSimpleDescriptorWithApplications(FileType type) throws Exception {
-
         final String   discoveryType    = "AMBARI";
         final String   discoveryAddress = "http://c6401.ambari.apache.org:8080";
         final String   discoveryUser    = "admin";
@@ -317,7 +311,6 @@ public class SimpleDescriptorFactoryTest {
     }
 
     private void testParseSimpleDescriptorWithServicesAndApplications(FileType type) throws Exception {
-
         final String   discoveryType    = "AMBARI";
         final String   discoveryAddress = "http://c6401.ambari.apache.org:8080";
         final String   discoveryUser    = "admin";
@@ -699,7 +692,6 @@ public class SimpleDescriptorFactoryTest {
         }
     }
 
-
     private void validateSimpleDescriptor(SimpleDescriptor          sd,
                                           String                    discoveryType,
                                           String                    discoveryAddress,
@@ -708,7 +700,6 @@ public class SimpleDescriptorFactoryTest {
                                           Map<String, List<String>> expectedServices) {
         validateSimpleDescriptor(sd, discoveryType, discoveryAddress, providerConfig, clusterName, expectedServices, null);
     }
-
 
     private void validateSimpleDescriptor(SimpleDescriptor          sd,
                                           String                    discoveryType,
@@ -719,7 +710,6 @@ public class SimpleDescriptorFactoryTest {
                                           Map<String, String>       expectedServiceVersions) {
         validateSimpleDescriptor(sd, discoveryType, discoveryAddress, providerConfig, clusterName, expectedServices, expectedServiceVersions, null);
     }
-
 
     private void validateSimpleDescriptor(SimpleDescriptor                 sd,
                                           String                           discoveryType,
@@ -773,9 +763,9 @@ public class SimpleDescriptorFactoryTest {
                     if (expectedVersion != null) {
                         String actualVersion = actualService.getVersion();
                         assertNotNull(actualVersion);
-                        assertEquals("Unexpected version for " + actualService.getName(),
-                                     expectedVersion,
-                                     actualVersion);
+                        assertEquals(expectedVersion,
+                                     actualVersion,
+                            "Unexpected version for " + actualService.getName());
                     }
                 }
 
@@ -832,5 +822,4 @@ public class SimpleDescriptorFactoryTest {
             }
         }
     }
-
 }

@@ -20,13 +20,10 @@ package org.apache.knox.gateway.identityasserter.filter;
 import org.apache.commons.io.IOUtils;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.identityasserter.common.filter.IdentityAsserterHttpServletRequestWrapper;
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
 import org.apache.knox.test.mock.MockHttpServletRequest;
 import org.apache.knox.test.mock.MockServletInputStream;
-import org.junit.Test;
-import org.junit.After;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,16 +38,14 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class IdentityAssertionHttpServletRequestWrapperTest {
-
-  @After
-  public void resetSystemProps() {
+class IdentityAssertionHttpServletRequestWrapperTest {
+  @AfterEach
+  void resetSystemProps() {
     System.setProperty(GatewayConfig.HADOOP_KERBEROS_SECURED, "false");
   }
 
   @Test
-  public void testInsertUserNameInPostMethod() throws IOException {
+  void testInsertUserNameInPostMethod() throws IOException {
     String inputBody = "jar=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaWebHCat%2Fhadoop-examples.jar&class=org.apache.org.apache.hadoop.examples.WordCount&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Finput&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Foutput";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -67,7 +62,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertUserNameInPostMethodWithoutEncoding() throws IOException {
+  void testInsertUserNameInPostMethodWithoutEncoding() {
     String inputBody = "jar=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaWebHCat%2Fhadoop-examples.jar&class=org.apache.org.apache.hadoop.examples.WordCount&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Finput&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Foutput";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -83,7 +78,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertUserNameInPostMethodWithIso88591Encoding() throws IOException {
+  void testInsertUserNameInPostMethodWithIso88591Encoding() throws IOException {
     String inputBody = "jar=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaWebHCat%2Fhadoop-examples.jar&class=org.apache.org.apache.hadoop.examples.WordCount&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Finput&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Foutput";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -100,7 +95,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testOverwriteUserNameInPostMethod() throws IOException {
+  void testOverwriteUserNameInPostMethod() throws IOException {
     String inputBody = "user.name=input-user&jar=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaWebHCat%2Fhadoop-examples.jar&class=org.apache.org.apache.hadoop.examples.WordCount&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Finput&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Foutput";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -118,7 +113,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testIngoreNonFormBody() throws IOException {
+  void testIngoreNonFormBody() throws IOException {
     String inputBody = "user.name=input-user&jar=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaWebHCat%2Fhadoop-examples.jar&class=org.apache.org.apache.hadoop.examples.WordCount&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Finput&arg=%2Ftmp%2FGatewayWebHdfsFuncTest%2FtestJavaMapReduceViaTempleton%2Foutput";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -136,7 +131,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertUserNameInQueryString() {
+  void testInsertUserNameInQueryString() {
     String input = "param=value";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -151,7 +146,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertDoAsInQueryString() {
+  void testInsertDoAsInQueryString() {
     System.setProperty(GatewayConfig.HADOOP_KERBEROS_SECURED, "true");
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.setQueryString("op=LISTSTATUS&user.name=jack&User.Name=jill&DOas=admin&doas=root");
@@ -164,7 +159,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertUserNameInNullQueryString() {
+  void testInsertUserNameInNullQueryString() {
     String input = null;
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -179,7 +174,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertUserNameInNullQueryStringForGET() {
+  void testInsertUserNameInNullQueryStringForGET() {
     String input = null;
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -194,7 +189,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testInsertUserNameInQueryStringForPOST() {
+  void testInsertUserNameInQueryStringForPOST() {
     String input = null;
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -210,7 +205,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testOverwriteUserNameInQueryString() {
+  void testOverwriteUserNameInQueryString() {
     String input = "user.name=input-user";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -226,7 +221,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testParameterWithNullValueInQueryString() {
+  void testParameterWithNullValueInQueryString() {
     String input = "paramWithNullValue&param2=abc";
 
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -243,7 +238,7 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
   }
 
   @Test
-  public void testUrlEncode() {
+  void testUrlEncode() {
     String s;
     HashMap<String,List<String>> m;
 

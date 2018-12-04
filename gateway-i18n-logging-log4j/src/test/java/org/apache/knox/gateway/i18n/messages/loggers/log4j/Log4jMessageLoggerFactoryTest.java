@@ -18,18 +18,17 @@
 package org.apache.knox.gateway.i18n.messages.loggers.log4j;
 
 import org.apache.knox.gateway.i18n.messages.MessageLoggerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class Log4jMessageLoggerFactoryTest {
-
+class Log4jMessageLoggerFactoryTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() throws Exception {
     ServiceLoader loader = ServiceLoader.load( MessageLoggerFactory.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -41,5 +40,4 @@ public class Log4jMessageLoggerFactoryTest {
     }
     fail( "Failed to find " + Log4jMessageLoggerFactory.class.getName() + " via service loader." );
   }
-
 }

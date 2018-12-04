@@ -18,7 +18,7 @@ package org.apache.knox.gateway.topology.discovery;
 
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -28,12 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PropertiesFileServiceDiscoveryTest {
-
+class PropertiesFileServiceDiscoveryTest {
     private static final Map<String, String> clusterProperties = new HashMap<>();
     static {
         clusterProperties.put("mycluster.name", "mycluster");
@@ -57,7 +56,7 @@ public class PropertiesFileServiceDiscoveryTest {
     }
 
     @Test
-    public void testPropertiesFileServiceDiscovery() throws Exception {
+    void testPropertiesFileServiceDiscovery() throws Exception {
         ServiceDiscovery sd = ServiceDiscoveryFactory.get("PROPERTIES_FILE");
         assertNotNull(sd);
 
@@ -86,8 +85,8 @@ public class PropertiesFileServiceDiscoveryTest {
                 }
             }
 
-            assertNull("Should not be any ZooKeeper config for RESOURCEMANAGER",
-                       c.getZooKeeperConfiguration("RESOURCEMANAGER"));
+            assertNull(c.getZooKeeperConfiguration("RESOURCEMANAGER"),
+                "Should not be any ZooKeeper config for RESOURCEMANAGER");
 
             // HIVE ZooKeeper config
             ServiceDiscovery.Cluster.ZooKeeperConfig zkConf = c.getZooKeeperConfiguration("HIVE");

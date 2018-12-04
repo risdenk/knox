@@ -17,10 +17,7 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 import java.util.Iterator;
@@ -30,9 +27,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class ParserTest {
-
+class ParserTest {
   private void assertBasics(
       Template template,
       boolean isAbsolute,
@@ -47,7 +42,7 @@ public class ParserTest {
     assertThat( "Incorrect query size.", template.getQuery().size(), is( querySegmentsSize ) );
   }
 
-  public void assertPath(
+  void assertPath(
       Template template,
       int index,
       String paramName,
@@ -57,7 +52,7 @@ public class ParserTest {
     assertThat( "Incorrect template value pattern.", segment.getFirstValue().getToken().getEffectivePattern(), is( valuePattern ) );
   }
 
-  public void assertPath(
+  void assertPath(
       Template template,
       int index,
       String paramName,
@@ -73,7 +68,7 @@ public class ParserTest {
 //    assertThat( "Segment max allowed wrong.", segment.getMaxAllowed(), is( maxAllowed ) );
   }
 
-  public void assertQuery(
+  void assertQuery(
       Template template,
       String queryName,
       String paramName,
@@ -84,7 +79,7 @@ public class ParserTest {
     assertThat( "value pattern wrong.", segment.getFirstValue().getToken().getEffectivePattern(), is( valuePattern ) );
   }
 
-  public void assertQuery(
+  void assertQuery(
       Template template,
       String queryName,
       String paramName,
@@ -102,13 +97,12 @@ public class ParserTest {
   }
 
   @Test
-  public void testCompleteUrl() throws URISyntaxException {
+  void testCompleteUrl() throws URISyntaxException {
     String text;
     Template template;
-    Parser parser = new Parser();
 
     text = "foo://username:password@example.com:8042/over/there/index.dtb?type=animal&name=narwhal#nose";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, false, true, 3, 2 );
     assertThat( template.toString(), is( text ) );
   }
@@ -125,7 +119,7 @@ public class ParserTest {
 //  }
 
   @Test
-  public void testTemplates() throws URISyntaxException {
+  void testTemplates() throws URISyntaxException {
     String text;
     Template template;
 
@@ -171,83 +165,82 @@ public class ParserTest {
   }
 
   @Test
-  public void testStaticPatterns() throws Exception {
-    Parser parser = new Parser();
+  void testStaticPatterns() throws Exception {
     String text;
     Template template;
 
     text = "";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, false, 0, 0 );
     assertThat( template.toString(), is( text ) );
 
     text = "/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, false, 0, 0 );
     assertThat( template.toString(), is( text ) );
 
     text = "?";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, true, 0, 0 );
     assertThat( template.toString(), is( text ) );
 
     text = "#";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, false, 0, 0 );
     assertThat( template.hasFragment(), is( true ) );
     assertThat( template.getFragment(), nullValue() );
     assertThat( template.toString(), is( text ) );
 
     text = "path";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, false, 1, 0 );
     assertPath( template, 0, "", "path" );
     assertThat( template.toString(), is( text ) );
 
     text = "/path";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, false, false, 1, 0 );
     assertPath( template, 0, "", "path" );
     assertThat( template.toString(), is( text ) );
 
 //    text = "//path";
-//    template = parser.parseTemplate( text );
+//    template = Parser.parseTemplate( text );
 //    assertBasics( template, true, false, false, 1, 0 );
 //    assertPath( template, 0, "", "path" );
 
     text = "path/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, true, false, 1, 0 );
     assertPath( template, 0, "", "path" );
     assertThat( template.toString(), is( text ) );
 
     text = "path//";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, true, false, 1, 0 );
     assertPath( template, 0, "", "path" );
     //IMPROVE assertThat( template.toString(), is( text ) );
     assertThat( template.getPattern(), is( text ) );
 
     text = "/path/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, false, 1, 0 );
     assertPath( template, 0, "", "path" );
     assertThat( template.toString(), is( text ) );
 
 //    text = "//path//";
-//    template = parser.parseTemplate( text );
+//    template = Parser.parseTemplate( text );
 //    assertBasics( template, true, true, false, 1, 0 );
 //    assertPath( template, 0, "", "path" );
 
     text = "pathA/pathB";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
     assertThat( template.toString(), is( text ) );
 
     text = "pathA//pathB";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
@@ -255,14 +248,14 @@ public class ParserTest {
     assertThat( template.getPattern(), is( text ) );
 
     text = "/pathA/pathB";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, false, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
     assertThat( template.toString(), is( text ) );
 
     text = "/pathA//pathB";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, false, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
@@ -270,14 +263,14 @@ public class ParserTest {
     assertThat( template.getPattern(), is( text ) );
 
     text = "pathA/pathB/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, true, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
     assertThat( template.toString(), is( text ) );
 
     text = "pathA//pathB/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, true, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
@@ -285,14 +278,14 @@ public class ParserTest {
     assertThat( template.getPattern(), is( text ) );
 
     text = "/pathA/pathB/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
     assertThat( template.toString(), is( text ) );
 
     text = "/pathA//pathB/";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, false, 2, 0 );
     assertPath( template, 0, "", "pathA" );
     assertPath( template, 1, "", "pathB" );
@@ -300,29 +293,29 @@ public class ParserTest {
     assertThat( template.getPattern(), is( text ) );
 
     text = "/?";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, true, 0, 0 );
     assertThat( template.toString(), is( text ) );
 
 //    text = "//??";
-//    template = parser.parseTemplate( text );
+//    template = Parser.parseTemplate( text );
 //    assertBasics( template, true, true, true, 0, 0 );
 
     text = "?name=value";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, true, 0, 1 );
     assertQuery( template, "name", "", "value" );
     assertThat( template.toString(), is( text ) );
 
     text = "?name1=value1&name2=value2";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, true, 0, 2 );
     assertQuery( template, "name1", "", "value1" );
     assertQuery( template, "name2", "", "value2" );
     assertThat( template.toString(), is( text ) );
 
     text = "?name1=value1&&name2=value2";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, true, 0, 2 );
     assertQuery( template, "name1", "", "value1" );
     assertQuery( template, "name2", "", "value2" );
@@ -330,13 +323,13 @@ public class ParserTest {
     assertThat( template.getPattern(), is( text ) );
 
     text = "/?name=value";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, true, 0, 1 );
     assertQuery( template, "name", "", "value" );
     assertThat( template.toString(), is( text ) );
 
     text = "/?name1=value1&name2=value2";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, true, true, true, 0, 2 );
     assertQuery( template, "name1", "", "value1" );
     assertQuery( template, "name2", "", "value2" );
@@ -348,20 +341,19 @@ public class ParserTest {
    *  In some cases & could be encoded as &amp;
    */
   @Test
-  public void testEncodedChar() throws URISyntaxException {
-    Parser parser = new Parser();
+  void testEncodedChar() throws URISyntaxException {
     String text;
     Template template;
 
     text = "stage?id=007&amp;attempt=0";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, true, 1, 2 );
     assertQuery( template, "id", "", "007" );
     assertQuery( template, "attempt", "", "0" );
   }
 
   @Test
-  public void testParameterizedPathTemplatesWithWildcardAndRegex() throws URISyntaxException {
+  void testParameterizedPathTemplatesWithWildcardAndRegex() throws URISyntaxException {
     String text;
     Template template;
 
@@ -397,7 +389,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testParameterizedQueryTemplatesWithWildcardAndRegex() throws URISyntaxException {
+  void testParameterizedQueryTemplatesWithWildcardAndRegex() throws URISyntaxException {
     String text;
     Template template;
 
@@ -433,7 +425,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testGlobPattern() throws URISyntaxException {
+  void testGlobPattern() throws URISyntaxException {
     String text;
     Template template;
 
@@ -524,7 +516,7 @@ public class ParserTest {
 //  }
 
   @Test
-  public void testAuthority() throws URISyntaxException {
+  void testAuthority() throws URISyntaxException {
     String text;
     Template template;
     String image;
@@ -632,7 +624,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testQuery() throws URISyntaxException {
+  void testQuery() throws URISyntaxException {
     String text;
     Template template;
     Query query;
@@ -668,7 +660,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testFragment() throws URISyntaxException {
+  void testFragment() throws URISyntaxException {
     String text;
     Template template;
 
@@ -681,8 +673,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testEdgeCases() throws URISyntaxException {
-    Parser parser = new Parser();
+  void testEdgeCases() throws URISyntaxException {
     String text;
     Template template;
 
@@ -733,7 +724,7 @@ public class ParserTest {
     assertThat( template.toString(), is( text ) );
 
     text = ":";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertBasics( template, false, false, false, 1, 0 );
     assertThat( template.hasScheme(), is( false ) );
     assertThat( template.getScheme(), nullValue() );
@@ -905,7 +896,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testQueryRemainder() throws URISyntaxException {
+  void testQueryRemainder() throws URISyntaxException {
     String text;
     Template template;
     Query query;
@@ -992,7 +983,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testSimplifiedQuerySyntax() throws URISyntaxException {
+  void testSimplifiedQuerySyntax() throws URISyntaxException {
     String text;
     Template template;
     Query query;
@@ -1023,7 +1014,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testAllWildcardUseCases() throws URISyntaxException {
+  void testAllWildcardUseCases() throws URISyntaxException {
     String text;
     Template template;
 
@@ -1044,15 +1035,13 @@ public class ParserTest {
   }
 
   @Test
-  public void testQueryNameWithoutValue() throws URISyntaxException {
-    Parser parser = new Parser();
+  void testQueryNameWithoutValue() throws URISyntaxException {
     String text;
     Template template;
     String string;
-    Expander expander = new Expander();
 
     text = "*://*:*/**?X";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( true ) );
     assertThat( template.getScheme().getParamName(), is( "" ) );
     assertThat( template.getScheme().getFirstValue().getOriginalPattern(), is( "*" ) );
@@ -1070,7 +1059,7 @@ public class ParserTest {
     assertThat( template.hasAuthority(), is( true ) );
     assertThat( template, notNullValue() );
     assertThat( template.getQuery().get( "X" ), notNullValue() );
-    string = expander.expandToString( template, null, null );
+    string = Expander.expandToString( template, null, null );
     assertThat( string, is( text ) );
     assertThat( template.toString(), is( text ) );
 
@@ -1078,7 +1067,7 @@ public class ParserTest {
     template = Parser.parseTemplate( text );
     assertThat( template, notNullValue() );
     assertThat( template.getQuery().get( "X" ), notNullValue() );
-    string = expander.expandToString( template, null, null );
+    string = Expander.expandToString( template, null, null );
     assertThat( string, is( "*://*:*/**?X" ) );
     //IMPROVE assertThat( template.toString(), is( text ) );
     assertThat( template.getPattern(), is( text ) );
@@ -1087,7 +1076,7 @@ public class ParserTest {
     template = Parser.parseTemplate( text );
     assertThat( template, notNullValue() );
     assertThat( template.getQuery().get( "aG9zdD1sb2NhbGhvc3QmcG9ydD02MjEzOSZvcD1DUkVBVEUmdXNlci5uYW1lPWhkZnM" ), notNullValue() );
-    string = expander.expandToString( template, null, null );
+    string = Expander.expandToString( template, null, null );
     assertThat( string, is( "http://localhost:62142/gateway/cluster/webhdfs/data/v1/tmp/GatewayWebHdfsFuncTest/testBasicHdfsUseCase/dir/file?aG9zdD1sb2NhbGhvc3QmcG9ydD02MjEzOSZvcD1DUkVBVEUmdXNlci5uYW1lPWhkZnM" ) );
     assertThat( template.toString(), is( text ) );
 
@@ -1095,20 +1084,19 @@ public class ParserTest {
     template = Parser.parseTemplate( text );
     assertThat( template, notNullValue() );
     assertThat( template.getQuery().get( "aG9zdD1sb2NhbGhvc3QmcG9ydD02MjEzOSZvcD1DUkVBVEUmdXNlci5uYW1lPWhkZnM" ), notNullValue() );
-    string = expander.expandToString( template, null, null );
+    string = Expander.expandToString( template, null, null );
     assertThat( string, is( "http://localhost:62142/gateway/cluster/webhdfs/data/v1/tmp/GatewayWebHdfsFuncTest/testBasicHdfsUseCase/dir/file?aG9zdD1sb2NhbGhvc3QmcG9ydD02MjEzOSZvcD1DUkVBVEUmdXNlci5uYW1lPWhkZnM" ) );
     //IMPROVE assertThat( template.toString(), is( text ) );
     assertThat( template.getPattern(), is( text ) );
   }
 
   @Test
-  public void testTemplateWithOnlyAuthority() throws Exception {
+  void testTemplateWithOnlyAuthority() throws Exception {
     String text;
     Template template;
-    Parser parser = new Parser();
 
     text = "test-host:42";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( false ) );
     assertThat( template.getHost().getFirstValue().getOriginalPattern(), is( "test-host" ) );
     assertThat( template.getHost().getFirstValue().getEffectivePattern(), is( "test-host" ) );
@@ -1117,7 +1105,7 @@ public class ParserTest {
     assertThat( template.toString(), is( text ) );
 
     text = "{test-host}:{test-port}";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( false ) );
     assertThat( template.getHost().getParamName(), is( "test-host" ) );
     assertThat( template.getHost().getFirstValue().getToken().getOriginalPattern(), nullValue() );
@@ -1129,13 +1117,12 @@ public class ParserTest {
   }
 
   @Test
-  public void testTemplateWithoutAuthority() throws Exception {
+  void testTemplateWithoutAuthority() throws Exception {
     String text;
     Template template;
-    Parser parser = new Parser();
 
     text = "test-scheme:/test-path";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( true ) );
     assertThat( template.getScheme().getFirstValue().getOriginalPattern(), is( "test-scheme" ) );
     assertThat( template.getScheme().getFirstValue().getEffectivePattern(), is( "test-scheme" ) );
@@ -1147,7 +1134,7 @@ public class ParserTest {
     assertThat( template.toString(), is( text ) );
 
     text = "test-scheme:///test-path";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( true ) );
     assertThat( template.getScheme().getFirstValue().getOriginalPattern(), is( "test-scheme" ) );
     assertThat( template.getScheme().getFirstValue().getEffectivePattern(), is( "test-scheme" ) );
@@ -1162,7 +1149,7 @@ public class ParserTest {
     assertThat( template.toString(), is( text ) );
 
     text = "{test-scheme}:/{test-path}";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( true ) );
     assertThat( template.getScheme().getParamName(), is( "test-scheme" ) );
     assertThat( template.getScheme().getFirstValue().getOriginalPattern(), nullValue() );
@@ -1176,7 +1163,7 @@ public class ParserTest {
     assertThat( template.toString(), is( text ) );
 
     text = "{test-scheme}:///{test-path}";
-    template = parser.parseTemplate( text );
+    template = Parser.parseTemplate( text );
     assertThat( template.hasScheme(), is( true ) );
     assertThat( template.getScheme().getParamName(), is( "test-scheme" ) );
     assertThat( template.getScheme().getFirstValue().getOriginalPattern(), nullValue() );
@@ -1195,7 +1182,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testAuthorityWildcards() throws Exception {
+  void testAuthorityWildcards() throws Exception {
     String text;
     Template template;
 
@@ -1231,7 +1218,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testParseTemplateToken() {
+  void testParseTemplateToken() {
     Builder builder;
     String input;
     Token output;
@@ -1282,7 +1269,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testBugKnox599() throws Exception {
+  void testBugKnox599() throws Exception {
     Template template;
     Template input;
     Matcher<String> matcher;
@@ -1301,7 +1288,7 @@ public class ParserTest {
   }
 
   @Test
-  public void testParserLiteralsWithReservedCharactersBugKnox394() throws Exception {
+  void testParserLiteralsWithReservedCharactersBugKnox394() throws Exception {
     Template template;
     String image;
 
@@ -1316,7 +1303,5 @@ public class ParserTest {
     template = Parser.parseLiteral( "${app.path}/child/path" );
     image = template.toString();
     assertThat( image, is( "${app.path}/child/path" ) );
-
   }
-
 }

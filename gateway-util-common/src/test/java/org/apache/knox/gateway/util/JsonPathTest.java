@@ -21,8 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -35,13 +34,12 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class JsonPathTest {
-
+class JsonPathTest {
   @Test
-  public void testCompileInvalidExpressions() {
+  void testCompileInvalidExpressions() {
     String[] paths = {
         null,
         "",
@@ -74,7 +72,7 @@ public class JsonPathTest {
   }
 
   @Test
-  public void testCompileUnsupportedExpressions() {
+  void testCompileUnsupportedExpressions() {
     String[] paths = {
         "$..book[-1:]",
         "$..book[,1]",
@@ -98,8 +96,7 @@ public class JsonPathTest {
   }
 
   @Test
-  public void testCompileValidExpressions() {
-
+  void testCompileValidExpressions() {
     JsonPath.Expression expression;
     JsonPath.Segment[] segments;
 
@@ -288,7 +285,7 @@ public class JsonPathTest {
   }
 
   @Test
-  public void testCompileQuotedExpressions() {
+  void testCompileQuotedExpressions() {
     JsonPath.Expression expression;
     JsonPath.Segment[] segments;
 
@@ -394,7 +391,7 @@ public class JsonPathTest {
   }
 
   @Test
-  public void testEvaluateObjects() throws IOException {
+  void testEvaluateObjects() throws IOException {
     String json;
     JsonPath.Segment seg;
     List<JsonPath.Match> matches;
@@ -474,7 +471,7 @@ public class JsonPathTest {
   }
 
   @Test
-  public void testEvaluateArrays() throws IOException {
+  void testEvaluateArrays() throws IOException {
     String json;
     List<JsonPath.Match> matches;
     JsonPath.Match match;
@@ -527,11 +524,11 @@ public class JsonPathTest {
     match = matches.get( 0 );
     expression = JsonPath.compile( "$.*.name" );
     matches = expression.evaluate( match.getNode() );
-    Assert.assertThat( matches.size(), is( 3 ) );
+    assertThat( matches.size(), is( 3 ) );
   }
 
   @Test
-  public void testGlobMatching() throws IOException {
+  void testGlobMatching() throws IOException {
     String json;
     List<JsonPath.Match> matches;
     JsonNode root;

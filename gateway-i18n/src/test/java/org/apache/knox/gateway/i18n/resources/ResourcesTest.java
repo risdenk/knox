@@ -17,34 +17,30 @@
  */
 package org.apache.knox.gateway.i18n.resources;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class ResourcesTest {
+class ResourcesTest {
   private Locale locale;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     locale = Locale.getDefault();
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     Locale.setDefault( locale );
   }
 
   @Test
-  public void testResourceFormatting() {
+  void testResourceFormatting() {
     ResourcesFormattingSubject res = ResourcesFactory.get( ResourcesFormattingSubject.class );
 
     assertThat(
@@ -81,7 +77,7 @@ public class ResourcesTest {
   }
 
   @Test
-  public void testResourceLocales() {
+  void testResourceLocales() {
     ResourcesLocaleSubject res = ResourcesFactory.get( ResourcesLocaleSubject.class );
 
     Locale.setDefault( Locale.CHINESE ); // Change to something that we won't have test bundles for.
@@ -98,7 +94,7 @@ public class ResourcesTest {
   }
 
   @Test
-  public void testNamedBundle() {
+  void testNamedBundle() {
     ResourcesNamedSubject res = ResourcesFactory.get( ResourcesNamedSubject.class );
 
     Locale.setDefault( Locale.CHINESE ); // Change to something that we won't have test bundles for.

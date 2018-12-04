@@ -24,29 +24,28 @@ import org.apache.curator.test.TestingCluster;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.URLManagerLoader;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AtlasZookeeperURLManagerTest {
-
+class AtlasZookeeperURLManagerTest {
     private TestingCluster cluster;
     private AtlasZookeeperURLManager manager;
     private static String atlasNode1 = "http://atlas.node1:21000";
     private static String atlasNode2 = "http://atlas.node2:21000";
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         cluster = new TestingCluster(3);
         cluster.start();
 
@@ -73,22 +72,22 @@ public class AtlasZookeeperURLManagerTest {
         manager.setConfig(config);
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterEach
+    void tearDown() throws IOException {
         if(cluster != null) {
             cluster.close();
         }
     }
 
     @Test
-    public void testAtlasActiveUrlIsSetCorrectlyAfterLookUpFromZK() {
+    void testAtlasActiveUrlIsSetCorrectlyAfterLookUpFromZK() {
         manager.lookupURLs();
         List<String> urls = manager.getURLs();
         assertEquals(atlasNode1, urls.get(0));
     }
 
     @Test
-    public void testMarkFailedCorrectlyResetTheEarlierUrl() throws Exception {
+    void testMarkFailedCorrectlyResetTheEarlierUrl() throws Exception {
         setAtlasActiveHostURLInZookeeper(atlasNode2);
 
         manager.markFailed("http://atlas.node1:21000");
@@ -98,37 +97,37 @@ public class AtlasZookeeperURLManagerTest {
     }
 
     @Test
-    public void testAtlasURLManagerLoadingForAtlasApiService() {
+    void testAtlasURLManagerLoadingForAtlasApiService() {
         doTestAtlasZooKeeperURLManager("ATLAS-API", true, cluster.getConnectString(), "apache_atlas");
     }
 
     @Test
-    public void testAtlasURLManagerLoadingForAtlasUIService() {
+    void testAtlasURLManagerLoadingForAtlasUIService() {
         doTestAtlasZooKeeperURLManager("ATLAS", true, cluster.getConnectString(), "apache_atlas");
     }
 
     @Test
-    public void testAtlasURLManagerDefaultNamespace() {
+    void testAtlasURLManagerDefaultNamespace() {
         doTestAtlasZooKeeperURLManager("ATLAS", true, cluster.getConnectString(), null);
     }
 
     @Test
-    public void testAtlasAPIURLManagerDefaultNamespace() {
+    void testAtlasAPIURLManagerDefaultNamespace() {
         doTestAtlasZooKeeperURLManager("ATLAS-API", true, cluster.getConnectString(), null);
     }
 
     @Test
-    public void testAtlasURLManagerWithLeadingSlashNamespace() {
+    void testAtlasURLManagerWithLeadingSlashNamespace() {
         doTestAtlasZooKeeperURLManager("ATLAS", true, cluster.getConnectString(), "/apache_atlas");
     }
 
     @Test
-    public void testAtlasAPIURLManagerWithLeadingSlashNamespace() {
+    void testAtlasAPIURLManagerWithLeadingSlashNamespace() {
         doTestAtlasZooKeeperURLManager("ATLAS-API", true, cluster.getConnectString(), "/apache_atlas");
     }
 
     @Test
-    public void testAtlasAPIURLManagerWithEmptyNamespace() {
+    void testAtlasAPIURLManagerWithEmptyNamespace() {
         doTestAtlasZooKeeperURLManager("ATLAS-API", true, cluster.getConnectString(), "");
     }
 
@@ -141,8 +140,8 @@ public class AtlasZookeeperURLManagerTest {
         config.setZookeeperEnsemble(ensemble);
         config.setZookeeperNamespace(namespace);
         URLManager manager = URLManagerLoader.loadURLManager(config);
-        Assert.assertNotNull(manager);
-        Assert.assertTrue(manager instanceof AtlasZookeeperURLManager);
+        assertNotNull(manager);
+        assertTrue(manager instanceof AtlasZookeeperURLManager);
     }
 
 
@@ -158,5 +157,4 @@ public class AtlasZookeeperURLManagerTest {
                 activeURL.getBytes(StandardCharsets.UTF_8));
         }
     }
-
 }

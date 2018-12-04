@@ -26,9 +26,8 @@ import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteStepProcessor;
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteStepStatus;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +36,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class UrlRewriteStepProcessorStateTest {
-
+class UrlRewriteStepProcessorStateTest {
   @Test
-  public void testEmpty() {
+  void testEmpty() {
     List<UrlRewriteStepProcessorHolder> steps = new ArrayList<>();
     UrlRewriteStepProcessorState state = new UrlRewriteStepProcessorState( steps.iterator() );
 
@@ -54,7 +52,7 @@ public class UrlRewriteStepProcessorStateTest {
   }
 
   @Test
-  public void testNextAction() throws Exception {
+  void testNextAction() throws Exception {
     UrlRewriteStepProcessorHolder holder;
     List<UrlRewriteStepProcessorHolder> steps = new ArrayList<>();
     holder = new UrlRewriteStepProcessorHolder();
@@ -88,7 +86,7 @@ public class UrlRewriteStepProcessorStateTest {
   }
 
   @Test
-  public void testNextCondition() throws Exception {
+  void testNextCondition() throws Exception {
     UrlRewriteStepProcessorHolder holder;
     List<UrlRewriteStepProcessorHolder> steps = new ArrayList<>();
     holder = new UrlRewriteStepProcessorHolder();
@@ -124,7 +122,7 @@ public class UrlRewriteStepProcessorStateTest {
   public class FakeActionDescriptor implements UrlRewriteStepDescriptor<FakeActionDescriptor> {
     public String name;
 
-    public FakeActionDescriptor( String name ) {
+    FakeActionDescriptor( String name ) {
       this.name = name;
     }
 
@@ -144,7 +142,7 @@ public class UrlRewriteStepProcessorStateTest {
       UrlRewriteStepProcessor<UrlRewriteStepDescriptor<FakeActionDescriptor>> {
     public String name;
 
-    public FakeActionProcessor( String name ) {
+    FakeActionProcessor( String name ) {
       this.name = name;
     }
 
@@ -154,23 +152,23 @@ public class UrlRewriteStepProcessorStateTest {
     }
 
     @Override
-    public void initialize( UrlRewriteEnvironment environment, UrlRewriteStepDescriptor<FakeActionDescriptor> descriptor ) throws Exception {
+    public void initialize( UrlRewriteEnvironment environment, UrlRewriteStepDescriptor<FakeActionDescriptor> descriptor ) {
     }
 
     @Override
-    public UrlRewriteStepStatus process( UrlRewriteContext context ) throws Exception {
+    public UrlRewriteStepStatus process( UrlRewriteContext context ) {
       return null;
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
     }
   }
 
   public class FakeConditionDescriptor implements UrlRewriteFlowDescriptor<FakeConditionDescriptor> {
     public String name;
 
-    public FakeConditionDescriptor( String name ) {
+    FakeConditionDescriptor( String name ) {
       this.name = name;
     }
 
@@ -213,7 +211,7 @@ public class UrlRewriteStepProcessorStateTest {
   public class FakeConditionProcessor implements UrlRewriteStepProcessor<FakeConditionDescriptor> {
     public String name;
 
-    public FakeConditionProcessor( String name ) {
+    FakeConditionProcessor( String name ) {
       this.name = name;
     }
 
@@ -223,22 +221,22 @@ public class UrlRewriteStepProcessorStateTest {
     }
 
     @Override
-    public void initialize( UrlRewriteEnvironment environment, FakeConditionDescriptor descriptor ) throws Exception {
+    public void initialize( UrlRewriteEnvironment environment, FakeConditionDescriptor descriptor ) {
     }
 
     @Override
-    public UrlRewriteStepStatus process( UrlRewriteContext context ) throws Exception {
+    public UrlRewriteStepStatus process( UrlRewriteContext context ) {
       return null;
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
     }
   }
 
   private class FakeEnvironment implements UrlRewriteEnvironment {
     @Override
-    public URL getResource( String name ) throws IOException {
+    public URL getResource( String name ) {
       return null;
     }
 

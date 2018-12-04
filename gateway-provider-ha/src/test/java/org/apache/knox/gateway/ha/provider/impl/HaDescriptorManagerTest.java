@@ -19,7 +19,7 @@ package org.apache.knox.gateway.ha.provider.impl;
 
 import org.apache.knox.gateway.ha.provider.HaDescriptor;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,16 +27,16 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlmatchers.XmlMatchers.hasXPath;
 import static org.xmlmatchers.transform.XmlConverters.the;
 
-public class HaDescriptorManagerTest {
+class HaDescriptorManagerTest {
    @Test
-   public void testDescriptorLoad() throws IOException {
+   void testDescriptorLoad() throws IOException {
       String xml = "<ha><service name='foo' maxFailoverAttempts='42' failoverSleep='4000' maxRetryAttempts='2' retrySleep='2213' enabled='false'/>" +
             "<service name='bar' failoverLimit='3' enabled='true'/></ha>";
       ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
@@ -56,7 +56,7 @@ public class HaDescriptorManagerTest {
    }
 
    @Test
-   public void testDescriptorDefaults() throws IOException {
+   void testDescriptorDefaults() throws IOException {
       String xml = "<ha><service name='foo'/></ha>";
       ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
       HaDescriptor descriptor = HaDescriptorManager.load(inputStream);
@@ -73,7 +73,7 @@ public class HaDescriptorManagerTest {
    }
 
    @Test
-   public void testDescriptorStoring() throws IOException {
+   void testDescriptorStoring() throws IOException {
       HaDescriptor descriptor = HaDescriptorFactory.createDescriptor();
       descriptor.addServiceConfig(HaDescriptorFactory.createServiceConfig("foo", "false", "42", "1000", "3", "3000", "foo:2181,bar:2181", "hiveserver2"));
       descriptor.addServiceConfig(HaDescriptorFactory.createServiceConfig("bar", "true", "3", "5000", "5", "8000", null, null));

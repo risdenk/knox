@@ -22,9 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,7 +45,6 @@ import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.gateway.services.topology.TopologyService;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.knox.test.mock.MockServer;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -62,11 +60,11 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,12 +72,12 @@ import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlmatchers.transform.XmlConverters.the;
 import static org.xmlmatchers.xpath.HasXPath.hasXPath;
 
-@Category( ReleaseTest.class )
-public class GatewaySslFuncTest {
+@Tag("release")
+class GatewaySslFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewaySslFuncTest.class );
   private static final Class<?> DAT = GatewaySslFuncTest.class;
 
@@ -94,16 +92,16 @@ public class GatewaySslFuncTest {
   private static MockServer mockWebHdfs;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     driver.setupLdap(0);
     setupGateway();
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     gateway.stop();
     driver.cleanup();
@@ -111,15 +109,15 @@ public class GatewaySslFuncTest {
     LOG_EXIT();
   }
 
-  @After
-  public void cleanupTest() throws Exception {
+  @AfterEach
+  void cleanupTest() throws Exception {
     FileUtils.cleanDirectory( new File( config.getGatewayTopologyDir() ) );
     // Test run should not fail if deleting deployment files is not successful.
     // Deletion has been already done by TopologyService.
     FileUtils.deleteQuietly( new File( config.getGatewayDeploymentDir() ) );
   }
 
-  public static void setupGateway() throws Exception {
+  static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -142,7 +140,7 @@ public class GatewaySslFuncTest {
     startGatewayServer();
   }
 
-  public static void setupMockServers() throws Exception {
+  private static void setupMockServers() throws Exception {
     mockWebHdfs = new MockServer( "WEBHDFS", true );
   }
 
@@ -155,7 +153,7 @@ public class GatewaySslFuncTest {
     return null;
   }
 
-  public static void startGatewayServer() throws Exception {
+  private static void startGatewayServer() throws Exception {
     instantiateGatewayServices();
     services = new DefaultGatewayServices();
     Map<String,String> options = new HashMap<>();
@@ -182,8 +180,8 @@ public class GatewaySslFuncTest {
     params.put( "WEBHDFS_URL", "http://localhost:" + mockWebHdfs.getPort() );
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testKnox674SslCipherSuiteConfig() throws Exception {
+  @Test
+  void testKnox674SslCipherSuiteConfig() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-admin-topology.xml", params );
@@ -225,8 +223,8 @@ public class GatewaySslFuncTest {
     client.close();
 
     gateway.stop();
-    config.setExcludedSSLCiphers( Arrays.asList( new String[]{ "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256" } ) );
-    config.setIncludedSSLCiphers( Arrays.asList( new String[]{ "TLS_DHE_RSA_WITH_AES_128_CBC_SHA" } ) );
+    config.setExcludedSSLCiphers(Collections.singletonList("TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"));
+    config.setIncludedSSLCiphers(Collections.singletonList("TLS_DHE_RSA_WITH_AES_128_CBC_SHA"));
 
     startGatewayServer();
     serviceUrl = gatewayUrl + "/test-topology/api/v1/version";
@@ -273,12 +271,12 @@ public class GatewaySslFuncTest {
 
   public static class TrustAllCerts implements X509TrustManager {
     @Override
-    public void checkClientTrusted(X509Certificate[] x509Certificates, String s ) throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s ) {
       // Trust all certificates.
     }
 
     @Override
-    public void checkServerTrusted(X509Certificate[] x509Certificates, String s ) throws CertificateException {
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s ) {
       // Trust all certificates.
     }
 
@@ -289,7 +287,7 @@ public class GatewaySslFuncTest {
 
   }
 
-  public static SSLContext createInsecureSslContext() throws NoSuchAlgorithmException, KeyManagementException {
+  static SSLContext createInsecureSslContext() throws NoSuchAlgorithmException, KeyManagementException {
     SSLContext sslContext = SSLContext.getInstance( "SSL" );
     sslContext.init( null, new TrustManager[]{ new TrustAllCerts() }, new SecureRandom() );
     return sslContext;

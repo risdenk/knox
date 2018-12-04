@@ -20,19 +20,15 @@ package org.apache.knox.gateway.i18n.messages;
 import org.apache.knox.gateway.i18n.messages.loggers.test.TestMessageLogger;
 import org.apache.knox.gateway.i18n.messages.loggers.test.TestMessageLoggerFactory;
 import org.apache.knox.gateway.i18n.messages.loggers.test.TestMessageRecord;
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class MessagesTest {
+class MessagesTest {
   @Test
-  public void testFirst() {
+  void testFirst() {
     MessagesSubject log = MessagesFactory.get( MessagesSubject.class );
 
     log.withFullAnnotationAndParameter( 7 );

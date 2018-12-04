@@ -33,11 +33,11 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Id;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -53,11 +53,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the RemoteConfigurationMonitor functionality with SASL configured, and znode ACLs applied.
@@ -67,8 +67,7 @@ import static org.junit.Assert.assertTrue;
  * Digest-based SASL is used for this test, but since that is dictated solely by the JAAS config, Kerberos-based SASL
  * should work in exactly the same way, simply by modifying the SASL config.
  */
-public class RemoteConfigurationMonitorTest {
-
+class RemoteConfigurationMonitorTest {
     private static final String PATH_KNOX = "/knox";
     private static final String PATH_KNOX_CONFIG = PATH_KNOX + "/config";
     private static final String PATH_KNOX_PROVIDERS = PATH_KNOX_CONFIG + "/shared-providers";
@@ -93,27 +92,27 @@ public class RemoteConfigurationMonitorTest {
 
     private static CuratorFramework client;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    @BeforeAll
+    static void setUpBeforeClass() throws Exception {
         testTmp = TestUtils.createTempDir(RemoteConfigurationMonitorTest.class.getName());
         File confDir = TestUtils.createTempDir(testTmp + "/conf");
         providersDir = TestUtils.createTempDir(confDir + "/shared-providers");
         descriptorsDir = TestUtils.createTempDir(confDir + "/descriptors");
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+    @AfterAll
+    static void tearDownAfterClass() {
         // Delete the working dir
         testTmp.delete();
     }
 
-    @Before
-    public void setupTest() throws Exception {
+    @BeforeEach
+    void setupTest() throws Exception {
         configureAndStartZKCluster();
     }
 
-    @After
-    public void tearDownTest() throws Exception {
+    @AfterEach
+    void tearDownTest() throws Exception {
         // Clean up the ZK nodes, and close the client
         if (client != null) {
             if (client.checkExists().forPath(PATH_KNOX) != null) {
@@ -194,10 +193,9 @@ public class RemoteConfigurationMonitorTest {
         List<ACL> acls = Arrays.asList(new ACL(ZooDefs.Perms.ALL, new Id("sasl", ALT_USERNAME)),
                                        new ACL(ZooDefs.Perms.READ, ZooDefs.Ids.ANYONE_ID_UNSAFE));
         client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).withACL(acls).forPath(PATH_AUTH_TEST);
-        assertNotNull("Failed to create node:" + PATH_AUTH_TEST,
-                      client.checkExists().forPath(PATH_AUTH_TEST));
+        assertNotNull(client.checkExists().forPath(PATH_AUTH_TEST),
+            "Failed to create node:" + PATH_AUTH_TEST);
     }
-
 
     private static void validateKnoxConfigNodeACLs(List<ACL> expectedACLS, List<ACL> actualACLs) throws Exception {
         assertEquals(expectedACLS.size(), actualACLs.size());
@@ -213,12 +211,12 @@ public class RemoteConfigurationMonitorTest {
                 }
             }
         }
-        assertEquals("ACL mismatch despite being same quantity.", expectedACLS.size(), matchedCount);
+        assertEquals(expectedACLS.size(), matchedCount,
+            "ACL mismatch despite being same quantity.");
     }
 
-
     @Test
-    public void testZooKeeperConfigMonitorSASLNodesExistWithUnacceptableACL() throws Exception {
+    void testZooKeeperConfigMonitorSASLNodesExistWithUnacceptableACL() throws Exception {
         final String configMonitorName = "zkConfigClient";
         final String alias = "zkPass";
 
@@ -254,7 +252,7 @@ public class RemoteConfigurationMonitorTest {
         RemoteConfigurationMonitorFactory.setClientService(clientService);
 
         RemoteConfigurationMonitor cm = RemoteConfigurationMonitorFactory.get(gc);
-        assertNotNull("Failed to load RemoteConfigurationMonitor", cm);
+        assertNotNull(cm, "Failed to load RemoteConfigurationMonitor");
 
         final ACL ANY_AUTHENTICATED_USER_ALL = new ACL(ZooDefs.Perms.ALL, new Id("auth", ""));
         List<ACL> acls = Arrays.asList(ANY_AUTHENTICATED_USER_ALL, new ACL(ZooDefs.Perms.WRITE, ZooDefs.Ids.ANYONE_ID_UNSAFE));
@@ -288,12 +286,11 @@ public class RemoteConfigurationMonitorTest {
         }
     }
 
-
     /*
      * KNOX-1135
      */
     @Test
-    public void testZooKeeperConfigMonitorSASLNodesExistWithUnacceptableACLAllowUnauthenticatedReads() throws Exception {
+    void testZooKeeperConfigMonitorSASLNodesExistWithUnacceptableACLAllowUnauthenticatedReads() throws Exception {
         final String configMonitorName = "zkConfigClient";
         final String alias = "zkPass";
 
@@ -330,7 +327,7 @@ public class RemoteConfigurationMonitorTest {
         RemoteConfigurationMonitorFactory.setClientService(clientService);
 
         RemoteConfigurationMonitor cm = RemoteConfigurationMonitorFactory.get(gc);
-        assertNotNull("Failed to load RemoteConfigurationMonitor", cm);
+        assertNotNull(cm, "Failed to load RemoteConfigurationMonitor");
 
         final ACL ANY_AUTHENTICATED_USER_ALL = new ACL(ZooDefs.Perms.ALL, new Id("auth", ""));
         List<ACL> acls = Arrays.asList(ANY_AUTHENTICATED_USER_ALL, new ACL(ZooDefs.Perms.WRITE, ZooDefs.Ids.ANYONE_ID_UNSAFE));
@@ -366,9 +363,8 @@ public class RemoteConfigurationMonitorTest {
         }
     }
 
-
     @Test
-    public void testZooKeeperConfigMonitorSASLNodesExistWithAcceptableACL() throws Exception {
+    void testZooKeeperConfigMonitorSASLNodesExistWithAcceptableACL() throws Exception {
         final String configMonitorName = "zkConfigClient";
         final String alias = "zkPass";
 
@@ -404,7 +400,7 @@ public class RemoteConfigurationMonitorTest {
         RemoteConfigurationMonitorFactory.setClientService(clientService);
 
         RemoteConfigurationMonitor cm = RemoteConfigurationMonitorFactory.get(gc);
-        assertNotNull("Failed to load RemoteConfigurationMonitor", cm);
+        assertNotNull(cm, "Failed to load RemoteConfigurationMonitor");
 
         List<ACL> acls = Collections.singletonList(ANY_AUTHENTICATED_USER_ALL);
         client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).withACL(acls).forPath(PATH_KNOX);
@@ -423,10 +419,10 @@ public class RemoteConfigurationMonitorTest {
 
             // Test auth violation
             clientService.get(configMonitorName).createEntry("/auth_test/child_node/test1");
-            assertNull("Creation should have been prevented since write access is not granted to the test client.",
-                client.checkExists().forPath("/auth_test/child_node/test1"));
-            assertTrue("Creation should have been prevented since write access is not granted to the test client.",
-                client.getChildren().forPath("/auth_test/child_node").isEmpty());
+            assertNull(client.checkExists().forPath("/auth_test/child_node/test1"),
+                "Creation should have been prevented since write access is not granted to the test client.");
+            assertTrue(client.getChildren().forPath("/auth_test/child_node").isEmpty(),
+                "Creation should have been prevented since write access is not granted to the test client.");
 
             // Validate the expected ACLs on the Knox config znodes (make sure the monitor didn't change them)
             List<ACL> expectedACLs = Collections.singletonList(SASL_TESTUSER_ALL);
@@ -440,9 +436,8 @@ public class RemoteConfigurationMonitorTest {
         }
     }
 
-
     @Test
-    public void testZooKeeperConfigMonitorSASLCreateNodes() throws Exception {
+    void testZooKeeperConfigMonitorSASLCreateNodes() throws Exception {
         final String configMonitorName = "zkConfigClient";
         final String alias = "zkPass";
 
@@ -478,7 +473,7 @@ public class RemoteConfigurationMonitorTest {
         RemoteConfigurationMonitorFactory.setClientService(clientService);
 
         RemoteConfigurationMonitor cm = RemoteConfigurationMonitorFactory.get(gc);
-        assertNotNull("Failed to load RemoteConfigurationMonitor", cm);
+        assertNotNull(cm, "Failed to load RemoteConfigurationMonitor");
 
         // Check that the config nodes really don't yet exist (the monitor will create them if they're not present)
         assertNull(client.checkExists().forPath(PATH_KNOX));
@@ -491,10 +486,10 @@ public class RemoteConfigurationMonitorTest {
 
             // Test auth violation
             clientService.get(configMonitorName).createEntry("/auth_test/child_node/test1");
-            assertNull("Creation should have been prevented since write access is not granted to the test client.",
-                       client.checkExists().forPath("/auth_test/child_node/test1"));
-            assertTrue("Creation should have been prevented since write access is not granted to the test client.",
-                       client.getChildren().forPath("/auth_test/child_node").isEmpty());
+            assertNull(client.checkExists().forPath("/auth_test/child_node/test1"),
+                "Creation should have been prevented since write access is not granted to the test client.");
+            assertTrue(client.getChildren().forPath("/auth_test/child_node").isEmpty(),
+                "Creation should have been prevented since write access is not granted to the test client.");
 
             // Validate the expected ACLs on the Knox config znodes (make sure the monitor created them correctly)
             List<ACL> expectedACLs = Collections.singletonList(SASL_TESTUSER_ALL);
@@ -561,7 +556,7 @@ public class RemoteConfigurationMonitorTest {
 
             client.delete().forPath(desc_two_znode);
             Thread.sleep(100);
-            assertFalse("Expected test2.json to have been deleted.", desc_two.exists());
+            assertFalse(desc_two.exists(), "Expected test2.json to have been deleted.");
 
             client.delete().forPath(desc_three_znode);
             Thread.sleep(100);

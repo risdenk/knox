@@ -24,30 +24,30 @@ import org.apache.curator.test.TestingCluster;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.URLManagerLoader;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Simple unit tests for SOLRZookeeperURLManager.
  *
  * @see SOLRZookeeperURLManager
  */
-public class SOLRZookeeperURLManagerTest {
+class SOLRZookeeperURLManagerTest {
   private TestingCluster cluster;
   private SOLRZookeeperURLManager manager;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     cluster = new TestingCluster(3);
     cluster.start();
 
@@ -69,17 +69,17 @@ public class SOLRZookeeperURLManagerTest {
     manager.setConfig(config);
   }
 
-  @After
-  public void tearDown() throws IOException {
+  @AfterEach
+  void tearDown() throws IOException {
     if(cluster != null) {
       cluster.close();
     }
   }
 
   @Test
-  public void testURLs() throws Exception {
+  void testURLs() throws Exception {
     List<String> urls = manager.getURLs();
-    Assert.assertNotNull(urls);
+    assertNotNull(urls);
 
     // Order of URLS is not deterministic out of Zookeeper
     // So we just check for expected values
@@ -100,12 +100,12 @@ public class SOLRZookeeperURLManagerTest {
   }
 
   @Test
-  public void testSOLRZookeeperURLManagerLoading() {
+  void testSOLRZookeeperURLManagerLoading() {
     HaServiceConfig config = new DefaultHaServiceConfig("SOLR");
     config.setEnabled(true);
     config.setZookeeperEnsemble(cluster.getConnectString());
     URLManager manager = URLManagerLoader.loadURLManager(config);
-    Assert.assertNotNull(manager);
-    Assert.assertTrue(manager instanceof SOLRZookeeperURLManager);
+    assertNotNull(manager);
+    assertTrue(manager instanceof SOLRZookeeperURLManager);
   }
 }

@@ -18,9 +18,8 @@ package org.apache.knox.gateway.config.impl;
 
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.security.impl.ZookeeperRemoteAliasService;
-import org.apache.knox.test.TestUtils;
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -33,17 +32,16 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GatewayConfigImplTest {
-
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testHttpServerSettings() {
+class GatewayConfigImplTest {
+  @Test
+  void testHttpServerSettings() {
     GatewayConfigImpl config = new GatewayConfigImpl();
 
     // Check the defaults.
@@ -76,8 +74,8 @@ public class GatewayConfigImplTest {
     config.setInt( GatewayConfigImpl.HTTP_SERVER_RESPONSE_HEADER_BUFFER, 8*1024 );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGetGatewayDeploymentsBackupVersionLimit() {
+  @Test
+  void testGetGatewayDeploymentsBackupVersionLimit() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     assertThat( config.getGatewayDeploymentsBackupVersionLimit(), is(5) );
 
@@ -91,8 +89,8 @@ public class GatewayConfigImplTest {
     assertThat( config.getGatewayDeploymentsBackupVersionLimit(), is(0) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGetGatewayDeploymentsBackupAgeLimit() {
+  @Test
+  void testGetGatewayDeploymentsBackupAgeLimit() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     assertThat( config.getGatewayDeploymentsBackupAgeLimit(), is(-1L) );
 
@@ -111,7 +109,7 @@ public class GatewayConfigImplTest {
 
 
   @Test
-  public void testSSLCiphers() {
+  void testSSLCiphers() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     List<String> list;
 
@@ -164,8 +162,8 @@ public class GatewayConfigImplTest {
     assertThat( config.getExcludedSSLCiphers(), is(hasItems("ONE","TWO","THREE")) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGlobalRulesServices() {
+  @Test
+  void testGlobalRulesServices() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     List<String> list;
 
@@ -173,7 +171,6 @@ public class GatewayConfigImplTest {
     assertThat( list, is(notNullValue()) );
 
     assertThat( list, is( CoreMatchers.hasItems("NAMENODE","JOBTRACKER", "WEBHDFS", "WEBHCAT", "OOZIE", "WEBHBASE", "HIVE", "RESOURCEMANAGER")));
-
 
     config.set( GatewayConfigImpl.GLOBAL_RULES_SERVICES, "none" );
     assertThat( config.getGlobalRulesServices(), is( CoreMatchers.hasItems("NAMENODE","JOBTRACKER", "WEBHDFS", "WEBHCAT", "OOZIE", "WEBHBASE", "HIVE", "RESOURCEMANAGER")) );
@@ -191,8 +188,8 @@ public class GatewayConfigImplTest {
     assertThat( config.getGlobalRulesServices(), is(hasItems("ONE","TWO","THREE")) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testMetricsSettings() {
+  @Test
+  void testMetricsSettings() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     //test defaults
     assertThat(config.isMetricsEnabled(), is(false));
@@ -202,8 +199,8 @@ public class GatewayConfigImplTest {
     assertThat(config.getGraphitePort(), is(32772));
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGatewayIdleTimeout() {
+  @Test
+  void testGatewayIdleTimeout() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     long idleTimeout;
 
@@ -215,8 +212,8 @@ public class GatewayConfigImplTest {
     assertThat( idleTimeout, is(15000L));
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGatewayServerHeaderEnabled() {
+  @Test
+  void testGatewayServerHeaderEnabled() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     boolean serverHeaderEnabled;
 
@@ -230,7 +227,7 @@ public class GatewayConfigImplTest {
 
 
   @Test
-  public void testGetRemoteConfigurationRegistryNames() {
+  void testGetRemoteConfigurationRegistryNames() {
     GatewayConfigImpl config = new GatewayConfigImpl();
 
     List<String> registryNames = config.getRemoteRegistryConfigurationNames();
@@ -254,7 +251,7 @@ public class GatewayConfigImplTest {
 
 
   @Test
-  public void testHTTPDefaultTimeouts() {
+  void testHTTPDefaultTimeouts() {
     final GatewayConfigImpl config = new GatewayConfigImpl();
 
     assertNotEquals(config.getHttpClientConnectionTimeout(), -1);
@@ -267,7 +264,7 @@ public class GatewayConfigImplTest {
 
   // KNOX-1322
   @Test
-  public void testGetReadOnlyOverrideTopologyNames() {
+  void testGetReadOnlyOverrideTopologyNames() {
     GatewayConfigImpl config = new GatewayConfigImpl();
 
     List<String> names = config.getReadOnlyOverrideTopologyNames();
@@ -299,7 +296,7 @@ public class GatewayConfigImplTest {
 
   // KNOX-1756
   @Test
-  public void testCustomIdentityKeystoreOptions() {
+  void testCustomIdentityKeystoreOptions() {
     GatewayConfigImpl config = new GatewayConfigImpl();
 
     // Validate default options (backwards compatibility)
@@ -404,5 +401,4 @@ public class GatewayConfigImplTest {
     assertTrue(remoteAliasServiceConfiguration.containsKey(REMOTE_ALIAS_SERVICE_TYPE));
     assertEquals(ZookeeperRemoteAliasService.TYPE, remoteAliasServiceConfiguration.get(REMOTE_ALIAS_SERVICE_TYPE));
   }
-
 }

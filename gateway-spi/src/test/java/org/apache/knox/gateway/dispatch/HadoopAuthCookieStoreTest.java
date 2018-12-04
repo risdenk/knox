@@ -21,7 +21,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -31,12 +31,11 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HadoopAuthCookieStoreTest {
-
+class HadoopAuthCookieStoreTest {
   /**
    * Test for the issue reported as KNOX-1171
    * Tests the required to workaround Oozie 4.3/Hadoop 2.4 not properly formatting the hadoop.auth cookie.
@@ -45,7 +44,7 @@ public class HadoopAuthCookieStoreTest {
    *   https://issues.apache.org/jira/browse/HADOOP-10379
    */
   @Test
-  public void testOozieCookieWorkaroundKnox1171() {
+  void testOozieCookieWorkaroundKnox1171() {
     String rawValue = "u=knox&p=knox/host.example.com.com@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=";
     String quotedValue = "\""+rawValue+"\"";
 
@@ -86,32 +85,32 @@ public class HadoopAuthCookieStoreTest {
   }
 
   @Test
-  public void testKnoxCookieInclusionDefaultUserAndPrincipal() {
+  void testKnoxCookieInclusionDefaultUserAndPrincipal() {
     doTestKnoxCookieInclusion("u=knox&p=knox/myhost.example.com@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=");
   }
 
   @Test
-  public void testKnoxCookieInclusionDefaultUser() {
+  void testKnoxCookieInclusionDefaultUser() {
     doTestKnoxCookieExclusion("u=knox&p=anotherUser/myhost.example.com@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=");
   }
 
   @Test
-  public void testKnoxCookieInclusionDefaultPrincipal() {
+  void testKnoxCookieInclusionDefaultPrincipal() {
     doTestKnoxCookieInclusion("u=anotherUser&p=knox/myhost.example.com@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=");
   }
 
   @Test
-  public void testKnoxCookieExclusionWrongUserAndPrincipal() {
+  void testKnoxCookieExclusionWrongUserAndPrincipal() {
     doTestKnoxCookieExclusion("u=test&p=dummy/host@EXAMPLE.COM&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=");
   }
 
   @Test
-  public void testKnoxCookieExclusionWrongUserNoPrincipal() {
+  void testKnoxCookieExclusionWrongUserNoPrincipal() {
     doTestKnoxCookieExclusion("u=test&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=");
   }
 
   @Test
-  public void testKnoxCookieInclusionDefaultUserAndCustomPrincipal() {
+  void testKnoxCookieInclusionDefaultUserAndCustomPrincipal() {
     final String principal = "myTestPrincipal/test@EXAMPLE.COM";
 
     GatewayConfig gatewayConfig = EasyMock.createNiceMock(GatewayConfig.class);
@@ -125,7 +124,7 @@ public class HadoopAuthCookieStoreTest {
   }
 
   @Test
-  public void testKnoxCookieInclusionDefaultUserAndMissingPrincipal() {
+  void testKnoxCookieInclusionDefaultUserAndMissingPrincipal() {
     doTestKnoxCookieExclusion("u=knox&t=kerberos&e=1517900515610&s=HpSXUOhoXR/2wXrsgPz5lSbNuf8=");
   }
 
@@ -194,5 +193,4 @@ public class HadoopAuthCookieStoreTest {
            "storeKey=true\n" +
            "useTicketCache=false;";
   }
-
 }

@@ -18,12 +18,11 @@ package org.apache.knox.gateway.topology.simple;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.knox.test.TestUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -32,33 +31,28 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ProviderConfigurationParserTest {
-
+class ProviderConfigurationParserTest {
   private static File tmpDir;
 
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    try {
-      tmpDir = TestUtils.createTempDir(ProviderConfigurationParser.class.getName());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
+    tmpDir = TestUtils.createTempDir(ProviderConfigurationParser.class.getName());
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() {
+  @AfterAll
+  static void tearDownAfterClass() {
     if (tmpDir != null) {
       FileUtils.deleteQuietly(tmpDir);
     }
   }
 
   @Test
-  public void testParseProviderConfigurationXML() throws Exception {
+  void testParseProviderConfigurationXML() throws Exception {
     final String XML =
     "<gateway>\n" +
     "  <provider>\n" +
@@ -112,16 +106,15 @@ public class ProviderConfigurationParserTest {
         // KNOX-1188
         int index = 1;
         for (String name : params.keySet()) {
-          assertEquals("Param out of order", "param" + index++, name);
+          assertEquals("param" + index++, name, "Param out of order");
           assertEquals(name + "-value", params.get(name));
         }
       }
     }
   }
 
-
   @Test
-  public void testParseProviderConfigurationJSON() throws Exception {
+  void testParseProviderConfigurationJSON() throws Exception {
     final String JSON =
     "{\n" +
     "    \"providers\": [\n" +
@@ -177,18 +170,15 @@ public class ProviderConfigurationParserTest {
     validateParsedProviders(providers);
   }
 
-
   @Test
-  public void testParseProviderConfigurationYAML() throws Exception {
+  void testParseProviderConfigurationYAML() throws Exception {
     doTestParseProviderConfigurationYAML("yaml");
   }
 
-
   @Test
-  public void testParseProviderConfigurationYML() throws Exception {
+  void testParseProviderConfigurationYML() throws Exception {
     doTestParseProviderConfigurationYAML("yml");
   }
-
 
   // Common test for both YAML and YML file extensions
   private void doTestParseProviderConfigurationYAML(String extension) throws Exception {
@@ -234,7 +224,6 @@ public class ProviderConfigurationParserTest {
     validateParsedProviders(providers);
   }
 
-
   private void validateParsedProviders(List<ProviderConfiguration.Provider> providers) throws Exception {
     // Validate the providers
     for (ProviderConfiguration.Provider provider : providers) {
@@ -265,7 +254,7 @@ public class ProviderConfigurationParserTest {
                                                         "urls./**"};
         int index = 0;
         for (String name : params.keySet()) {
-          assertEquals("Param out of order", expectedParameterOrder[index++], name);
+          assertEquals(expectedParameterOrder[index++], name, "Param out of order");
         }
       } else if ("hostmap".equals(role)) {
         assertEquals("static", provider.getName());

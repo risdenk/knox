@@ -24,7 +24,7 @@ import org.apache.knox.gateway.descriptor.GatewayDescriptorFactory;
 import org.apache.knox.gateway.descriptor.ResourceDescriptor;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -35,23 +35,21 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class XmlGatewayDescriptorImporterTest {
-
+class XmlGatewayDescriptorImporterTest {
   @Test
-  public void testFormat() {
+  void testFormat() {
     XmlGatewayDescriptorImporter importer = new XmlGatewayDescriptorImporter();
     assertThat( importer.getFormat(), is( "xml" ) );
   }
 
   @Test
-  public void testXmlGatewayDescriptorLoad() throws IOException {
+  void testXmlGatewayDescriptorLoad() throws IOException {
     String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<gateway>\n" +
         "  <resource>\n" +
         "    <pattern>resource1-source</pattern>\n" +
-//        "    <target>resource1-target</target>\n" +
         "    <filter>\n" +
         "      <role>resource1-filter1-role</role>\n" +
         "      <class>resource1-filter1-impl</class>\n" +
@@ -71,7 +69,6 @@ public class XmlGatewayDescriptorImporterTest {
         "  </resource>\n" +
         "  <resource>\n" +
         "    <pattern>resource2-source</pattern>\n" +
-//        "    <target>resource2-target</target>\n" +
         "  </resource>\n" +
         "</gateway>";
 
@@ -116,7 +113,7 @@ public class XmlGatewayDescriptorImporterTest {
   }
 
   @Test
-  public void testXmlGatewayDescriptorLoadEmpty() throws IOException {
+  void testXmlGatewayDescriptorLoadEmpty() throws IOException {
     String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<gateway>\n" +
         "  <resource>\n" +
@@ -144,7 +141,7 @@ public class XmlGatewayDescriptorImporterTest {
   }
 
   @Test
-  public void testXmlGatewayDescriptorLoadInvalid() throws IOException {
+  void testXmlGatewayDescriptorLoadInvalid() {
     String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<gateway>\n" +
         "  <resource>\n" +
@@ -168,5 +165,4 @@ public class XmlGatewayDescriptorImporterTest {
       logger.setLevel( level );
     }
   }
-
 }

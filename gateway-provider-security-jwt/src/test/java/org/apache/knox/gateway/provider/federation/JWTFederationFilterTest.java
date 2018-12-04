@@ -21,14 +21,14 @@ import com.nimbusds.jwt.SignedJWT;
 import org.apache.knox.gateway.provider.federation.jwt.filter.JWTFederationFilter;
 import org.apache.knox.gateway.services.security.token.JWTokenAuthority;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class JWTFederationFilterTest extends AbstractJWTFilterTest {
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     handler = new TestJWTFederationFilter();
     ((TestJWTFederationFilter) handler).setTokenService(new TestJWTokenAuthority(publicKey));
   }
@@ -62,7 +62,7 @@ public class JWTFederationFilterTest extends AbstractJWTFilterTest {
   }
 
   @Test
-  public void doTest() {
+  void doTest() {
     // TODO
   }
 }

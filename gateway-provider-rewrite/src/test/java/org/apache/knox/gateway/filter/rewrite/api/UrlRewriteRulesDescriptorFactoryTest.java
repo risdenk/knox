@@ -20,7 +20,7 @@ package org.apache.knox.gateway.filter.rewrite.api;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xmlmatchers.transform.XmlConverters;
 
 import javax.xml.transform.Source;
@@ -41,15 +41,14 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlmatchers.XmlMatchers.hasXPath;
 
-public class UrlRewriteRulesDescriptorFactoryTest {
-
+class UrlRewriteRulesDescriptorFactoryTest {
   @Test
-  public void testCreate() {
+  void testCreate() {
     UrlRewriteRulesDescriptor descriptor = UrlRewriteRulesDescriptorFactory.create();
     assertThat( descriptor, notNullValue() );
     assertThat( descriptor.getRules(), notNullValue() );
@@ -87,7 +86,7 @@ public class UrlRewriteRulesDescriptorFactoryTest {
   }
 
   @Test
-  public void testLoadMissingFile() throws IOException {
+  void testLoadMissingFile() throws IOException {
     try {
       UrlRewriteRulesDescriptorFactory.load( "xml", getTestResourceReader( "missing.xml" ) );
       fail( "Should have thrown a FileNotFoundException." );
@@ -97,7 +96,7 @@ public class UrlRewriteRulesDescriptorFactoryTest {
   }
 
   @Test
-  public void testLoadEmptyFile() {
+  void testLoadEmptyFile() {
     Logger logger = org.apache.log4j.LogManager.getLogger( "org.apache.commons.digester3.Digester" );
     Level level = logger.getLevel();
     try {
@@ -117,7 +116,7 @@ public class UrlRewriteRulesDescriptorFactoryTest {
   }
 
   @Test
-  public void testLoadInvalidFile() {
+  void testLoadInvalidFile() {
     Logger logger = org.apache.log4j.LogManager.getLogger( "org.apache.commons.digester3.Digester" );
     Level level = logger.getLevel();
     try {
@@ -137,21 +136,21 @@ public class UrlRewriteRulesDescriptorFactoryTest {
   }
 
   @Test
-  public void testLoadNoopFile() throws IOException {
+  void testLoadNoopFile() throws IOException {
     UrlRewriteRulesDescriptor config =
         UrlRewriteRulesDescriptorFactory.load( "xml", getTestResourceReader( "noop.xml" ) );
     assertThat( "Rules should be an empty list.", config.getRules().isEmpty(), Matchers.is( true ) );
   }
 
   @Test
-  public void testLoadSimpleFile() throws IOException {
+  void testLoadSimpleFile() throws IOException {
     UrlRewriteRulesDescriptor config =
         UrlRewriteRulesDescriptorFactory.load( "xml", getTestResourceReader( "simple.xml" ) );
     assertThat( "Failed to load simple config file.", config, notNullValue() );
   }
 
   @Test
-  public void testLoadSimpleFilterFile() throws IOException {
+  void testLoadSimpleFilterFile() throws IOException {
     UrlRewriteRulesDescriptor config =
         UrlRewriteRulesDescriptorFactory.load( "xml", getTestResourceReader( "filter-simple.xml" ) );
     List<UrlRewriteFilterDescriptor> filters = config.getFilters();
@@ -162,7 +161,7 @@ public class UrlRewriteRulesDescriptorFactoryTest {
   }
 
   @Test
-  public void testLoadStoreCompleteFilterFile() throws IOException {
+  void testLoadStoreCompleteFilterFile() throws IOException {
     UrlRewriteRulesDescriptor config =
         UrlRewriteRulesDescriptorFactory.load( "xml", getTestResourceReader( "filter-complete.xml" ) );
 

@@ -17,20 +17,15 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class SegmentTest {
-
+class SegmentTest {
   @Test
-  public void testEquals() throws Exception {
+  void testEquals() {
     Object o = new Object();
     TestSegment s1 = new TestSegment( "p", "v", true );
     assertThat( s1.equals( o ), equalTo( false ) );
@@ -47,11 +42,10 @@ public class SegmentTest {
 
     TestSegment s5 = new TestSegment( "p", "*", false );
     assertThat( s1.equals( s5 ), equalTo( false ) );
-
   }
 
   @Test
-  public void testMatches() throws Exception {
+  void testMatches() {
     TestSegment s1 = new TestSegment( "p", "v", true );
     TestSegment s2 = new TestSegment( "p", "v", true );
 
@@ -105,7 +99,7 @@ public class SegmentTest {
   }
 
   @Test
-  public void testCreateRegex() {
+  void testCreateRegex() {
     assertThat( Segment.createRegex( "" ), is( "" ) );
     assertThat( Segment.createRegex( " " ), is( " " ) );
     assertThat( Segment.createRegex( "X" ), is( "X" ) );

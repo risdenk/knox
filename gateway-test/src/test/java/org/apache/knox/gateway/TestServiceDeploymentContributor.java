@@ -35,7 +35,7 @@ public class TestServiceDeploymentContributor extends ServiceDeploymentContribut
   }
 
   @Override
-  public void contributeService( DeploymentContext context, Service service ) throws Exception {
+  public void contributeService( DeploymentContext context, Service service ) {
     ResourceDescriptor resource = context.getGatewayDescriptor().addResource();
     resource.role( service.getRole() );
     resource.pattern( "test-service-path/**?**" );
@@ -45,5 +45,4 @@ public class TestServiceDeploymentContributor extends ServiceDeploymentContribut
     //addRewriteFilter( context, service, resource, null ); // This shouldn't be included for in-processes services.
     context.contributeFilter( service, resource, "test-provider-role", "test-provider-name", null );
   }
-
 }

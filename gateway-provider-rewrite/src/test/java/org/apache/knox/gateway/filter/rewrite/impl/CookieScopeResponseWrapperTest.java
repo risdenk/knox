@@ -19,22 +19,22 @@ package org.apache.knox.gateway.filter.rewrite.impl;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletResponse;
 
-public class CookieScopeResponseWrapperTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+class CookieScopeResponseWrapperTest {
   private HttpServletResponse mock;
 
   private Capture<String> captureKey;
 
   private Capture<String> captureValue;
 
-  @Before
-  public void init(){
+  @BeforeEach
+  void setUp(){
     mock = EasyMock.createNiceMock(HttpServletResponse.class);
     captureKey = Capture.newInstance();
     captureValue = Capture.newInstance();
@@ -43,74 +43,74 @@ public class CookieScopeResponseWrapperTest {
   }
 
   @Test
-  public void testNoPath() {
+  void testNoPath() {
     CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "gw");
     underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl;HttpOnly;");
 
-    Assert.assertEquals("Set-Cookie", captureKey.getValue());
-    Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl;HttpOnly; Path=/gw/;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl;HttpOnly; Path=/gw/;", captureValue.getValue());
   }
 
   @Test
-  public void testRootPath() {
+  void testRootPath() {
     CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "gw");
     underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
 
-    Assert.assertEquals("Set-Cookie", captureKey.getValue());
-    Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/gw/; HttpOnly;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/gw/; HttpOnly;", captureValue.getValue());
   }
 
   @Test
-  public void testMultiSegmentPath() {
+  void testMultiSegmentPath() {
     CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "some/path");
     underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
 
-    Assert.assertEquals("Set-Cookie", captureKey.getValue());
-    Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/; HttpOnly;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/; HttpOnly;", captureValue.getValue());
   }
 
   @Test
-  public void testAlreadyScopedPath() {
+  void testAlreadyScopedPath() {
     CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "some/path");
     underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/already-scoped/; HttpOnly;");
 
-    Assert.assertEquals("Set-Cookie", captureKey.getValue());
-    Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/already-scoped/; HttpOnly;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/already-scoped/; HttpOnly;", captureValue.getValue());
   }
 
   @Test
-  public void testCaseSensitive() {
+  void testCaseSensitive() {
     CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "some/path");
     underTest.addHeader("set-cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/not-touched/; HttpOnly;");
 
-    Assert.assertEquals("set-cookie", captureKey.getValue());
-    Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/not-touched/; HttpOnly;", captureValue.getValue());
+    assertEquals("set-cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/not-touched/; HttpOnly;", captureValue.getValue());
   }
 
   @Test
-  public void testWithPathAndTopologyName() {
+  void testWithPathAndTopologyName() {
     CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "some/path", "dp-proxy");
     underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
 
-    Assert.assertEquals("Set-Cookie", captureKey.getValue());
-    Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/dp-proxy/; HttpOnly;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/dp-proxy/; HttpOnly;", captureValue.getValue());
   }
 
   @Test
-  public void gatewayPathIsInvalid() {
-      CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "/", "dp-proxy");
-      underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
+  void gatewayPathIsInvalid() {
+    CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "/", "dp-proxy");
+    underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
 
-      Assert.assertEquals("Set-Cookie", captureKey.getValue());
-      Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/dp-proxy/; HttpOnly;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/dp-proxy/; HttpOnly;", captureValue.getValue());
   }
 
   @Test
-  public void topologyNameIsInvalid() {
-      CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "some/path", "");
-      underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
+  void topologyNameIsInvalid() {
+    CookieScopeResponseWrapper underTest = new CookieScopeResponseWrapper(mock, "some/path", "");
+    underTest.addHeader("Set-Cookie", "SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/; HttpOnly;");
 
-      Assert.assertEquals("Set-Cookie", captureKey.getValue());
-      Assert.assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/; HttpOnly;", captureValue.getValue());
+    assertEquals("Set-Cookie", captureKey.getValue());
+    assertEquals("SESSIONID=jn0zexg59r1jo1n66hd7tg5anl; Path=/some/path/; HttpOnly;", captureValue.getValue());
   }
 }

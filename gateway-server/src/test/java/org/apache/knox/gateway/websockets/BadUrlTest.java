@@ -44,10 +44,9 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.hamcrest.CoreMatchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
@@ -68,6 +67,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
  * Test for bad URLs.
  * <p>
@@ -75,8 +76,7 @@ import java.util.concurrent.TimeUnit;
  * attempt to test the bad url case and also the plumbing around it.
  * @since 0.10
  */
-public class BadUrlTest {
-
+class BadUrlTest {
   private static final String TEST_KEY_ALIAS = "test-identity";
 
   /**
@@ -107,12 +107,8 @@ public class BadUrlTest {
   private static Path keystoresDir;
   private static Path keystoreFile;
 
-  public BadUrlTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     topoDir = createDir();
     dataDir = Paths.get(topoDir.getAbsolutePath(), "data").toAbsolutePath();
     securityDir = dataDir.resolve("security");
@@ -122,8 +118,8 @@ public class BadUrlTest {
     startGatewayServer();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() {
+  @AfterAll
+  static void tearDownAfterClass() {
     try {
       gatewayServer.stop();
     } catch (final Exception e) {
@@ -135,7 +131,7 @@ public class BadUrlTest {
   }
 
   @Test
-  public void testBadUrl() throws Exception {
+  void testBadUrl() throws Exception {
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
     WebsocketClient client = new WebsocketClient();
@@ -146,9 +142,8 @@ public class BadUrlTest {
     client.awaitClose(CloseReason.CloseCodes.UNEXPECTED_CONDITION.getCode(),
         1000, TimeUnit.MILLISECONDS);
 
-    Assert.assertThat(client.close.getCloseCode().getCode(),
+    assertThat(client.close.getCloseCode().getCode(),
         CoreMatchers.is(CloseReason.CloseCodes.UNEXPECTED_CONDITION.getCode()));
-
   }
 
   private static void startGatewayServer() throws Exception {

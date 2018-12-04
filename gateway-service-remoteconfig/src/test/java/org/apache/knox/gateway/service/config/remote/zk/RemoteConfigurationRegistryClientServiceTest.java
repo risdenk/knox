@@ -32,7 +32,7 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Id;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
@@ -46,19 +46,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RemoteConfigurationRegistryClientServiceTest {
-
+class RemoteConfigurationRegistryClientServiceTest {
     /*
      * Test a configuration for an unsecured remote registry, included in the gateway configuration.
      */
     @Test
-    public void testUnsecuredZooKeeperWithSimpleRegistryConfig() throws Exception {
+    void testUnsecuredZooKeeperWithSimpleRegistryConfig() throws Exception {
         final String REGISTRY_CLIENT_NAME = "unsecured-zk-registry-name";
         final String PRINCIPAL = null;
         final String PWD = null;
@@ -89,7 +88,7 @@ public class RemoteConfigurationRegistryClientServiceTest {
      * Test multiple configurations for an unsecured remote registry.
      */
     @Test
-    public void testMultipleUnsecuredZooKeeperWithSimpleRegistryConfig() throws Exception {
+    void testMultipleUnsecuredZooKeeperWithSimpleRegistryConfig() throws Exception {
         final String REGISTRY_CLIENT_NAME_1 = "zkclient1";
         final String REGISTRY_CLIENT_NAME_2 = "zkclient2";
         final String PRINCIPAL = null;
@@ -119,7 +118,8 @@ public class RemoteConfigurationRegistryClientServiceTest {
             // Create the client service instance
             RemoteConfigurationRegistryClientService clientService =
                 RemoteConfigurationRegistryClientServiceFactory.newInstance(config);
-            assertEquals("Wrong registry client service type.", clientService.getClass(), CuratorClientService.class);
+            assertEquals(clientService.getClass(), CuratorClientService.class,
+                "Wrong registry client service type.");
             clientService.setAliasService(null);
             clientService.init(config, null);
             clientService.start();
@@ -139,7 +139,7 @@ public class RemoteConfigurationRegistryClientServiceTest {
      * Test a configuration for a secure remote registry, included in the gateway configuration.
      */
     @Test
-    public void testZooKeeperWithSimpleRegistryConfig() throws Exception {
+    void testZooKeeperWithSimpleRegistryConfig() throws Exception {
         final String AUTH_TYPE = "digest";
         final String REGISTRY_CLIENT_NAME = "zk-registry-name";
         final String PRINCIPAL = "knox";
@@ -175,7 +175,7 @@ public class RemoteConfigurationRegistryClientServiceTest {
      * client.
      */
     @Test
-    public void testZooKeeperWithSingleExternalRegistryConfig() throws Exception {
+    void testZooKeeperWithSingleExternalRegistryConfig() throws Exception {
         final String AUTH_TYPE = "digest";
         final String REGISTRY_CLIENT_NAME = "my-zookeeper_registryNAME";
         final String PRINCIPAL = "knox";
@@ -314,7 +314,8 @@ public class RemoteConfigurationRegistryClientServiceTest {
         // Create the client service instance
         RemoteConfigurationRegistryClientService clientService =
                 RemoteConfigurationRegistryClientServiceFactory.newInstance(config);
-        assertEquals("Wrong registry client service type.", clientService.getClass(), CuratorClientService.class);
+        assertEquals(clientService.getClass(), CuratorClientService.class,
+            "Wrong registry client service type.");
         clientService.setAliasService(aliasService);
         clientService.init(config, null);
         clientService.start();
@@ -346,7 +347,7 @@ public class RemoteConfigurationRegistryClientServiceTest {
 
         List<String> someotherConfig = client.listChildEntries("/someotherconfig");
         if (isSecureTest) {
-            assertNull("Expected null because of the ACL mismatch.", someotherConfig);
+            assertNull(someotherConfig, "Expected null because of the ACL mismatch.");
         } else {
             assertNotNull(someotherConfig);
         }

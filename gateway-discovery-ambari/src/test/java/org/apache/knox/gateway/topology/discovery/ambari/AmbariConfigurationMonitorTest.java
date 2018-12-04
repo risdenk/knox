@@ -20,9 +20,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.topology.discovery.ServiceDiscoveryConfig;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
@@ -32,30 +32,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AmbariConfigurationMonitorTest {
+class AmbariConfigurationMonitorTest {
     private File dataDir;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         File targetDir = new File( System.getProperty("user.dir"), "target");
         File tempDir = new File(targetDir, this.getClass().getName() + "__data__" + UUID.randomUUID());
         FileUtils.forceMkdir(tempDir);
         dataDir = tempDir;
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         dataDir.delete();
     }
 
     @Test
-    public void testPollingMonitor() throws Exception {
+    void testPollingMonitor() {
         final String addr1 = "http://host1:8080";
         final String addr2 = "http://host2:8080";
         final String cluster1Name = "Cluster_One";
@@ -181,37 +181,41 @@ public class AmbariConfigurationMonitorTest {
             monitor.stop();
         }
 
-        assertNotNull("Expected changes to have been reported for source 1.",
-                      changeNotifications.get(addr1));
+        assertNotNull(changeNotifications.get(addr1),
+            "Expected changes to have been reported for source 1.");
 
-        assertEquals("Expected changes to have been reported.",
-                     3, changeNotifications.get(addr1).get(cluster1Name).intValue());
+        assertEquals(3, changeNotifications.get(addr1).get(cluster1Name).intValue(),
+            "Expected changes to have been reported.");
 
-        assertNotNull("Expected changes to have been reported for source 2.",
-                      changeNotifications.get(addr2));
+        assertNotNull(changeNotifications.get(addr2),
+            "Expected changes to have been reported for source 2.");
 
-        assertEquals("Expected changes to have been reported.",
-                     3, changeNotifications.get(addr2).get(cluster2Name).intValue());
+        assertEquals(3, changeNotifications.get(addr2).get(cluster2Name).intValue(),
+            "Expected changes to have been reported.");
 
-        assertNull("Expected changes to have been reported.",
-                   changeNotifications.get(addr2).get(cluster1Name));
+        assertNull(changeNotifications.get(addr2).get(cluster1Name),
+            "Expected changes to have been reported.");
 
         // Verify the cache clearing behavior
         Map<String, Map<String, String>> src2ClustersData = monitor.ambariClusterConfigVersions.get(addr2);
-        assertTrue("Expected data for this cluster.", src2ClustersData.containsKey(cluster1Name));
-        assertTrue("Expected data for this cluster.", src2ClustersData.containsKey(cluster2Name));
+        assertTrue(src2ClustersData.containsKey(cluster1Name),
+            "Expected data for this cluster.");
+        assertTrue(src2ClustersData.containsKey(cluster2Name),
+            "Expected data for this cluster.");
 
         // Clear the cache for this source
         monitor.clearCache(addr2, cluster1Name);
 
-        assertFalse("Expected NO data for this cluster.", src2ClustersData.containsKey(cluster1Name));
-        assertTrue("Expected data for this cluster.", src2ClustersData.containsKey(cluster2Name));
+        assertFalse(src2ClustersData.containsKey(cluster1Name),
+            "Expected NO data for this cluster.");
+        assertTrue(src2ClustersData.containsKey(cluster2Name),
+            "Expected data for this cluster.");
 
         // Make sure the cache for the other source is unaffected
         Map<String, Map<String, String>> src1ClustersData = monitor.ambariClusterConfigVersions.get(addr1);
-        assertTrue("Expected data for this cluster.", src1ClustersData.containsKey(cluster1Name));
+        assertTrue(src1ClustersData.containsKey(cluster1Name),
+            "Expected data for this cluster.");
     }
-
 
     private static boolean areChangeUpdatesExhausted(Map<String, Map<String, List<List<AmbariCluster.ServiceConfiguration>>>> updates,
                                               Map<String, Map<String, Integer>> configChangeIndeces) {
@@ -275,7 +279,6 @@ public class AmbariConfigurationMonitorTest {
      * mechanism rather than the REST invocation mechanism.
      */
     private static final class TestableAmbariConfigurationMonitor extends AmbariConfigurationMonitor {
-
         Map<String, Map<String, Map<String, String>>> configVersionData = new HashMap<>();
 
         TestableAmbariConfigurationMonitor(GatewayConfig config) {

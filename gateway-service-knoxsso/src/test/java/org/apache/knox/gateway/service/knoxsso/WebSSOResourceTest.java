@@ -25,10 +25,10 @@ import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.util.RegExUtils;
 
 import static org.apache.knox.gateway.services.GatewayServices.GATEWAY_CLUSTER_ATTRIBUTE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
@@ -62,25 +62,23 @@ import org.apache.knox.gateway.services.security.token.TokenServiceException;
 import org.apache.knox.gateway.services.security.token.impl.JWT;
 import org.apache.knox.gateway.services.security.token.impl.JWTToken;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Some tests for the Knox SSO service.
  */
-public class WebSSOResourceTest {
-
+class WebSSOResourceTest {
   private static RSAPublicKey gatewayPublicKey;
   private static RSAPrivateKey gatewayPrivateKey;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
     kpg.initialize(2048);
     KeyPair keyPair = kpg.generateKeyPair();
@@ -90,7 +88,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testWhitelistMatching() {
+  void testWhitelistMatching() {
     String whitelist = "^https?://.*example.com:8080/.*$;" +
         "^https?://.*example.com/.*$;" +
         "^https?://.*example2.com:\\d{0,9}/.*$;" +
@@ -98,43 +96,42 @@ public class WebSSOResourceTest {
         "^https?://localhost:\\d{0,9}/.*$;^/.*$";
 
     // match on explicit hostname/domain and port
-    Assert.assertTrue("Failed to match whitelist", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example.com:8080/"));
+    assertTrue(RegExUtils.checkWhitelist(whitelist, "http://host.example.com:8080/"),
+        "Failed to match whitelist");
     // match on non-required port
-    Assert.assertTrue("Failed to match whitelist", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example.com/"));
+    assertTrue(RegExUtils.checkWhitelist(whitelist, "http://host.example.com/"),
+        "Failed to match whitelist");
     // match on required but any port
-    Assert.assertTrue("Failed to match whitelist", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example2.com:1234/"));
+    assertTrue(RegExUtils.checkWhitelist(whitelist, "http://host.example2.com:1234/"),
+        "Failed to match whitelist");
     // fail on missing port
-    assertFalse("Matched whitelist inappropriately", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example2.com/"));
+    assertFalse(RegExUtils.checkWhitelist(whitelist, "http://host.example2.com/"),
+        "Matched whitelist inappropriately");
     // fail on invalid port
-    assertFalse("Matched whitelist inappropriately", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example.com:8081/"));
+    assertFalse(RegExUtils.checkWhitelist(whitelist, "http://host.example.com:8081/"),
+        "Matched whitelist inappropriately");
     // fail on alphanumeric port
-    assertFalse("Matched whitelist inappropriately", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example.com:A080/"));
+    assertFalse(RegExUtils.checkWhitelist(whitelist, "http://host.example.com:A080/"),
+        "Matched whitelist inappropriately");
     // fail on invalid hostname/domain
-    assertFalse("Matched whitelist inappropriately", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example.net:8080/"));
+    assertFalse(RegExUtils.checkWhitelist(whitelist, "http://host.example.net:8080/"),
+        "Matched whitelist inappropriately");
     // fail on required port
-    assertFalse("Matched whitelist inappropriately", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example2.com/"));
+    assertFalse(RegExUtils.checkWhitelist(whitelist, "http://host.example2.com/"),
+        "Matched whitelist inappropriately");
     // fail on required https
-    assertFalse("Matched whitelist inappropriately", RegExUtils.checkWhitelist(whitelist,
-        "http://host.example3.com/"));
+    assertFalse(RegExUtils.checkWhitelist(whitelist, "http://host.example3.com/"),
+        "Matched whitelist inappropriately");
     // match on localhost and port
-    Assert.assertTrue("Failed to match whitelist", RegExUtils.checkWhitelist(whitelist,
-        "http://localhost:8080/"));
+    assertTrue(RegExUtils.checkWhitelist(whitelist, "http://localhost:8080/"),
+        "Failed to match whitelist");
     // match on local/relative path
-    Assert.assertTrue("Failed to match whitelist", RegExUtils.checkWhitelist(whitelist,
-        "/local/resource/"));
+    assertTrue(RegExUtils.checkWhitelist(whitelist, "/local/resource/"),
+        "Failed to match whitelist");
   }
 
   @Test
-  public void testGetToken() throws Exception {
-
+  void testGetToken() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -185,8 +182,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testAudiences() throws Exception {
-
+  void testAudiences() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -243,8 +239,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testAudiencesWhitespace() throws Exception {
-
+  void testAudiencesWhitespace() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -301,8 +296,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testSignatureAlgorithm() throws Exception {
-
+  void testSignatureAlgorithm() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -355,8 +349,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testDefaultTTL() throws Exception {
-
+  void testDefaultTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -412,7 +405,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testCustomTTL() throws Exception {
+  void testCustomTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -469,8 +462,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testNegativeTTL() throws Exception {
-
+  void testNegativeTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -526,8 +518,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testOverflowTTL() throws Exception {
-
+  void testOverflowTTL() throws Exception {
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.name")).andReturn(null);
     EasyMock.expect(context.getInitParameter("knoxsso.cookie.secure.only")).andReturn(null);
@@ -583,7 +574,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testWhitelistValidationWithEncodedOriginalURL() throws Exception {
+  void testWhitelistValidationWithEncodedOriginalURL() throws Exception {
     GatewayConfig config = EasyMock.createNiceMock(GatewayConfig.class);
     EasyMock.expect(config.getDispatchWhitelistServices()).andReturn(Collections.emptyList()).anyTimes();
     EasyMock.expect(config.getDispatchWhitelist()).andReturn(null).anyTimes();
@@ -640,7 +631,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testTopologyDefinedWhitelist() throws Exception {
+  void testTopologyDefinedWhitelist() throws Exception {
     final String testServiceRole = "TEST";
 
     GatewayConfig config = EasyMock.createNiceMock(GatewayConfig.class);
@@ -696,8 +687,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testExpectedKnoxSSOParams() {
-
+  void testExpectedKnoxSSOParams() {
     final HashMap<String, String[]> paramMap = new HashMap<>();
     paramMap.put("knoxtoken", new String[]{"eyJhbGciOiJSUzI1NiJ9.eyJzdWIiO"
         + "iJhZG1pbjEiLCJpc3MiOiJLTk9YU1NPIiwiZXhwIjoxNTMwODk1NjUw"
@@ -706,7 +696,6 @@ public class WebSSOResourceTest {
         + "yWSPzBOc2kcPmwdYXkOXtPu6KWZaQcD-WRw-89aORbgqZVRKX2Zyk2MLb0Rnig_0"});
 
     final String originalUrl = "http://localhost:9080/service";
-
 
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
     EasyMock.expect(context.getInitParameter("knoxsso.expected.params")).andReturn("knoxtoken,originalUrl");
@@ -761,8 +750,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testRedactToken() {
-
+  void testRedactToken() {
     final String token = "eyJhbGciOiJSUzI1NiJ9."
         + "eyJzdWIiOiJhZG1pbjEiLCJpc3MiOiJLTk9YU1NPIiwiZXhwIjoxNTMwNzkwMjkxfQ."
         + "BdWDAzGvXVvBH_TiEhAqowH-K24GfH8rgb8HJLromVpGwBTkbijIfOZWcvT3a5uZx6r"
@@ -792,8 +780,7 @@ public class WebSSOResourceTest {
   }
 
   @Test
-  public void testCustomSigningKey() throws Exception {
-
+  void testCustomSigningKey() throws Exception {
     String topologyName = "testCustomSigningKeyTopology";
     String customSigningKeyName = "testSigningKeyName";
     String customSigningKeyAlias = "testSigningKeyAlias";

@@ -32,7 +32,7 @@ import org.apache.knox.gateway.topology.simple.SimpleDescriptorHandler;
 import org.apache.knox.test.TestUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -46,11 +46,11 @@ import java.util.Map;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class SimpleDescriptorHandlerFuncTest {
+class SimpleDescriptorHandlerFuncTest {
   private static final String TEST_PROVIDER_CONFIG =
       "    <gateway>\n" +
           "        <provider>\n" +
@@ -115,7 +115,7 @@ public class SimpleDescriptorHandlerFuncTest {
    * N.B. This test depends on the NoOpServiceDiscovery extension being configured in META-INF/services
    */
   @Test
-  public void testSimpleDescriptorHandlerQueryStringCredentialAliasCreation() throws Exception {
+  void testSimpleDescriptorHandlerQueryStringCredentialAliasCreation() throws Exception {
 
     final String testMasterSecret = "mysecret";
     final String discoveryType = "NO_OP";
@@ -223,15 +223,14 @@ public class SimpleDescriptorHandlerFuncTest {
       topologyFile = files.get("topology");
 
       // Validate the AliasService interaction
-      assertEquals("Unexpected cluster name for the alias (should be the topology name).",
-                   testDescriptor.getName(), capturedCluster.getValue());
-      assertEquals("Unexpected alias name.", "encryptQueryString", capturedAlias.getValue());
-      assertEquals("Unexpected alias value (should be master secret + topology name.",
-                   testMasterSecret + testDescriptor.getName(), capturedPwd.getValue());
+      assertEquals(testDescriptor.getName(), capturedCluster.getValue(),
+          "Unexpected cluster name for the alias (should be the topology name).");
+      assertEquals("encryptQueryString", capturedAlias.getValue(), "Unexpected alias name.");
+      assertEquals(testMasterSecret + testDescriptor.getName(), capturedPwd.getValue(),
+          "Unexpected alias value (should be master secret + topology name.");
 
     } catch (Exception e) {
-      e.printStackTrace();
-      fail(e.getMessage());
+      fail(e);
     } finally {
       FileUtils.forceDelete(testRootDir);
       if (topologyFile != null) {

@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.identityasserter.regex.filter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,11 +25,9 @@ import java.util.TreeMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class RegexTemplateTest {
-
+class RegexTemplateTest {
   @Test
-  public void testExtractUsernameFromEmailAddress() {
-
+  void testExtractUsernameFromEmailAddress() {
     RegexTemplate template;
     String actual;
 
@@ -44,12 +42,10 @@ public class RegexTemplateTest {
     template = new RegexTemplate( "(.*)@.*", "prefix_{1}_{a}_suffix" );
     actual = template.apply( "member@apache.org" );
     assertThat( actual, is( "prefix_member_{a}_suffix" ) );
-
   }
 
   @Test
-  public void testExtractUsernameFromEmailAddressAndMapDomain() {
-
+  void testExtractUsernameFromEmailAddressAndMapDomain() {
     RegexTemplate template;
     Map<String,String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     map.put( "us", "USA" );
@@ -66,12 +62,10 @@ public class RegexTemplateTest {
 
     actual = template.apply( "member@nj.apache.org" );
     assertThat( actual, is( "prefix_member:_suffix" ) );
-
   }
 
   @Test
-  public void testLookupFailure() {
-
+  void testLookupFailure() {
     RegexTemplate template;
     Map<String,String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     map.put( "us", "USA" );
@@ -88,6 +82,5 @@ public class RegexTemplateTest {
 
     actual = template.apply( "member@nj.apache.org" );
     assertThat( actual, is( "prefix_member:nj_suffix" ) );
-
   }
 }

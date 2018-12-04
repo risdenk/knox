@@ -20,7 +20,7 @@ package org.apache.knox.gateway.identityasserter.filter;
 import org.apache.knox.gateway.security.GroupPrincipal;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.FilterConfig;
@@ -28,15 +28,14 @@ import javax.servlet.ServletContext;
 import java.security.Principal;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultIdentityAssertionFilterTest {
-
+class DefaultIdentityAssertionFilterTest {
   @Test
-  public void testInitParameters() throws Exception {
+  void testInitParameters() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
@@ -68,9 +67,12 @@ public class DefaultIdentityAssertionFilterTest {
     username = filter.mapUserPrincipal(((Principal) subject.getPrincipals(PrimaryPrincipal.class).toArray()[0]).getName());
     String[] mappedGroups = filter.mapGroupPrincipals(((Principal) subject.getPrincipals(PrimaryPrincipal.class).toArray()[0]).getName(), subject);
     assertEquals("hdfs", username);
-    assertTrue("mrgroup not found in groups: " + Arrays.toString(mappedGroups), groupFoundIn("mrgroup", mappedGroups));
-    assertTrue("mrducks not found in groups: " + Arrays.toString(mappedGroups), groupFoundIn("mrducks", mappedGroups));
-    assertFalse("group1 WAS found in groups: " + Arrays.toString(mappedGroups), groupFoundIn("group1", mappedGroups));
+    assertTrue(groupFoundIn("mrgroup", mappedGroups),
+        "mrgroup not found in groups: " + Arrays.toString(mappedGroups));
+    assertTrue(groupFoundIn("mrducks", mappedGroups),
+        "mrducks not found in groups: " + Arrays.toString(mappedGroups));
+    assertFalse(groupFoundIn("group1", mappedGroups),
+        "group1 WAS found in groups: " + Arrays.toString(mappedGroups));
 
     subject = new Subject();
 
@@ -88,7 +90,8 @@ public class DefaultIdentityAssertionFilterTest {
     username = filter.mapUserPrincipal(((Principal) subject.getPrincipals(PrimaryPrincipal.class).toArray()[0]).getName());
     mappedGroups = filter.mapGroupPrincipals(((Principal) subject.getPrincipals(PrimaryPrincipal.class).toArray()[0]).getName(), subject);
     assertEquals("hdfs", username);
-    assertTrue("group1 not found in groups: " + Arrays.toString(mappedGroups), groupFoundIn("group1", mappedGroups));
+    assertTrue(groupFoundIn("group1", mappedGroups),
+        "group1 not found in groups: " + Arrays.toString(mappedGroups));
   }
 
   private boolean groupFoundIn(String expected, String[] mappedGroups) {
@@ -104,7 +107,7 @@ public class DefaultIdentityAssertionFilterTest {
   }
 
   @Test
-  public void testContextParameters() throws Exception {
+  void testContextParameters() throws Exception {
     // for backward compatibility of old deployment contributor's method
     // of adding init params to the servlet context instead of to the filter.
     // There is the possibility that previously deployed topologies will have
@@ -142,9 +145,12 @@ public class DefaultIdentityAssertionFilterTest {
     username = filter.mapUserPrincipal(((Principal) subject.getPrincipals(PrimaryPrincipal.class).toArray()[0]).getName());
     groups = filter.mapGroupPrincipals(((Principal) subject.getPrincipals(PrimaryPrincipal.class).toArray()[0]).getName(), subject);
     assertEquals("hdfs", username);
-    assertTrue("mrgroup not found in groups: " + Arrays.toString(groups), groupFoundIn("mrgroup", groups));
-    assertTrue("mrducks not found in groups: " + Arrays.toString(groups), groupFoundIn("mrducks", groups));
-    assertFalse("group1 WAS found in groups: " + Arrays.toString(groups), groupFoundIn("group1", groups));
+    assertTrue(groupFoundIn("mrgroup", groups),
+        "mrgroup not found in groups: " + Arrays.toString(groups));
+    assertTrue(groupFoundIn("mrducks", groups),
+        "mrducks not found in groups: " + Arrays.toString(groups));
+    assertFalse(groupFoundIn("group1", groups),
+        "group1 WAS found in groups: " + Arrays.toString(groups));
 
     subject = new Subject();
 

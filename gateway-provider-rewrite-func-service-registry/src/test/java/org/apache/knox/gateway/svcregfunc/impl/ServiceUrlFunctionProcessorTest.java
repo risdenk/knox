@@ -30,8 +30,8 @@ import org.apache.knox.gateway.services.hostmap.HostMapperService;
 import org.apache.knox.gateway.services.registry.ServiceRegistry;
 import org.apache.knox.gateway.svcregfunc.api.ServiceUrlFunctionDescriptor;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,20 +43,19 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceUrlFunctionProcessorTest {
+class ServiceUrlFunctionProcessorTest {
+  private HostMapperService hms;
+  private HostMapper hm;
+  private ServiceRegistry reg;
+  private GatewayServices svc;
+  private UrlRewriteEnvironment env;
+  private UrlRewriteContext ctx;
+  private ServiceUrlFunctionDescriptor desc;
 
-  HostMapperService hms;
-  HostMapper hm;
-  ServiceRegistry reg;
-  GatewayServices svc;
-  UrlRewriteEnvironment env;
-  UrlRewriteContext ctx;
-  ServiceUrlFunctionDescriptor desc;
-
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     hm = EasyMock.createNiceMock( HostMapper.class );
     EasyMock.expect( hm.resolveInboundHostName( "test-host" ) ).andReturn( "test-internal-host" ).anyTimes();
 
@@ -79,17 +78,17 @@ public class ServiceUrlFunctionProcessorTest {
 
     desc = EasyMock.createNiceMock( ServiceUrlFunctionDescriptor.class );
 
-     HaProvider haProvider = EasyMock.createNiceMock( HaProvider.class );
+    HaProvider haProvider = EasyMock.createNiceMock(HaProvider.class);
 
-     EasyMock.expect(env.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(haProvider).anyTimes();
+    EasyMock.expect(env.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(haProvider).anyTimes();
 
-     EasyMock.expect(haProvider.isHaEnabled(EasyMock.anyObject(String.class))).andReturn(Boolean.FALSE).anyTimes();
+    EasyMock.expect(haProvider.isHaEnabled(EasyMock.anyObject(String.class))).andReturn(Boolean.FALSE).anyTimes();
 
     EasyMock.replay( hm, hms, reg, svc, env, desc, ctx, haProvider);
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -103,13 +102,13 @@ public class ServiceUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     ServiceUrlFunctionProcessor func = new ServiceUrlFunctionProcessor();
     assertThat( func.name(), is( "serviceUrl" ) );
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  void testInitialize() throws Exception {
     ServiceUrlFunctionProcessor func = new ServiceUrlFunctionProcessor();
     try {
       func.initialize( null, desc );
@@ -133,7 +132,7 @@ public class ServiceUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testDestroy() throws Exception {
+  void testDestroy() throws Exception {
     ServiceUrlFunctionProcessor func = new ServiceUrlFunctionProcessor();
     func.initialize( env, desc );
     func.destroy();
@@ -143,7 +142,7 @@ public class ServiceUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() throws Exception {
     ServiceUrlFunctionProcessor func = new ServiceUrlFunctionProcessor();
     func.initialize( env, desc );
 
@@ -153,5 +152,4 @@ public class ServiceUrlFunctionProcessorTest {
 
     func.destroy();
   }
-
 }

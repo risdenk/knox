@@ -33,9 +33,9 @@ import org.apache.knox.gateway.dispatch.DefaultDispatch;
 import org.apache.knox.test.log.CollectAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,10 +64,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class AuditLoggingTest {
-  private static Logger LOG = LoggerFactory.getLogger( AuditLoggingTest.class );
+class AuditLoggingTest {
+  private static final Logger LOG = LoggerFactory.getLogger( AuditLoggingTest.class );
 
   private static final String METHOD = "GET";
   private static final String PATH = "path";
@@ -75,14 +75,14 @@ public class AuditLoggingTest {
   private static final String ADDRESS = "address";
   private static final String HOST = "host";
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     AuditServiceFactory.getAuditService().createContext();
     CollectAppender.queue.clear();
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     AuditServiceFactory.getAuditService().detachContext();
   }
 
@@ -93,7 +93,7 @@ public class AuditLoggingTest {
    * action=access request_type=uri outcome=success message=Response status: 404
    */
   @Test
-  public void testNoFiltersAudit() throws Exception {
+  void testNoFiltersAudit() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -170,9 +170,7 @@ public class AuditLoggingTest {
    * action=access request_type=uri outcome=unavailable
    */
   @Test
-  public void testNoopFilter() throws ServletException, IOException,
-      URISyntaxException {
-
+  void testNoopFilter() throws ServletException, IOException, URISyntaxException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -213,7 +211,6 @@ public class AuditLoggingTest {
     LoggingEvent accessEvent = iterator.next();
     verifyAuditEvent( accessEvent, CONTEXT_PATH + PATH, ResourceType.URI,
         Action.ACCESS, ActionOutcome.UNAVAILABLE, null, "Request method: GET" );
-
   }
 
   /*
@@ -223,8 +220,7 @@ public class AuditLoggingTest {
    * action=dispatch request_type=uri outcome=unavailable
    */
   @Test
-  public void testHttpClientOutboundException() throws IOException,
-      URISyntaxException {
+  void testHttpClientOutboundException() throws URISyntaxException {
     String uri = "http://outbound-host.invalid:port/path";
 
     HttpServletRequest inboundRequest = EasyMock.createNiceMock( HttpServletRequest.class );
@@ -255,7 +251,6 @@ public class AuditLoggingTest {
       verifyValue( (String) failureEvent.getMDC( AuditConstants.MDC_RESOURCE_TYPE_KEY ), ResourceType.URI );
       verifyValue( (String) failureEvent.getMDC( AuditConstants.MDC_ACTION_KEY ), Action.DISPATCH );
       verifyValue( (String) failureEvent.getMDC( AuditConstants.MDC_OUTCOME_KEY ), ActionOutcome.FAILURE );
-
     }
   }
 

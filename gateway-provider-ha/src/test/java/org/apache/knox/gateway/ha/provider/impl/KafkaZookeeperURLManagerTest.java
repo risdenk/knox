@@ -27,23 +27,23 @@ import org.apache.curator.test.TestingCluster;
 import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.URLManagerLoader;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Simple unit tests for KafkaZookeeperURLManager.
  *
  * @see KafkaZookeeperURLManager
  */
-public class KafkaZookeeperURLManagerTest {
+class KafkaZookeeperURLManagerTest {
   private TestingCluster cluster;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     cluster = new TestingCluster(3);
     cluster.start();
 
@@ -58,20 +58,20 @@ public class KafkaZookeeperURLManagerTest {
     }
   }
 
-  @After
-  public void tearDown() throws IOException {
+  @AfterEach
+  void tearDown() throws IOException {
     if(cluster != null) {
       cluster.close();
     }
   }
 
   @Test
-  public void testHBaseZookeeperURLManagerLoading() {
+  void testHBaseZookeeperURLManagerLoading() {
     HaServiceConfig config = new DefaultHaServiceConfig("KAFKA");
     config.setEnabled(true);
     config.setZookeeperEnsemble(cluster.getConnectString());
     URLManager manager = URLManagerLoader.loadURLManager(config);
-    Assert.assertNotNull(manager);
-    Assert.assertTrue(manager instanceof KafkaZookeeperURLManager);
+    assertNotNull(manager);
+    assertTrue(manager instanceof KafkaZookeeperURLManager);
   }
 }

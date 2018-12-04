@@ -21,13 +21,10 @@ import org.apache.knox.gateway.audit.api.AuditServiceFactory;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.filter.AbstractGatewayFilter;
 import org.apache.knox.gateway.topology.Topology;
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -42,22 +39,19 @@ import java.net.URISyntaxException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class GatewayFilterTest {
-
-  @Before
-  public void setUp() {
+class GatewayFilterTest {
+  @BeforeEach
+  void setUp() {
     AuditServiceFactory.getAuditService().createContext();
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     AuditServiceFactory.getAuditService().detachContext();
   }
 
   @Test
-  public void testNoFilters() throws ServletException, IOException {
-
+  void testNoFilters() throws ServletException, IOException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -87,8 +81,7 @@ public class GatewayFilterTest {
   }
 
   @Test
-  public void testNoopFilter() throws ServletException, IOException, URISyntaxException {
-
+  void testNoopFilter() throws ServletException, IOException, URISyntaxException {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -119,11 +112,9 @@ public class GatewayFilterTest {
     gateway.init( config );
     gateway.doFilter( request, response, chain );
     gateway.destroy();
-
   }
 
   public static class TestRoleFilter extends AbstractGatewayFilter {
-
     public Object role;
     public String defaultServicePath;
     public String url;
@@ -141,8 +132,7 @@ public class GatewayFilterTest {
   }
 
   @Test
-  public void testTargetServiceRoleRequestAttribute() throws Exception {
-
+  void testTargetServiceRoleRequestAttribute() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -174,12 +164,10 @@ public class GatewayFilterTest {
     gateway.destroy();
 
     assertThat(filter.role, is( "test-role" ) );
-
   }
 
   @Test
-  public void testDefaultServicePathTopologyRequestAttribute() throws Exception {
-
+  void testDefaultServicePathTopologyRequestAttribute() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.replay( config );
 
@@ -216,6 +204,5 @@ public class GatewayFilterTest {
 
     assertThat(filter.defaultServicePath, is( "test-role" ) );
     assertThat(filter.url, is("http://host:8443/gateway/sandbox/test-role/test-path/test-resource"));
-
   }
 }

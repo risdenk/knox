@@ -30,12 +30,11 @@ import org.apache.hadoop.minikdc.MiniKdc;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.ssl.KeyStoreTestUtil;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,14 +64,14 @@ import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_KERBEROS_PRINCIP
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_KEYTAB_FILE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_SERVER_HTTPS_KEYSTORE_RESOURCE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_WEB_AUTHENTICATION_KERBEROS_PRINCIPAL_KEY;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for KnoxShell Kerberos support
  */
-@Category(ReleaseTest.class)
-public class SecureKnoxShellTest {
+@Tag("release")
+class SecureKnoxShellTest {
   private static final String SCRIPT = "SecureWebHdfsPutGet.groovy";
   private static MiniKdc kdc;
   private static String userName;
@@ -87,8 +86,8 @@ public class SecureKnoxShellTest {
   private static MiniDFSCluster miniDFSCluster;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     baseDir = new File(
         KeyStoreTestUtil.getClasspathDir(SecureKnoxShellTest.class));
 
@@ -157,8 +156,8 @@ public class SecureKnoxShellTest {
     krb5conf = kdc.getKrb5conf().getAbsolutePath();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     if(kdc != null) {
       kdc.stop();
     }
@@ -279,7 +278,7 @@ public class SecureKnoxShellTest {
   }
 
   @Test
-  public void testCachedTicket() throws Exception {
+  void testCachedTicket() throws Exception {
     setupLogging();
 
     webhdfsPutGet();
@@ -319,7 +318,7 @@ public class SecureKnoxShellTest {
     assertTrue(fetchedFile.contains("README"));
   }
 
-  public URL getResourceUrl(String resource) {
+  URL getResourceUrl(String resource) {
     String filePath =
         this.getClass().getCanonicalName().replaceAll("\\.", "/") + "/"
             + resource;

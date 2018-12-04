@@ -25,9 +25,9 @@ import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.test.TestUtils;
 import org.apache.http.HttpStatus;
 import org.hamcrest.MatcherAssert;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
 
-public class GatewayAdminFuncTest {
+class GatewayAdminFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayAdminFuncTest.class );
 
   public static GatewayConfig config;
@@ -52,24 +52,23 @@ public class GatewayAdminFuncTest {
   public static String clusterUrl;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     TestUtils.LOG_ENTER();
     driver.setupLdap(0);
     setupGateway();
     TestUtils.LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     TestUtils.LOG_ENTER();
     gateway.stop();
     driver.cleanup();
     TestUtils.LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
-
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -141,8 +140,8 @@ public class GatewayAdminFuncTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testAdminService() throws ClassNotFoundException {
+  @Test
+  void testAdminService() {
     TestUtils.LOG_ENTER();
 
     String username = "guest";
@@ -161,8 +160,8 @@ public class GatewayAdminFuncTest {
     TestUtils.LOG_EXIT();
   }
 
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT)
-  public void testAliasAPI() {
+  @Test
+  void testAliasAPI() {
     String username = "guest";
     String password = "guest-password";
 
@@ -207,8 +206,8 @@ public class GatewayAdminFuncTest {
         .when().get(getAliasUrl);
   }
 
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT)
-  public void testAliasAPIFail() {
+  @Test
+  void testAliasAPIFail() {
     String username = "guest";
     String password = "guest-password";
 

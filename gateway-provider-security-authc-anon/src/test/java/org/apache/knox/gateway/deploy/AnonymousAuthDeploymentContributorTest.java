@@ -17,18 +17,17 @@
  */
 package org.apache.knox.gateway.deploy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class AnonymousAuthDeploymentContributorTest {
-
+class AnonymousAuthDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -40,5 +39,4 @@ public class AnonymousAuthDeploymentContributorTest {
     }
     fail( "Failed to find " + AnonymousAuthDeploymentContributor.class.getName() + " via service loader." );
   }
-
 }

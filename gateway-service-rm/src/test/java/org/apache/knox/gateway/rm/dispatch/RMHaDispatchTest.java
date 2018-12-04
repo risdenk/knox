@@ -37,8 +37,7 @@ import org.apache.http.message.BasicStatusLine;
 import org.apache.http.message.BasicHeader;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -51,11 +50,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RMHaDispatchTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class RMHaDispatchTest {
     private static final String LOCATION = "Location";
 
     @Test
-    public void testConnectivityFailure() throws Exception {
+    void testConnectivityFailure() throws Exception {
         String serviceName = "RESOURCEMANAGER";
         HaDescriptor descriptor = HaDescriptorFactory.createDescriptor();
         descriptor.addServiceConfig(HaDescriptorFactory.createServiceConfig(serviceName, "true", "1", "1000", "2", "1000", null, null));
@@ -87,7 +89,7 @@ public class RMHaDispatchTest {
         HttpServletResponse outboundResponse = EasyMock.createNiceMock(HttpServletResponse.class);
         EasyMock.expect(outboundResponse.getOutputStream()).andAnswer(new IAnswer<ServletOutputStream>() {
             @Override
-            public ServletOutputStream answer() throws Throwable {
+            public ServletOutputStream answer() {
                 return new ServletOutputStream() {
                     @Override
                     public void write(int b) throws IOException {
@@ -106,7 +108,7 @@ public class RMHaDispatchTest {
             }
         }).once();
         EasyMock.replay(filterConfig, servletContext, outboundRequest, inboundRequest, outboundResponse);
-        Assert.assertEquals(uri1.toString(), provider.getActiveURL(serviceName));
+        assertEquals(uri1.toString(), provider.getActiveURL(serviceName));
         RMHaDispatch dispatch = new RMHaDispatch();
         HttpClientBuilder builder = HttpClientBuilder.create();
         CloseableHttpClient client = builder.build();
@@ -120,13 +122,13 @@ public class RMHaDispatchTest {
             //this is expected after the failover limit is reached
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
-        Assert.assertEquals(uri2.toString(), provider.getActiveURL(serviceName));
+        assertEquals(uri2.toString(), provider.getActiveURL(serviceName));
         //test to make sure the sleep took place
-        Assert.assertTrue(elapsedTime > 1000);
+        assertTrue(elapsedTime > 1000);
     }
 
     @Test
-    public void testConnectivityFailover() throws Exception {
+    void testConnectivityFailover() throws Exception {
         String serviceName = "RESOURCEMANAGER";
         HaDescriptor descriptor = HaDescriptorFactory.createDescriptor();
         descriptor.addServiceConfig(HaDescriptorFactory.createServiceConfig(serviceName, "true", "1", "1000", "2", "1000", null, null));
@@ -184,7 +186,7 @@ public class RMHaDispatchTest {
                 };
             }
         }).once();
-        Assert.assertEquals(uri1.toString(), provider.getActiveURL(serviceName));
+        assertEquals(uri1.toString(), provider.getActiveURL(serviceName));
         EasyMock.replay(filterConfig, servletContext, inboundResponse, outboundRequest, inboundRequest, outboundResponse);
 
         RMHaDispatch dispatch = new RMHaDispatch();
@@ -200,11 +202,11 @@ public class RMHaDispatchTest {
         } catch (IOException e) {
             //this is expected after the failover limit is reached
         }
-        Assert.assertEquals(uri3.toString(), dispatch.getUriFromInbound(inboundRequest, inboundResponse, null).toString());
+        assertEquals(uri3.toString(), dispatch.getUriFromInbound(inboundRequest, inboundResponse, null).toString());
         long elapsedTime = System.currentTimeMillis() - startTime;
-        Assert.assertEquals(uri3.toString(), provider.getActiveURL(serviceName));
+        assertEquals(uri3.toString(), provider.getActiveURL(serviceName));
         //test to make sure the sleep took place
-        Assert.assertTrue(elapsedTime > 1000);
+        assertTrue(elapsedTime > 1000);
     }
 
     private StringEntity getResponseEntity() {
@@ -220,5 +222,4 @@ public class RMHaDispatchTest {
     private Header getFirstHeader(String host) {
         return new BasicHeader(LOCATION, host);
     }
-
 }

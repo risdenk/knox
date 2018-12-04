@@ -18,10 +18,9 @@ package org.apache.knox.gateway.topology.discovery.ambari;
 
 import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -32,22 +31,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class AmbariDynamicServiceURLCreatorTest {
-
+class AmbariDynamicServiceURLCreatorTest {
     @Test
-    public void testHiveURLFromInternalMapping() throws Exception {
+    void testHiveURLFromInternalMapping() throws Exception {
         testHiveURL(null);
     }
 
     @Test
-    public void testHiveURLFromExternalMapping() throws Exception {
+    void testHiveURLFromExternalMapping() throws Exception {
         testHiveURL(TEST_MAPPING_CONFIG);
     }
 
@@ -115,12 +113,12 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testJobTrackerURLFromInternalMapping() throws Exception {
+    void testJobTrackerURLFromInternalMapping() throws Exception {
         testJobTrackerURL(null);
     }
 
     @Test
-    public void testJobTrackerURLFromExternalMapping() throws Exception {
+    void testJobTrackerURLFromExternalMapping() throws Exception {
         testJobTrackerURL(TEST_MAPPING_CONFIG);
     }
 
@@ -142,21 +140,21 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testNameNodeURL() throws Exception {
+    void testNameNodeURL() {
         final String ADDRESS = "host1:1234";
         String url = getTestNameNodeURL(ADDRESS);
         assertEquals("hdfs://" + ADDRESS, url);
     }
 
     @Test
-    public void testNameNodeURLHADefaultNameService() throws Exception {
+    void testNameNodeURLHADefaultNameService() {
         final String DEFAULT_NAMESERVICE = "ns1";
         String url = getTestNameNodeURL(DEFAULT_NAMESERVICE, "ns1");
         assertEquals("hdfs://" + DEFAULT_NAMESERVICE, url);
     }
 
     @Test
-    public void testNameNodeURLHADeclared() throws Exception {
+    void testNameNodeURLHADeclared() {
         final String delcaredNS = "ns1";
         Map<String, String> params = new HashMap<>();
         params.put("discovery-nameservice", delcaredNS);
@@ -166,7 +164,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testNameNodeURLHADeclaredMultipleNameservices() throws Exception {
+    void testNameNodeURLHADeclaredMultipleNameservices() {
         final String delcaredNS = "ns2";
         Map<String, String> params = new HashMap<>();
         params.put("discovery-nameservice", delcaredNS);
@@ -176,24 +174,25 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testNameNodeURLHADeclaredInvalid() throws Exception {
+    void testNameNodeURLHADeclaredInvalid() {
         final String delcaredNS = "MyInvalidNameService";
         Map<String, String> params = new HashMap<>();
         params.put("discovery-nameservice", delcaredNS);
 
         String url = getTestNameNodeURL("nn1", "ns1,ns2", params);
-        assertNull("Invalid nameservice declaration should still yield a URL.", url);
+        assertNull(url,
+            "Invalid nameservice declaration should still yield a URL.");
     }
 
-    private String getTestNameNodeURL(String address) throws Exception {
+    private String getTestNameNodeURL(String address) {
         return getTestNameNodeURL(address, null);
     }
 
-    private String getTestNameNodeURL(String defaultFSAddress, String nameservices) throws Exception {
+    private String getTestNameNodeURL(String defaultFSAddress, String nameservices) {
         return getTestNameNodeURL(defaultFSAddress, nameservices, Collections.emptyMap());
     }
 
-    private String getTestNameNodeURL(String defaultFSAddress, String nameservices, Map<String, String> serviceParams) throws Exception {
+    private String getTestNameNodeURL(String defaultFSAddress, String nameservices, Map<String, String> serviceParams) {
         AmbariCluster.ServiceConfiguration coreSC = EasyMock.createNiceMock(AmbariCluster.ServiceConfiguration.class);
         Map<String, String> coreProps = new HashMap<>();
         coreProps.put("fs.defaultFS", "hdfs://" + defaultFSAddress);
@@ -227,19 +226,17 @@ public class AmbariDynamicServiceURLCreatorTest {
         return url;
     }
 
-
     @Test
-    public void testWebHCatURLFromInternalMapping() throws Exception {
+    void testWebHCatURLFromInternalMapping() throws Exception {
         testWebHCatURL(null);
     }
 
     @Test
-    public void testWebHCatURLFromExternalMapping() throws Exception {
+    void testWebHCatURLFromExternalMapping() throws Exception {
         testWebHCatURL(TEST_MAPPING_CONFIG);
     }
 
     private void testWebHCatURL(Object mappingConfiguration) throws Exception {
-
         final String HOSTNAME = "host3";
         final String PORT     = "1919";
 
@@ -259,19 +256,18 @@ public class AmbariDynamicServiceURLCreatorTest {
         assertEquals("http://" + HOSTNAME + ":" + PORT + "/templeton", url);
     }
 
-
     @Test
-    public void testOozieURLFromInternalMapping() throws Exception {
+    void testOozieURLFromInternalMapping() throws Exception {
         testOozieURL(null, "OOZIE");
     }
 
     @Test
-    public void testOozieURLFromExternalMapping() throws Exception {
+    void testOozieURLFromExternalMapping() throws Exception {
         testOozieURL(TEST_MAPPING_CONFIG, "OOZIE");
     }
 
     @Test
-    public void testOozieURLFromInternalMappingWithExternalOverrides() throws Exception {
+    void testOozieURLFromInternalMappingWithExternalOverrides() throws Exception {
         File tmpFile = File.createTempFile("knox-discovery-external-url-mapping", ".xml");
         System.setProperty(AmbariDynamicServiceURLCreator.MAPPING_CONFIG_OVERRIDE_PROPERTY, tmpFile.getAbsolutePath());
         try {
@@ -284,7 +280,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testOozieUIURLFromInternalMapping() throws Exception {
+    void testOozieUIURLFromInternalMapping() throws Exception {
         testOozieURL(null, "OOZIEUI");
     }
 
@@ -313,12 +309,12 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testWebHBaseURLFromInternalMapping() throws Exception {
+    void testWebHBaseURLFromInternalMapping() throws Exception {
         testWebHBaseURL(null);
     }
 
     @Test
-    public void testWebHBaseURLFromExternalMapping() throws Exception {
+    void testWebHBaseURLFromExternalMapping() throws Exception {
         testWebHBaseURL(TEST_MAPPING_CONFIG);
     }
 
@@ -351,30 +347,30 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testWebHdfsURLHttp() throws Exception {
+    void testWebHdfsURLHttp() {
         final String ADDRESS = "host3:1357";
         assertEquals(("http://" + ADDRESS + "/webhdfs"), getTestHdfsURL("WEBHDFS", ADDRESS, false));
     }
 
     @Test
-    public void testWebHdfsURLHttps() throws Exception {
+    void testWebHdfsURLHttps() {
         final String ADDRESS = "host3:1357";
         assertEquals(("https://" + ADDRESS + "/webhdfs"), getTestHdfsURL("WEBHDFS", ADDRESS, true));
     }
 
     @Test
-    public void testHdfsUIURLHttp() throws Exception {
+    void testHdfsUIURLHttp() {
         final String ADDRESS = "host3:1357";
         assertEquals(("http://" + ADDRESS), getTestHdfsURL("HDFSUI", ADDRESS, false));
     }
 
     @Test
-    public void testHdfsUIURLHttps() throws Exception {
+    void testHdfsUIURLHttps() {
         final String ADDRESS = "host3:1357";
         assertEquals(("https://" + ADDRESS), getTestHdfsURL("HDFSUI", ADDRESS, true));
     }
 
-    private String getTestHdfsURL(String serviceName, String address, boolean isHttps) throws Exception {
+    private String getTestHdfsURL(String serviceName, String address, boolean isHttps) {
         AmbariCluster.ServiceConfiguration hdfsSC = EasyMock.createNiceMock(AmbariCluster.ServiceConfiguration.class);
         Map<String, String> hdfsProps = new HashMap<>();
         hdfsProps.put("dfs.namenode.http-address", address);
@@ -395,7 +391,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testWebHdfsURLHASingleNameService() throws Exception {
+    void testWebHdfsURLHASingleNameService() {
         final String NAMESERVICES   = "myNameServicesCluster";
         final String HTTP_ADDRESS_1 = "host1:50070";
         final String HTTP_ADDRESS_2 = "host2:50077";
@@ -423,7 +419,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testHdfsUIURLHASingleNameService() throws Exception {
+    void testHdfsUIURLHASingleNameService() {
         final String NAMESERVICES   = "myNameServicesCluster";
         final String HTTP_ADDRESS_1 = "host1:50070";
         final String HTTP_ADDRESS_2 = "host2:50077";
@@ -450,13 +446,12 @@ public class AmbariDynamicServiceURLCreatorTest {
         assertTrue(webhdfsURLs.contains(EXPECTED_ADDR_2));
     }
 
-
     /*
      * Test federated NameNode scenario, which chooses the "first" nameservice because there is no information from
      * which one can be selected from among the set.
      */
     @Test
-    public void testWebHdfsURLHAMultipleNameServicesNoDefaultFS() throws Exception {
+    void testWebHdfsURLHAMultipleNameServicesNoDefaultFS() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -489,13 +484,12 @@ public class AmbariDynamicServiceURLCreatorTest {
         assertTrue(webhdfsURLs.contains(EXPECTED_ADDR_2));
     }
 
-
     /*
      * Test federated NameNode scenario, which chooses the "first" nameservice because there is no information from
      * which one can be selected from among the set.
      */
     @Test
-    public void testHdfsUIURLHAMultipleNameServicesNoDefaultFS() throws Exception {
+    void testHdfsUIURLHAMultipleNameServicesNoDefaultFS() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -532,7 +526,7 @@ public class AmbariDynamicServiceURLCreatorTest {
      * Test federated NameNode scenario, relying on the core-site property for identifying the default nameservice.
      */
     @Test
-    public void testWebHdfsURLFederatedNNWithDefaultFS() throws Exception {
+    void testWebHdfsURLFederatedNNWithDefaultFS() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -576,7 +570,7 @@ public class AmbariDynamicServiceURLCreatorTest {
      * Test federated NameNode scenario, relying on the core-site property for identifying the default nameservice.
      */
     @Test
-    public void testHdfsUIURLFederatedNNWithDefaultFS() throws Exception {
+    void testHdfsUIURLFederatedNNWithDefaultFS() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -622,7 +616,7 @@ public class AmbariDynamicServiceURLCreatorTest {
      * a descriptor.
      */
     @Test
-    public void testWebHdfsURLFederatedNNWithDefaultFSAndHaNodes() throws Exception {
+    void testWebHdfsURLFederatedNNWithDefaultFSAndHaNodes() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -670,7 +664,7 @@ public class AmbariDynamicServiceURLCreatorTest {
      * a descriptor.
      */
     @Test
-    public void testHdfsUIURLFederatedNNWithDefaultFSAndHaNodes() throws Exception {
+    void testHdfsUIURLFederatedNNWithDefaultFSAndHaNodes() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -717,7 +711,7 @@ public class AmbariDynamicServiceURLCreatorTest {
      * This test verifies that discovery works correctly in those cases, when a nameservice is declared in descriptor.
      */
     @Test
-    public void testWebHdfsURLFederatedNNDeclaredNS() throws Exception {
+    void testWebHdfsURLFederatedNNDeclaredNS() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -772,7 +766,7 @@ public class AmbariDynamicServiceURLCreatorTest {
      * This test verifies that discovery works correctly in those cases, when a nameservice is declared in descriptor.
      */
     @Test
-    public void testWebHdfsURLFederatedNNDeclaredNSWithoutHaNodes() throws Exception {
+    void testWebHdfsURLFederatedNNDeclaredNSWithoutHaNodes() {
         final String NS1 = "myns1";
         final String NS2 = "myns2";
         final String NAMESERVICES   = NS1 + "," + NS2;
@@ -821,7 +815,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testAtlasApiURL() throws Exception {
+    void testAtlasApiURL() throws Exception {
         final String ATLAS_REST_ADDRESS = "http://host2:21000";
 
         AmbariComponent atlasServer = EasyMock.createNiceMock(AmbariComponent.class);
@@ -840,7 +834,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testAtlasURL() throws Exception {
+    void testAtlasURL() throws Exception {
         final String HTTP_PORT = "8787";
         final String HTTPS_PORT = "8989";
 
@@ -876,12 +870,12 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testRangerURL() throws Exception {
+    void testRangerURL() throws Exception {
         doTestRangerURLs("RANGER");
     }
 
     @Test
-    public void testRangerUIURL() throws Exception {
+    void testRangerUIURL() throws Exception {
         doTestRangerURLs("RANGERUI");
     }
 
@@ -929,7 +923,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testZeppelinURL() throws Exception {
+    void testZeppelinURL() throws Exception {
         final String HTTP_PORT = "8787";
         final String HTTPS_PORT = "8989";
 
@@ -964,7 +958,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testZeppelinUiURL() throws Exception {
+    void testZeppelinUiURL() throws Exception {
         final String HTTP_PORT = "8787";
         final String HTTPS_PORT = "8989";
 
@@ -999,7 +993,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testZeppelinWsURL() throws Exception {
+    void testZeppelinWsURL() throws Exception {
         final String HTTP_PORT = "8787";
         final String HTTPS_PORT = "8989";
 
@@ -1034,7 +1028,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testDruidCoordinatorURL() throws Exception {
+    void testDruidCoordinatorURL() throws Exception {
         final String PORT = "8787";
 
         final String[] HOSTNAMES = {"host3", "host2"};
@@ -1056,7 +1050,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testDruidBrokerURL() throws Exception {
+    void testDruidBrokerURL() throws Exception {
         final String PORT = "8181";
 
         final String[] HOSTNAMES = {"host4", "host3"};
@@ -1078,7 +1072,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testDruidRouterURL() throws Exception {
+    void testDruidRouterURL() throws Exception {
         final String PORT = "8282";
 
         final String[] HOSTNAMES = {"host5", "host7"};
@@ -1100,7 +1094,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testDruidOverlordURL() throws Exception {
+    void testDruidOverlordURL() throws Exception {
         final String PORT = "8383";
 
         final String[] HOSTNAMES = {"host4", "host1"};
@@ -1122,7 +1116,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testDruidSupersetURL() throws Exception {
+    void testDruidSupersetURL() throws Exception {
         final String PORT = "8484";
 
         final String[] HOSTNAMES = {"host4", "host1"};
@@ -1144,7 +1138,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testFalconURL() throws Exception {
+    void testFalconURL() throws Exception {
         final String PORT = "8998";
 
         final String[] HOSTNAMES = {"host2"};
@@ -1166,7 +1160,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testMissingServiceComponentURL() throws Exception {
+    void testMissingServiceComponentURL() throws Exception {
         AmbariCluster cluster = EasyMock.createNiceMock(AmbariCluster.class);
         EasyMock.expect(cluster.getComponent("DRUID_BROKER")).andReturn(null).anyTimes();
         EasyMock.expect(cluster.getComponent("HIVE_SERVER")).andReturn(null).anyTimes();
@@ -1186,7 +1180,7 @@ public class AmbariDynamicServiceURLCreatorTest {
     }
 
     @Test
-    public void testExtensionServiceURLFromOverride() throws Exception {
+    void testExtensionServiceURLFromOverride() throws Exception {
         File tmpFile = File.createTempFile("knox-discovery-url-mapping-extension", ".xml");
         System.setProperty(AmbariDynamicServiceURLCreator.MAPPING_CONFIG_OVERRIDE_PROPERTY, tmpFile.getAbsolutePath());
         try {
@@ -1260,7 +1254,7 @@ public class AmbariDynamicServiceURLCreatorTest {
                                             String[]     hostNames,
                                             String       scheme,
                                             String       port,
-                                            String       path) throws MalformedURLException {
+                                            String       path) {
 
         List<String> hostNamesToTest = new LinkedList<>(Arrays.asList(hostNames));
         for (String url : urlsToValidate) {
@@ -1269,7 +1263,7 @@ public class AmbariDynamicServiceURLCreatorTest {
                 // Make sure it's a valid URL
                 test = new URI(url);
             } catch (URISyntaxException e) {
-                fail(e.getMessage());
+                fail(e);
             }
 
             // Validate the scheme

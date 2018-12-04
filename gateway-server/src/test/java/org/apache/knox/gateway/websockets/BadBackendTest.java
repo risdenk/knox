@@ -21,24 +21,24 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.hamcrest.CoreMatchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
  * Test a case where the backend is down.
  */
-public class BadBackendTest {
+class BadBackendTest {
   /* Proxy */
   private static Server proxy;
   private static ServerConnector proxyConnector;
@@ -46,21 +46,21 @@ public class BadBackendTest {
 
   private static final String BAD_BACKEND = "ws://localhost:666";
 
-  @BeforeClass
-  public static void startServer() throws Exception {
+  @BeforeAll
+  static void startServer() throws Exception {
     startProxy();
   }
 
-  @AfterClass
-  public static  void stopServer() throws Exception {
+  @AfterAll
+  static  void stopServer() throws Exception {
     proxy.stop();
   }
 
   /*
    * Test for a message within limit.
    */
-  @Test(timeout = 8000)
-  public void testBadBackEnd() throws IOException, Exception {
+  @Test
+  void testBadBackEnd() throws Exception {
     final String message = "Echo";
 
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -73,7 +73,7 @@ public class BadBackendTest {
     client.awaitClose(CloseReason.CloseCodes.UNEXPECTED_CONDITION.getCode(), 1000,
         TimeUnit.MILLISECONDS);
 
-    Assert.assertThat(client.close.getCloseCode().getCode(), CoreMatchers.is(CloseReason.CloseCodes.UNEXPECTED_CONDITION.getCode()));
+    assertThat(client.close.getCloseCode().getCode(), CoreMatchers.is(CloseReason.CloseCodes.UNEXPECTED_CONDITION.getCode()));
   }
 
   private static void startProxy() throws Exception {

@@ -18,12 +18,8 @@
 package org.apache.knox.gateway.hbase;
 
 import org.apache.knox.gateway.dispatch.Dispatch;
-import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
 import org.easymock.EasyMock;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -31,12 +27,10 @@ import java.net.URI;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class HBaseDispatchTest {
-
+class HBaseDispatchTest {
   @SuppressWarnings("deprecation")
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testGetDispatchUrl() throws Exception {
+  @Test
+  void testGetDispatchUrl() {
     HttpServletRequest request;
     Dispatch dispatch;
     String path;

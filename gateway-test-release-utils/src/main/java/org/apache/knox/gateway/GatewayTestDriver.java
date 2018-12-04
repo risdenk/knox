@@ -17,9 +17,6 @@
  */
 package org.apache.knox.gateway;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mycila.xmltool.XMLTag;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This class was created to reduce much of the duplication and boiler plate that was ending up in the GatewayBasicFuncTest class.

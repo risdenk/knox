@@ -33,10 +33,9 @@ import org.apache.knox.gateway.services.security.token.JWTokenAuthority;
 import org.apache.knox.gateway.services.security.token.impl.JWT;
 import org.apache.knox.gateway.util.X509CertificateUtil;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.servlet.FilterChain;
@@ -66,7 +65,11 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractJWTFilterTest  {
   private static final String SERVICE_URL = "https://localhost:8888/resource";
@@ -89,8 +92,8 @@ public abstract class AbstractJWTFilterTest  {
     return headerFormatter.format(paramArray);
   }
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
     kpg.initialize(2048);
     KeyPair KPair = kpg.generateKeyPair();
@@ -104,13 +107,13 @@ public abstract class AbstractJWTFilterTest  {
     privateKey = (RSAPrivateKey) KPair.getPrivate();
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     handler.destroy();
   }
 
   @Test
-  public void testValidJWT() throws Exception {
+  void testValidJWT() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -131,17 +134,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
-      fail("Should NOT have thrown a ServletException.");
+      fail("Should NOT have thrown a ServletException.", se);
     }
   }
 
   @Test
-  public void testValidAudienceJWT() throws Exception {
+  void testValidAudienceJWT() throws Exception {
     try {
       Properties props = getProperties();
       props.put(getAudienceProperty(), "bar");
@@ -163,17 +167,19 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(),
+          "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
-      fail("Should NOT have thrown a ServletException.");
+      fail("Should NOT have thrown a ServletException.", se);
     }
   }
 
   @Test
-  public void testInvalidAudienceJWT() throws Exception {
+  void testInvalidAudienceJWT() throws Exception {
     try {
       Properties props = getProperties();
       props.put(getAudienceProperty(), "foo");
@@ -197,15 +203,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be true.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testValidAudienceJWTWhitespace() throws Exception {
+  void testValidAudienceJWTWhitespace() throws Exception {
     try {
       Properties props = getProperties();
       props.put(getAudienceProperty(), " foo, bar ");
@@ -227,17 +232,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testNoTokenAudience() throws Exception {
+  void testNoTokenAudience() throws Exception {
     try {
       Properties props = getProperties();
       props.put(getAudienceProperty(), "bar");
@@ -259,15 +265,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be true.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testNoAudienceConfigured() throws Exception {
+  void testNoAudienceConfigured() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -288,17 +293,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testEmptyAudienceConfigured() throws Exception {
+  void testEmptyAudienceConfigured() throws Exception {
     try {
       Properties props = getProperties();
       props.put(getAudienceProperty(), "");
@@ -320,17 +326,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testValidVerificationPEM() throws Exception {
+  void testValidVerificationPEM() throws Exception {
     try {
       Properties props = getProperties();
 
@@ -355,17 +362,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testExpiredJWT() throws Exception {
+  void testExpiredJWT() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -386,15 +394,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testValidJWTNoExpiration() throws Exception {
+  void testValidJWTNoExpiration() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -414,17 +421,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testUnableToParseJWT() throws Exception {
+  void testUnableToParseJWT() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -445,15 +453,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be true.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testFailedSignatureValidationJWT() throws Exception {
+  void testFailedSignatureValidationJWT() throws Exception {
     try {
       // Create a private key to sign the token
       KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -480,15 +487,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be true.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testInvalidVerificationPEM() throws Exception {
+  void testInvalidVerificationPEM() throws Exception {
     try {
       Properties props = getProperties();
 
@@ -521,15 +527,15 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertFalse("doFilterCalled should not be true.", chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertFalse(chain.doFilterCalled, "doFilterCalled should not be true.");
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testInvalidIssuer() throws Exception {
+  void testInvalidIssuer() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -549,15 +555,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be true.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testValidIssuerViaConfig() throws Exception {
+  void testValidIssuerViaConfig() throws Exception {
     try {
       Properties props = getProperties();
       props.setProperty(AbstractJWTFilter.JWT_EXPECTED_ISSUER, "new-issuer");
@@ -578,17 +583,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled);
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testRS512SignatureAlgorithm() throws Exception {
+  void testRS512SignatureAlgorithm() throws Exception {
     try {
       Properties props = getProperties();
       props.put(AbstractJWTFilter.JWT_EXPECTED_SIGALG, "RS512");
@@ -610,17 +616,18 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", chain.doFilterCalled );
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
       Set<PrimaryPrincipal> principals = chain.subject.getPrincipals(PrimaryPrincipal.class);
-      Assert.assertTrue("No PrimaryPrincipal", !principals.isEmpty());
-      Assert.assertEquals("Not the expected principal", "alice", ((Principal)principals.toArray()[0]).getName());
+      assertTrue(!principals.isEmpty(), "No PrimaryPrincipal");
+      assertEquals("alice", ((Principal)principals.toArray()[0]).getName(),
+          "Not the expected principal");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testInvalidSignatureAlgorithm() throws Exception {
+  void testInvalidSignatureAlgorithm() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -641,15 +648,14 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", !chain.doFilterCalled );
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testNotBeforeJWT() throws Exception {
+  void testNotBeforeJWT() throws Exception {
     try {
       Properties props = getProperties();
       handler.init(new TestFilterConfig(props));
@@ -672,8 +678,7 @@ public abstract class AbstractJWTFilterTest  {
 
       TestFilterChain chain = new TestFilterChain();
       handler.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.", !chain.doFilterCalled);
-      Assert.assertNull("No Subject should be returned.", chain.subject);
+      assertNull(chain.subject, "No Subject should be returned.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }

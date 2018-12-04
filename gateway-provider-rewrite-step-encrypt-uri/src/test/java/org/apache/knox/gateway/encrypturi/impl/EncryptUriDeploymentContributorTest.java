@@ -29,21 +29,19 @@ import org.apache.knox.gateway.topology.Topology;
 import org.easymock.EasyMock;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class EncryptUriDeploymentContributorTest {
-
+class EncryptUriDeploymentContributorTest {
   @SuppressWarnings("rawtypes")
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -57,7 +55,7 @@ public class EncryptUriDeploymentContributorTest {
   }
 
   @Test
-  public void testDeployment() throws IOException {
+  void testDeployment() {
     WebArchive webArchive = ShrinkWrap.create( WebArchive.class, "test-acrhive" );
 
     Provider provider = new Provider();
@@ -99,7 +97,5 @@ public class EncryptUriDeploymentContributorTest {
 
     // Just make sure it doesn't blow up.
     contributor.finalizeContribution( context );
-
   }
-
 }

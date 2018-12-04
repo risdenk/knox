@@ -23,24 +23,24 @@ import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class SimpleLdapServerTest {
+class SimpleLdapServerTest {
   private static int port;
   private static File ldifFile;
   private static TcpTransport ldapTransport;
   private static SimpleLdapDirectoryServer ldap;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     ldifFile = new File( ClassLoader.getSystemResource( "users.ldif" ).toURI() );
     ldapTransport = new TcpTransport( 0 );
     ldap = new SimpleLdapDirectoryServer( "dc=hadoop,dc=apache,dc=org", ldifFile, ldapTransport );
@@ -48,15 +48,15 @@ public class SimpleLdapServerTest {
     port = ldapTransport.getAcceptor().getLocalAddress().getPort();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     if( ldap != null ) {
       ldap.stop( true );
     }
   }
 
   @Test
-  public void testBind() throws LdapException, IOException {
+  void testBind() throws LdapException, IOException {
     try(LdapConnection connection = new LdapNetworkConnection( "localhost", port )) {
       connection.bind( "uid=guest,ou=people,dc=hadoop,dc=apache,dc=org", "guest-password" );
     }

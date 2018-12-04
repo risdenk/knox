@@ -20,17 +20,18 @@ package org.apache.knox.gateway.websockets;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Test to simulate unexpected connection drop. Here we establish a connection
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * @since 0.10
  *
  */
-public class ConnectionDroppedTest {
+class ConnectionDroppedTest {
   private static Server backend;
   private static ServerConnector connector;
   private static URI serverUri;
@@ -49,18 +50,14 @@ public class ConnectionDroppedTest {
   private static ServerConnector proxyConnector;
   private static URI proxyUri;
 
-  public ConnectionDroppedTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     startBackend();
     startProxy();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     /* ORDER MATTERS ! */
     proxy.stop();
     backend.stop();
@@ -70,8 +67,8 @@ public class ConnectionDroppedTest {
    * The connection is dropped, so we should see a tineout exception when we try
    * to poll the message from queue.
    */
-  @Test(expected = java.util.concurrent.TimeoutException.class)
-  public void testDroppedConnection() throws IOException, Exception {
+  @Test
+  void testDroppedConnection() throws Exception {
     final String message = "Echo";
 
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -81,9 +78,8 @@ public class ConnectionDroppedTest {
         proxyUri);
 
     session.getBasicRemote().sendText(message);
-
-    client.messageQueue.awaitMessages(1, 1000, TimeUnit.MILLISECONDS);
-
+    Assertions.assertThrows(TimeoutException.class,
+        () -> client.messageQueue.awaitMessages(1, 1000, TimeUnit.MILLISECONDS));
   }
 
   private static void startBackend() throws Exception {

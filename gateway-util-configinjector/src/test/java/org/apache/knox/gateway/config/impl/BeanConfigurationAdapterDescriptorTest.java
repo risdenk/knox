@@ -19,19 +19,18 @@ package org.apache.knox.gateway.config.impl;
 
 import org.apache.knox.gateway.config.ConfigurationAdapter;
 import org.apache.knox.gateway.config.spi.ConfigurationAdapterDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasKey;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class BeanConfigurationAdapterDescriptorTest {
-
+class BeanConfigurationAdapterDescriptorTest {
   @Test
-  public void testServiceLoader() {
+  void testServiceLoader() {
     ServiceLoader<ConfigurationAdapterDescriptor> loader = ServiceLoader.load( ConfigurationAdapterDescriptor.class );
     for (ConfigurationAdapterDescriptor configurationAdapterDescriptor : loader) {
       if (configurationAdapterDescriptor instanceof BeanConfigurationAdapterDescriptor) {
@@ -42,7 +41,7 @@ public class BeanConfigurationAdapterDescriptorTest {
   }
 
   @Test
-  public void testDescriptor() {
+  void testDescriptor() {
     ConfigurationAdapterDescriptor descriptor = new BeanConfigurationAdapterDescriptor();
     Map<Class<?>,Class<? extends ConfigurationAdapter>> map = descriptor.providedConfigurationAdapters();
     assertThat( map, hasKey( (Class)Object.class ) );
@@ -51,5 +50,4 @@ public class BeanConfigurationAdapterDescriptorTest {
         "Descriptor didn't return " + BeanConfigurationAdapter.class.getName(),
         type == BeanConfigurationAdapter.class );
   }
-
 }

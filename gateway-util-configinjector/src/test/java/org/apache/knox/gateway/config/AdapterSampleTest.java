@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 import java.util.Map;
@@ -26,9 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class AdapterSampleTest {
-
+class AdapterSampleTest {
   private static class Target {
+    @SuppressWarnings("unused")
     @Configure
     private String username;
   }
@@ -51,11 +51,10 @@ public class AdapterSampleTest {
   }
 
   @Test
-  public void sample() {
+  void sample() {
     Target target = new Target();
     Adapter adapter = new Adapter( CONFIG );
     ConfigurationInjectorBuilder.configuration().target( target ).source( adapter ).inject();
     assertThat( target.username, is( "somebody" ) );
   }
-
 }

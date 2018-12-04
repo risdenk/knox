@@ -22,7 +22,8 @@ import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.topology.validation.TopologyValidator;
 import org.apache.knox.gateway.util.XmlUtils;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -53,15 +54,14 @@ import java.util.Properties;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class SimpleDescriptorHandlerTest {
-
+class SimpleDescriptorHandlerTest {
     private static final String TEST_PROVIDER_CONFIG =
             "    <gateway>\n" +
             "        <provider>\n" +
@@ -135,8 +135,7 @@ public class SimpleDescriptorHandlerTest {
      *             org.apache.knox.gateway.topology.discovery.test.extension.PropertiesFileServiceDiscovery
      */
     @Test
-    public void testSimpleDescriptorHandler() throws Exception {
-
+    void testSimpleDescriptorHandler() throws Exception {
         final String type = "PROPERTIES_FILE";
         final String clusterName = "dummy";
 
@@ -159,7 +158,7 @@ public class SimpleDescriptorHandlerTest {
         try (OutputStream outputStream = Files.newOutputStream(discoveryConfig.toPath())){
             DISCOVERY_PROPERTIES.store(outputStream, null);
         } catch (FileNotFoundException e) {
-            fail(e.getMessage());
+            fail(e);
         }
 
         final Map<String, List<String>> serviceURLs = new HashMap<>();
@@ -275,7 +274,7 @@ public class SimpleDescriptorHandlerTest {
 
                     // If the service should have a URL (some don't require it)
                     if (serviceURLs.containsKey(role)) {
-                        assertNotNull("Declared service should have a URL.", url);
+                        assertNotNull(url, "Declared service should have a URL.");
                         if (!topologyServiceURLs.containsKey(role)) {
                             topologyServiceURLs.put(role, new ArrayList<>());
                         }
@@ -297,7 +296,8 @@ public class SimpleDescriptorHandlerTest {
                 }
 
             }
-            assertEquals("Unexpected number of service declarations.", (serviceURLs.size() - 1), topologyServiceURLs.size());
+            assertEquals(serviceURLs.size() - 1, topologyServiceURLs.size(),
+                "Unexpected number of service declarations.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -311,7 +311,6 @@ public class SimpleDescriptorHandlerTest {
         }
     }
 
-
     /*
      * KNOX-1006
      *
@@ -322,7 +321,7 @@ public class SimpleDescriptorHandlerTest {
      *             org.apache.knox.gateway.topology.discovery.test.extension.PropertiesFileServiceDiscovery
      */
     @Test
-    public void testInvalidServiceURLFromDiscovery() throws Exception {
+    void testInvalidServiceURLFromDiscovery() throws Exception {
         final String CLUSTER_NAME = "myproperties";
 
         // Configure the PropertiesFile Service Discovery implementation for this test
@@ -434,7 +433,7 @@ public class SimpleDescriptorHandlerTest {
                     Node urlNode = urlNodes.item(urlNodeIndex);
                     assertNotNull(urlNode);
                     String url = urlNode.getNodeValue();
-                    assertNotNull("Every declared service should have a URL.", url);
+                    assertNotNull(url, "Every declared service should have a URL.");
                     if (!topologyServiceURLs.containsKey(role)) {
                         topologyServiceURLs.put(role, new ArrayList<>());
                     }
@@ -443,10 +442,13 @@ public class SimpleDescriptorHandlerTest {
             }
 
             // There should not be a service element for HIVE, since it had no valid URLs
-            assertEquals("Unexpected number of service declarations.", serviceURLs.size() - 1, topologyServices.size());
-            assertFalse("The HIVE service should have been omitted from the generated topology.", topologyServices.contains("HIVE"));
+            assertEquals(serviceURLs.size() - 1, topologyServices.size(),
+                "Unexpected number of service declarations.");
+            assertFalse(topologyServices.contains("HIVE"),
+                "The HIVE service should have been omitted from the generated topology.");
 
-            assertEquals("Unexpected number of service URLs.", serviceURLs.size() - 1, topologyServiceURLs.size());
+            assertEquals(serviceURLs.size() - 1, topologyServiceURLs.size(),
+                "Unexpected number of service URLs.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -463,8 +465,8 @@ public class SimpleDescriptorHandlerTest {
     /*
      * KNOX-1216
      */
-    @Test (expected = IllegalArgumentException.class)
-    public void testMissingProviderConfigReference() throws Exception {
+    @Test
+    void testMissingProviderConfigReference() throws Exception {
         // Prepare a mock SimpleDescriptor
         final Map<String, List<String>> serviceURLs = new HashMap<>();
         serviceURLs.put("NAMENODE", null);
@@ -500,7 +502,8 @@ public class SimpleDescriptorHandlerTest {
         EasyMock.expect(testDescriptor.getServices()).andReturn(serviceMocks).anyTimes();
         EasyMock.replay(testDescriptor);
 
-        SimpleDescriptorHandler.handle(gc, testDescriptor, destDir, destDir);
+      Assertions.assertThrows(IllegalArgumentException.class,
+          () -> SimpleDescriptorHandler.handle(gc, testDescriptor, destDir, destDir));
     }
 
     /*
@@ -510,8 +513,7 @@ public class SimpleDescriptorHandlerTest {
      *             org.apache.knox.gateway.topology.discovery.test.extension.PropertiesFileServiceDiscovery
      */
     @Test
-    public void testSimpleDescriptorHandlerHaProviderConfigOverrides() throws Exception {
-
+    void testSimpleDescriptorHandlerHaProviderConfigOverrides() throws Exception {
         final String type = "PROPERTIES_FILE";
         final String clusterName = "dummy";
 
@@ -673,8 +675,8 @@ public class SimpleDescriptorHandlerTest {
                         assertNotNull(valueNode);
                         hiveServiceParams.put(nameNode.getNodeValue(), valueNode.getNodeValue());
                     }
-                    assertEquals("Expected true because enabled=auto and service config indicates HA is enabled",
-                                 HIVE_HA_ENABLED, hiveServiceParams.get("haEnabled"));
+                    assertEquals(HIVE_HA_ENABLED, hiveServiceParams.get("haEnabled"),
+                        "Expected true because enabled=auto and service config indicates HA is enabled");
                     assertEquals(HIVE_HA_ENSEMBLE, hiveServiceParams.get("zookeeperEnsemble"));
                     assertEquals(HIVE_HA_NAMESPACE, hiveServiceParams.get("zookeeperNamespace"));
                 }
@@ -693,8 +695,8 @@ public class SimpleDescriptorHandlerTest {
                         assertNotNull(valueNode);
                         atlasServiceParams.put(nameNode.getNodeValue(), valueNode.getNodeValue());
                     }
-                    assertEquals("Expected true because enabled=auto and service config indicates HA is enabled",
-                                 ATLAS_HA_ENABLED, atlasServiceParams.get("haEnabled"));
+                    assertEquals(ATLAS_HA_ENABLED, atlasServiceParams.get("haEnabled"),
+                        "Expected true because enabled=auto and service config indicates HA is enabled");
                     assertEquals(ATLAS_HA_ENSEMBLE, atlasServiceParams.get("zookeeperEnsemble"));
                     assertNull(atlasServiceParams.get("zookeeperNamespace"));
                 }
@@ -733,7 +735,7 @@ public class SimpleDescriptorHandlerTest {
 
                     // If the service should have a URL (some don't require it)
                     if (serviceURLs.containsKey(role)) {
-                        assertNotNull("Declared service should have a URL.", url);
+                        assertNotNull(url, "Declared service should have a URL.");
                         if (!topologyServiceURLs.containsKey(role)) {
                             topologyServiceURLs.put(role, new ArrayList<>());
                         }
@@ -741,7 +743,8 @@ public class SimpleDescriptorHandlerTest {
                     }
                 }
             }
-            assertEquals("Unexpected number of service declarations.", serviceURLs.size(), generatedServiceDeclarations.size());
+            assertEquals(serviceURLs.size(), generatedServiceDeclarations.size(),
+                "Unexpected number of service declarations.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -775,11 +778,12 @@ public class SimpleDescriptorHandlerTest {
         // Compare the generated ProviderConfiguration to the expected one
         List<ProviderConfiguration.Provider> expectedProviders = expected.getProviders();
         List<ProviderConfiguration.Provider> actualProviders = generatedProviderConfiguration.getProviders();
-        assertEquals("The number of providers should be the same.", expectedProviders.size(), actualProviders.size());
+        assertEquals(expectedProviders.size(), actualProviders.size(),
+            "The number of providers should be the same.");
 
         for (ProviderConfiguration.Provider expectedProvider : expectedProviders) {
-            assertTrue("Failed to validate provider with role " + expectedProvider.getRole(),
-                       validateProvider(expectedProvider, actualProviders));
+            assertTrue(validateProvider(expectedProvider, actualProviders),
+                "Failed to validate provider with role " + expectedProvider.getRole());
         }
     }
 

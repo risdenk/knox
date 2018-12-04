@@ -32,9 +32,9 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.ACL;
 import org.easymock.EasyMock;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -45,19 +45,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the ZooKeeperConfigMonitor WITHOUT SASL configured or znode ACLs applied.
  * The implementation of the monitor is the same regardless, since the ACLs are defined by the ZooKeeper znode
  * creator, and the SASL config is purely JAAS (and external to the implementation).
  */
-public class ZooKeeperConfigurationMonitorTest {
-
+class ZooKeeperConfigurationMonitorTest {
     private static final String PATH_KNOX = "/knox";
     private static final String PATH_KNOX_CONFIG = PATH_KNOX + "/config";
     private static final String PATH_KNOX_PROVIDERS = PATH_KNOX_CONFIG + "/shared-providers";
@@ -73,9 +72,8 @@ public class ZooKeeperConfigurationMonitorTest {
 
     private GatewayConfig gc;
 
-
-    @BeforeClass
-    public static void setupSuite() throws Exception {
+    @BeforeAll
+    static void setupSuite() throws Exception {
         testTmp = TestUtils.createTempDir(ZooKeeperConfigurationMonitorTest.class.getName());
         File confDir   = TestUtils.createTempDir(testTmp + "/conf");
         providersDir   = TestUtils.createTempDir(confDir + "/shared-providers");
@@ -118,15 +116,15 @@ public class ZooKeeperConfigurationMonitorTest {
         acls.add(new ACL(ZooDefs.Perms.ALL, ZooDefs.Ids.ANYONE_ID_UNSAFE));
 
         client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).withACL(acls).forPath(PATH_KNOX_DESCRIPTORS);
-        assertNotNull("Failed to create node:" + PATH_KNOX_DESCRIPTORS,
-                      client.checkExists().forPath(PATH_KNOX_DESCRIPTORS));
+        assertNotNull(client.checkExists().forPath(PATH_KNOX_DESCRIPTORS),
+            "Failed to create node:" + PATH_KNOX_DESCRIPTORS);
         client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).withACL(acls).forPath(PATH_KNOX_PROVIDERS);
-        assertNotNull("Failed to create node:" + PATH_KNOX_PROVIDERS,
-                      client.checkExists().forPath(PATH_KNOX_PROVIDERS));
+        assertNotNull(client.checkExists().forPath(PATH_KNOX_PROVIDERS),
+            "Failed to create node:" + PATH_KNOX_PROVIDERS);
     }
 
-    @AfterClass
-    public static void tearDownSuite() throws Exception {
+    @AfterAll
+    static void tearDownSuite() throws Exception {
         // Clean up the ZK nodes, and close the client
         if (client != null) {
             if (client.checkExists().forPath(PATH_KNOX) != null) {
@@ -143,7 +141,7 @@ public class ZooKeeperConfigurationMonitorTest {
     }
 
     @Test
-    public void testZooKeeperConfigMonitor() throws Exception {
+    void testZooKeeperConfigMonitor() throws Exception {
         String configMonitorName = "remoteConfigMonitorClient";
 
         // Setup the base GatewayConfig mock
@@ -178,18 +176,17 @@ public class ZooKeeperConfigurationMonitorTest {
         client.create().withMode(CreateMode.PERSISTENT).forPath(preExistingProviderConfig,
                                                                 TEST_PROVIDERS_CONFIG_1.getBytes(StandardCharsets.UTF_8));
         File preExistingProviderConfigLocalFile = new File(providersDir, "pre-existing-providers.xml");
-        assertFalse("This file should not exist locally prior to monitor starting.",
-                    preExistingProviderConfigLocalFile.exists());
+        assertFalse(preExistingProviderConfigLocalFile.exists(),
+            "This file should not exist locally prior to monitor starting.");
 
         try {
             cm.start();
         } catch (Exception e) {
-            fail("Failed to start monitor: " + e.getMessage());
+            fail("Failed to start monitor", e);
         }
 
-        assertTrue("This file should exist locally immediately after monitor starting.",
-                    preExistingProviderConfigLocalFile.exists());
-
+        assertTrue(preExistingProviderConfigLocalFile.exists(),
+            "This file should exist locally immediately after monitor starting.");
 
         try {
             final String pc_one_znode = getProviderPath("providers-config1.xml");
@@ -252,8 +249,8 @@ public class ZooKeeperConfigurationMonitorTest {
                 true, 1000));
 
             client.delete().forPath(desc_two_znode);
-            assertFalse("Expected test2.json to have been deleted.",
-                TestUtils.waitUntil(desc_two::exists, false,1000));
+            assertFalse(TestUtils.waitUntil(desc_two::exists, false,1000),
+                "Expected test2.json to have been deleted.");
 
             client.delete().forPath(desc_three_znode);
             assertFalse(TestUtils.waitUntil(desc_three::exists, false,1000));
@@ -273,7 +270,6 @@ public class ZooKeeperConfigurationMonitorTest {
     private static String getProviderPath(String providerConfigName) {
         return PATH_KNOX_PROVIDERS + "/" + providerConfigName;
     }
-
 
     private static final String TEST_PROVIDERS_CONFIG_1 =
             "<gateway>\n" +
@@ -375,5 +371,4 @@ public class ZooKeeperConfigurationMonitorTest {
             "    {\"name\":\"RESOURCEMANAGER\"}\n" +
             "  ]\n" +
             "}\n";
-
 }

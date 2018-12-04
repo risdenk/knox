@@ -21,7 +21,8 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,9 +35,9 @@ import java.nio.charset.StandardCharsets;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CappedBufferHttpEntityTest {
+class CappedBufferHttpEntityTest {
   // Variables
   // Consumers: C1, C2
   // Reads: FC - Full Content, PC - Partial Content, AC - Any Content
@@ -64,7 +65,7 @@ public class CappedBufferHttpEntityTest {
   //   C1 PC/IB; C2 PC/OB; C1 AC; EE
 
   @Test
-  public void testS__C1_FC_IB() throws IOException {
+  void testS__C1_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -78,7 +79,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testB__C1_FC_IB() throws IOException {
+  void testB__C1_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -91,8 +92,8 @@ public class CappedBufferHttpEntityTest {
     assertThat( output, is( data ) );
   }
 
-  @Test (expected = IOException.class)
-  public void testS__C1_FC_OB() throws IOException {
+  @Test
+  void testS__C1_FC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -101,24 +102,26 @@ public class CappedBufferHttpEntityTest {
     basic.setContent( new ByteArrayInputStream( data.getBytes( StandardCharsets.UTF_8 ) ) );
     replay = new CappedBufferHttpEntity( basic, 5 );
 
-    byteRead( replay.getContent(), -1 );
-  }
-
-  @Test (expected = IOException.class)
-  public void testB__C1_FC_OB() throws IOException {
-    String data = "0123456789";
-    BasicHttpEntity basic;
-    CappedBufferHttpEntity replay;
-
-    basic = new BasicHttpEntity();
-    basic.setContent( new ByteArrayInputStream( data.getBytes( StandardCharsets.UTF_8 ) ) );
-    replay = new CappedBufferHttpEntity( basic, 5 );
-
-    blockRead( replay.getContent(), StandardCharsets.UTF_8, -1, 3 );
+    Assertions.assertThrows(IOException.class,
+        () -> byteRead( replay.getContent(), -1 ));
   }
 
   @Test
-  public void testS_C1_FC_IB__C2_FC_IB() throws IOException {
+  void testB__C1_FC_OB() throws IOException {
+    String data = "0123456789";
+    BasicHttpEntity basic;
+    CappedBufferHttpEntity replay;
+
+    basic = new BasicHttpEntity();
+    basic.setContent( new ByteArrayInputStream( data.getBytes( StandardCharsets.UTF_8 ) ) );
+    replay = new CappedBufferHttpEntity( basic, 5 );
+
+    Assertions.assertThrows(IOException.class,
+        () -> blockRead( replay.getContent(), StandardCharsets.UTF_8, -1, 3 ));
+  }
+
+  @Test
+  void testS_C1_FC_IB__C2_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -137,7 +140,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testB_C1_FC_IB__C2_FC_IB() throws IOException {
+  void testB_C1_FC_IB__C2_FC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -155,8 +158,8 @@ public class CappedBufferHttpEntityTest {
     assertThat( output, is( data ) );
   }
 
-  @Test (expected = IOException.class)
-  public void testS_C1_FC_OB__C2_AC__EE() throws Exception {
+  @Test
+  void testS_C1_FC_OB__C2_AC__EE() throws Exception {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -165,11 +168,12 @@ public class CappedBufferHttpEntityTest {
     basic.setContent( new ByteArrayInputStream( data.getBytes( StandardCharsets.UTF_8 ) ) );
     replay = new CappedBufferHttpEntity( basic, 5 );
 
-    byteRead( replay.getContent(), -1 );
+    Assertions.assertThrows(IOException.class,
+        () -> byteRead( replay.getContent(), -1 ));
   }
 
-  @Test (expected = IOException.class)
-  public void testB_C1_FC_OB__C2_AC__EE() throws Exception {
+  @Test
+  void testB_C1_FC_OB__C2_AC__EE() throws Exception {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -178,12 +182,13 @@ public class CappedBufferHttpEntityTest {
     basic.setContent( new ByteArrayInputStream( data.getBytes( StandardCharsets.UTF_8 ) ) );
     replay = new CappedBufferHttpEntity( basic, 5 );
 
-    blockRead( replay.getContent(), StandardCharsets.UTF_8, -1, 3 );
+    Assertions.assertThrows(IOException.class,
+        () -> blockRead( replay.getContent(), StandardCharsets.UTF_8, -1, 3 ));
   }
 
   //   C1 FC/IB; C1 XC; C2 FC.
   @Test
-  public void testS_C1_FC_IB__C1_XC__C2_FC() throws IOException {
+  void testS_C1_FC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -205,7 +210,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 FC/IB; C1 XC; C2 FC.
   @Test
-  public void testB_C1_FC_IB__C1_XC__C2_FC() throws IOException {
+  void testB_C1_FC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -227,8 +232,8 @@ public class CappedBufferHttpEntityTest {
   }
 
   //   C1 FC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testS_C1_FC_OB__C1_XC__C2_AC__EE() throws IOException {
+  @Test
+  void testS_C1_FC_OB__C1_XC__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -238,13 +243,14 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity( basic, 5 );
 
     try(InputStream stream = replay.getContent()) {
-      byteRead(stream, -1);
+      Assertions.assertThrows(IOException.class,
+          () -> byteRead(stream, -1));
     }
   }
 
   //   C1 FC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_FC_OB__C1_XC__C2_AC_EE() throws IOException {
+  @Test
+  void testB_C1_FC_OB__C1_XC__C2_AC_EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -254,13 +260,14 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity( basic, 5 );
 
     try(InputStream stream = replay.getContent()) {
-      blockRead(stream, StandardCharsets.UTF_8, -1, 3);
+      Assertions.assertThrows(IOException.class,
+          () -> blockRead(stream, StandardCharsets.UTF_8, -1, 3));
     }
   }
 
   //   C1 PC/IB.
   @Test
-  public void testS_C1_PC_IB() throws IOException {
+  void testS_C1_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -277,7 +284,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 PC/IB.
   @Test
-  public void testB_C1_PC_IB() throws IOException {
+  void testB_C1_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -293,8 +300,8 @@ public class CappedBufferHttpEntityTest {
   }
 
   //   C1 PC/OB.
-  @Test (expected = IOException.class)
-  public void testS_C1_PC_OB() throws IOException {
+  @Test
+  void testS_C1_PC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -303,13 +310,14 @@ public class CappedBufferHttpEntityTest {
     basic.setContent(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
     replay = new CappedBufferHttpEntity(basic, 5);
     try(InputStream stream = replay.getContent()) {
-      byteRead(stream, -1);
+      Assertions.assertThrows(IOException.class,
+          () -> byteRead(stream, -1));
     }
   }
 
   //   C1 PC/OB.
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_OB() throws IOException {
+  @Test
+  void testB_C1_PC_OB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -319,13 +327,14 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity( basic, 5 );
 
     try (InputStream stream = replay.getContent()) {
-      blockRead(stream, StandardCharsets.UTF_8, -1, 4);
+      Assertions.assertThrows(IOException.class,
+          () -> blockRead(stream, StandardCharsets.UTF_8, -1, 4));
     }
   }
 
   //   C1 PC/IB; C2 FC.
   @Test
-  public void testS_C1_PC_IB__C2_FC() throws IOException {
+  void testS_C1_PC_IB__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -347,7 +356,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 PC/IB; C2 FC.
   @Test
-  public void testB_C1_PC_IB__C2_FC() throws IOException {
+  void testB_C1_PC_IB__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -368,8 +377,8 @@ public class CappedBufferHttpEntityTest {
   }
 
   //   C1 PC/OB; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testS_C1_PC_OB__C2_AC__EE() throws IOException {
+  @Test
+  void testS_C1_PC_OB__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -379,14 +388,14 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity(basic, 5);
 
     try(InputStream stream = replay.getContent()) {
-      String text = byteRead(stream, 7);
-      assertThat(text, is("0123456"));
+      Assertions.assertThrows(IOException.class,
+          () -> byteRead(stream, 7));
     }
   }
 
   //   C1 PC/OB; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_OB__C2_AC__EE() throws IOException {
+  @Test
+  void testB_C1_PC_OB__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -396,13 +405,14 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity( basic, 5 );
 
     try(InputStream stream = replay.getContent()) {
-      blockRead(stream, StandardCharsets.UTF_8, 7, 2);
+      Assertions.assertThrows(IOException.class,
+          () -> blockRead(stream, StandardCharsets.UTF_8, 7, 2));
     }
   }
 
   //   C1 PC/IB; C1 XC; C2 FC.
   @Test
-  public void testS_C1_PC_IB__C1_XC__C2_FC() throws IOException {
+  void testS_C1_PC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -424,7 +434,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 PC/IB; C1 XC; C2 FC.
   @Test
-  public void testB_C1_PC_IB__C1_XC__C2_FC() throws IOException {
+  void testB_C1_PC_IB__C1_XC__C2_FC() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -446,7 +456,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 PC/OB; C1 XC; C2 AC; EE
   @Test
-  public void testS_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
+  void testS_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -461,8 +471,8 @@ public class CappedBufferHttpEntityTest {
   }
 
   //   C1 PC/OB; C1 XC; C2 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
+  @Test
+  void testB_C1_PC_OB__C1_XC__C2_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -472,13 +482,14 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity( basic, 5 );
 
     try(InputStream stream = replay.getContent()) {
-      blockRead( stream, StandardCharsets.UTF_8, 7, 2 );
+      Assertions.assertThrows(IOException.class,
+          () -> blockRead( stream, StandardCharsets.UTF_8, 7, 2 ));
     }
   }
 
   //   C1 PC/IB; C2 PC/IB; C1 PC/IB; C2 PC/IB - Back and forth before buffer overflow is OK.
   @Test
-  public void testS_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
+  void testS_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -503,7 +514,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 PC/IB; C2 PC/IB; C1 PC/IB; C2 PC/IB - Back and forth before buffer overflow is OK.
   @Test
-  public void testB_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
+  void testB_C1_PC_IB__C2_PC_IB__C2_PC_IB() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -527,7 +538,7 @@ public class CappedBufferHttpEntityTest {
 
   //   C1 PC/IB; C2 PC/OB; C1 AC; EE
   @Test
-  public void testS_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
+  void testS_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -548,8 +559,8 @@ public class CappedBufferHttpEntityTest {
   }
 
   //   C1 PC/IB; C2 PC/OB; C1 AC; EE
-  @Test (expected = IOException.class)
-  public void testB_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
+  @Test
+  void testB_C1_PC_IB__C2_PC_OB__C1_AC__EE() throws IOException {
     String data = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -565,12 +576,13 @@ public class CappedBufferHttpEntityTest {
     }
 
     try (InputStream stream = replay.getContent()) {
-      blockRead( stream, StandardCharsets.UTF_8, 6, 4 );
+      Assertions.assertThrows(IOException.class,
+          () -> blockRead(stream, StandardCharsets.UTF_8, 6, 4));
     }
   }
 
-  @Test (expected = IOException.class)
-  public void testWriteTo() throws Exception {
+  @Test
+  void testWriteTo() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -580,12 +592,13 @@ public class CappedBufferHttpEntityTest {
     replay = new CappedBufferHttpEntity( basic, 5 );
 
     try(OutputStream buffer = new ByteArrayOutputStream()) {
-      replay.writeTo(buffer);
+      Assertions.assertThrows(IOException.class,
+          () -> replay.writeTo(buffer));
     }
   }
 
   @Test
-  public void testIsRepeatable() throws Exception {
+  void testIsRepeatable() throws Exception {
     String text = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -603,7 +616,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testIsChunked() throws Exception {
+  void testIsChunked() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -621,7 +634,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testGetContentLength() throws Exception {
+  void testGetContentLength() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -639,7 +652,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testGetContentType() throws Exception {
+  void testGetContentType() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -657,7 +670,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testGetContentEncoding() throws Exception {
+  void testGetContentEncoding() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -675,7 +688,7 @@ public class CappedBufferHttpEntityTest {
   }
 
   @Test
-  public void testIsStreaming() throws Exception {
+  void testIsStreaming() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     InputStreamEntity streaming;
@@ -696,8 +709,8 @@ public class CappedBufferHttpEntityTest {
     assertThat( replay.isStreaming(), is( true ) );
   }
 
-  @Test (expected = UnsupportedOperationException.class)
-  public void testConsumeContent() throws Exception {
+  @Test
+  void testConsumeContent() throws Exception {
     String input = "0123456789";
     BasicHttpEntity basic;
     CappedBufferHttpEntity replay;
@@ -705,7 +718,8 @@ public class CappedBufferHttpEntityTest {
     basic = new BasicHttpEntity();
     basic.setContent( new ByteArrayInputStream( input.getBytes( StandardCharsets.UTF_8 ) ) );
     replay = new CappedBufferHttpEntity( basic, 5 );
-    replay.consumeContent();
+    Assertions.assertThrows(UnsupportedOperationException.class,
+        replay::consumeContent);
   }
 
   private static String byteRead( InputStream stream, int total ) throws IOException {

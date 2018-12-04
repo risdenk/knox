@@ -23,12 +23,11 @@ import org.apache.knox.gateway.services.ServiceType;
 import org.apache.knox.gateway.services.GatewayServices;
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URL;
@@ -37,20 +36,20 @@ import static io.restassured.RestAssured.given;
 import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Functional test to verify : looking up ldap groups from directory
  * and using them in acl authorization checks
  *
  */
-@Category(ReleaseTest.class)
-public class GatewayLdapPosixGroupFuncTest {
+@Tag("release")
+class GatewayLdapPosixGroupFuncTest {
   private static final GatewayTestDriver driver = new GatewayTestDriver();
   private static final String cluster = "test-cluster";
 
-  @BeforeClass
-  public static void setupSuite() throws Exception {
+  @BeforeAll
+  static void setupSuite() throws Exception {
     LOG_ENTER();
     URL usersUrl = TestUtils.getResourceUrl( GatewayLdapPosixGroupFuncTest.class, "users.ldif" );
     driver.setupLdap( 0, new File( usersUrl.toURI() ) );
@@ -58,14 +57,14 @@ public class GatewayLdapPosixGroupFuncTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void cleanupSuite() throws Exception {
+  @AfterAll
+  static void cleanupSuite() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     String cluster = "test-cluster";
     GatewayTestConfig config = new GatewayTestConfig();
     XMLTag topology = createTopology();
@@ -88,11 +87,9 @@ public class GatewayLdapPosixGroupFuncTest {
   }
 
   private static XMLTag createTopology() {
-
     return XMLDoc.newDocument( true )
         .addRoot( "topology" )
         .addTag( "gateway" )
-
         .addTag( "provider" )
         .addTag( "role" ).addText( "authentication" )
         .addTag( "name" ).addText( "ShiroProvider" )
@@ -165,8 +162,8 @@ public class GatewayLdapPosixGroupFuncTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testGroupMember() {
+  @Test
+  void testGroupMember() {
     LOG_ENTER();
     String username = "sam";
     String password = "sam-password";
@@ -183,8 +180,8 @@ public class GatewayLdapPosixGroupFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testNonGroupMember() {
+  @Test
+  void testNonGroupMember() {
     LOG_ENTER();
     String username = "guest";
     String password = "guest-password";
@@ -198,5 +195,4 @@ public class GatewayLdapPosixGroupFuncTest {
         .when().get( serviceUrl );
     LOG_EXIT();
   }
-
 }

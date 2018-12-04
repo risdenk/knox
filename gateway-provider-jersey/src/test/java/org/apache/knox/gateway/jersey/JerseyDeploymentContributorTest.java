@@ -32,7 +32,7 @@ import org.easymock.EasyMock;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.List;
@@ -40,12 +40,11 @@ import java.util.ServiceLoader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class JerseyDeploymentContributorTest {
-
+class JerseyDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -59,7 +58,7 @@ public class JerseyDeploymentContributorTest {
   }
 
   @Test
-  public void testDeploymentContributors() throws Exception {
+  void testDeploymentContributors() throws Exception {
     JerseyDispatchDeploymentContributor providerContributor = new JerseyDispatchDeploymentContributor();
     assertThat( providerContributor.getRole(), is( "pivot" ) );
     assertThat( providerContributor.getName(), is( "jersey" ) );
@@ -104,7 +103,7 @@ public class JerseyDeploymentContributorTest {
 
     // This should end up calling providerContributor.contributeFilter
     serviceContributor.contributeService( context, service );
-    ResourceDescriptor resource = context.getGatewayDescriptor().resources().get( 0 );
+    ResourceDescriptor resource;
 
     // Just make sure they don't blow up.
     serviceContributor.finalizeContribution( context );
@@ -177,7 +176,6 @@ public class JerseyDeploymentContributorTest {
   }
 
   private static class MockJerseyService extends JerseyServiceDeploymentContributorBase {
-
     @Override
     protected String[] getPatterns() {
       return new String[]{ "test-service/?**", "test-service/**?**" };
@@ -197,11 +195,9 @@ public class JerseyDeploymentContributorTest {
     public String getName() {
       return "test-service-name";
     }
-
   }
 
   private static class MockDeploymentContext implements DeploymentContext {
-
     DeploymentContext context;
     ProviderDeploymentContributor providerContributor;
     Provider provider;
@@ -253,7 +249,5 @@ public class JerseyDeploymentContributorTest {
     public <T> T getDescriptor( String name ) {
       return null;
     }
-
   }
-
 }

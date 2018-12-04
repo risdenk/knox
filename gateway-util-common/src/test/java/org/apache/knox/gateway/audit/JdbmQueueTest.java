@@ -20,12 +20,14 @@ package org.apache.knox.gateway.audit;
 import org.apache.knox.gateway.audit.log4j.appender.JdbmQueue;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -40,15 +42,15 @@ public class JdbmQueueTest {
   private File file;
   private JdbmQueue<String> queue;
 
-  @Before
-  public void setUp() throws IOException {
+  @BeforeEach
+  void setUp() throws IOException {
     file = new File( "target/JdbmQueueTest" );
     tearDown();
     queue = new JdbmQueue<>( file );
   }
 
-  @After
-  public void tearDown() throws IOException {
+  @AfterEach
+  void tearDown() throws IOException {
     if( queue != null ) {
       queue.close();
       queue = null;
@@ -67,7 +69,7 @@ public class JdbmQueueTest {
   }
 
   @Test
-  public void testSimple() throws IOException, InterruptedException {
+  void testSimple() throws IOException, InterruptedException {
     System.out.println( "Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName() );
     String one = UUID.randomUUID().toString();
     String two = UUID.randomUUID().toString();
@@ -92,48 +94,52 @@ public class JdbmQueueTest {
     assertThat( counter.get(), is( 1 ) );
   }
 
-  @Test( timeout = 120000 )
-  public void testConcurrentConsumer() throws InterruptedException, IOException {
-    System.out.println( "Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName() );
+  @Test
+  void testConcurrentConsumer() {
+    Assertions.assertTimeout(Duration.ofMillis(120000), () -> {
+      System.out.println("Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName());
 
-    int iterations = 100;
-    HashSet<String> consumed = new HashSet<>();
-    Consumer consumer = new Consumer( consumed );
-    consumer.start();
-    Producer producer1 = new Producer( iterations );
-    producer1.start();
-    Producer producer2 = new Producer( iterations );
-    producer2.start();
-    producer1.join();
-    producer2.join();
-    while (consumed.size() < iterations * 2) {
-      Thread.sleep( 5 );
-    }
-    queue.stop();
-    consumer.join();
-    assertThat( consumed, hasSize( iterations * 2 ) );
+      int iterations = 100;
+      HashSet<String> consumed = new HashSet<>();
+      Consumer consumer = new Consumer(consumed);
+      consumer.start();
+      Producer producer1 = new Producer(iterations);
+      producer1.start();
+      Producer producer2 = new Producer(iterations);
+      producer2.start();
+      producer1.join();
+      producer2.join();
+      while (consumed.size() < iterations * 2) {
+        Thread.sleep(5);
+      }
+      queue.stop();
+      consumer.join();
+      assertThat(consumed, hasSize(iterations * 2));
+    });
   }
 
-  @Test( timeout=120000 )
-  public void testConcurrentProcessor() throws InterruptedException, IOException {
-    System.out.println( "Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName() );
+  @Test
+  void testConcurrentProcessor() {
+    Assertions.assertTimeout(Duration.ofMillis(120000), () -> {
+      System.out.println( "Running " + Thread.currentThread().getStackTrace()[1].getClassName() + "#" + Thread.currentThread().getStackTrace()[1].getMethodName() );
 
-    int iterations = 100;
-    HashSet<String> consumed = new HashSet<>();
-    Processor consumer = new Processor( consumed );
-    consumer.start();
-    Producer producer1 = new Producer( iterations );
-    producer1.start();
-    Producer producer2 = new Producer( iterations );
-    producer2.start();
-    producer1.join();
-    producer2.join();
-    while (consumed.size() < iterations * 2) {
-      Thread.sleep( 5 );
-    }
-    queue.stop();
-    consumer.join();
-    assertThat( consumed, hasSize( iterations * 2 ) );
+      int iterations = 100;
+      HashSet<String> consumed = new HashSet<>();
+      Processor consumer = new Processor( consumed );
+      consumer.start();
+      Producer producer1 = new Producer( iterations );
+      producer1.start();
+      Producer producer2 = new Producer( iterations );
+      producer2.start();
+      producer1.join();
+      producer2.join();
+      while (consumed.size() < iterations * 2) {
+        Thread.sleep( 5 );
+      }
+      queue.stop();
+      consumer.join();
+      assertThat( consumed, hasSize( iterations * 2 ) );
+    });
   }
 
   @SuppressWarnings("PMD.DoNotUseThreads")

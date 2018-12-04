@@ -17,6 +17,7 @@
  */
 package org.apache.knox.gateway.shell;
 
+<<<<<<< HEAD
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -38,6 +39,15 @@ import java.util.logging.Logger;
 
 public class KnoxSessionTest {
   public static final String PEM = "MIICOjCCAaOgAwIBAgIJAN5kp1oW3Up8MA0GCSqGSIb3DQEBBQUAMF8xCzAJBgNVBAYTAlVTMQ0w\n"
+=======
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+class KnoxSessionTest {
+  private static final String PEM = "MIICOjCCAaOgAwIBAgIJAN5kp1oW3Up8MA0GCSqGSIb3DQEBBQUAMF8xCzAJBgNVBAYTAlVTMQ0w\n"
+>>>>>>> KNOX-1704 - Upgrade to JUnit 5
       + "CwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ8wDQYDVQQKEwZIYWRvb3AxDTALBgNVBAsTBFRl\n"
       + "c3QxEjAQBgNVBAMTCWxvY2FsaG9zdDAeFw0xODEyMTMwMzE2MTFaFw0xOTEyMTMwMzE2MTFaMF8x\n"
       + "CzAJBgNVBAYTAlVTMQ0wCwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ8wDQYDVQQKEwZIYWRv\n"
@@ -50,8 +60,7 @@ public class KnoxSessionTest {
       + "dWEFEA==\n";
 
   @Test
-  public void testParsingPublicCertPem() throws Exception {
-
+  void testParsingPublicCertPem() throws Exception {
     final ClientContext context = ClientContext.with("https://localhost:8443/gateway/dt");
     context.connection().withPublicCertPem(PEM);
     KnoxSession session = KnoxSession.login(context);
@@ -59,8 +68,7 @@ public class KnoxSessionTest {
   }
 
   @Test
-  public void testParsingInvalidPublicCertPem() throws Exception {
-
+  void testParsingInvalidPublicCertPem() throws Exception {
     final ClientContext context = ClientContext.with("https://localhost:8443/gateway/dt");
     try {
       context.connection().withPublicCertPem("INVLID-" + PEM);
@@ -74,8 +82,7 @@ public class KnoxSessionTest {
   }
 
   @Test
-  public void testParsingPublicCertPemWithCertDelimiters() throws Exception {
-
+  void testParsingPublicCertPemWithCertDelimiters() throws Exception {
     final ClientContext context = ClientContext.with("https://localhost:8443/gateway/dt");
     try {
       context.connection().withPublicCertPem(KnoxSession.BEGIN_CERTIFICATE + PEM + KnoxSession.END_CERTIFICATE);

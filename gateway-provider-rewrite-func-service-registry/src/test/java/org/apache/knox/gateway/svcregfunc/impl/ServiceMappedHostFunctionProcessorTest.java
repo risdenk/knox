@@ -30,8 +30,8 @@ import org.apache.knox.gateway.services.hostmap.HostMapperService;
 import org.apache.knox.gateway.services.registry.ServiceRegistry;
 import org.apache.knox.gateway.svcregfunc.api.ServiceMappedHostFunctionDescriptor;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,53 +43,52 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceMappedHostFunctionProcessorTest {
+class ServiceMappedHostFunctionProcessorTest {
+  private HostMapperService hms;
+  private HostMapper hm;
+  private ServiceRegistry reg;
+  private GatewayServices svc;
+  private UrlRewriteEnvironment env;
+  private UrlRewriteContext ctx;
+  private ServiceMappedHostFunctionDescriptor desc;
 
-  HostMapperService hms;
-  HostMapper hm;
-  ServiceRegistry reg;
-  GatewayServices svc;
-  UrlRewriteEnvironment env;
-  UrlRewriteContext ctx;
-  ServiceMappedHostFunctionDescriptor desc;
+  @BeforeEach
+  void setUp() {
+    hm = EasyMock.createNiceMock(HostMapper.class);
+    EasyMock.expect(hm.resolveInboundHostName("test-host")).andReturn("test-internal-host").anyTimes();
 
-  @Before
-  public void setUp() {
-    hm = EasyMock.createNiceMock( HostMapper.class );
-    EasyMock.expect( hm.resolveInboundHostName( "test-host" ) ).andReturn( "test-internal-host" ).anyTimes();
+    hms = EasyMock.createNiceMock(HostMapperService.class);
+    EasyMock.expect(hms.getHostMapper("test-cluster")).andReturn(hm).anyTimes();
 
-    hms = EasyMock.createNiceMock( HostMapperService.class );
-    EasyMock.expect( hms.getHostMapper( "test-cluster" ) ).andReturn( hm ).anyTimes();
+    reg = EasyMock.createNiceMock(ServiceRegistry.class);
+    EasyMock.expect(reg.lookupServiceURL("test-cluster", "test-service")).andReturn("test-scheme://test-host:777/test-path").anyTimes();
 
-    reg = EasyMock.createNiceMock( ServiceRegistry.class );
-    EasyMock.expect( reg.lookupServiceURL( "test-cluster", "test-service" ) ).andReturn( "test-scheme://test-host:777/test-path" ).anyTimes();
+    svc = EasyMock.createNiceMock(GatewayServices.class);
+    EasyMock.expect(svc.getService(ServiceType.SERVICE_REGISTRY_SERVICE)).andReturn(reg).anyTimes();
+    EasyMock.expect(svc.getService(ServiceType.HOST_MAPPING_SERVICE)).andReturn(hms).anyTimes();
 
-    svc = EasyMock.createNiceMock( GatewayServices.class );
-    EasyMock.expect( svc.getService( ServiceType.SERVICE_REGISTRY_SERVICE ) ).andReturn( reg ).anyTimes();
-    EasyMock.expect( svc.getService( ServiceType.HOST_MAPPING_SERVICE ) ).andReturn( hms ).anyTimes();
+    env = EasyMock.createNiceMock(UrlRewriteEnvironment.class);
+    EasyMock.expect(env.getAttribute(GatewayServices.GATEWAY_SERVICES_ATTRIBUTE)).andReturn(svc).anyTimes();
+    EasyMock.expect(env.getAttribute(GatewayServices.GATEWAY_CLUSTER_ATTRIBUTE)).andReturn("test-cluster").anyTimes();
 
-    env = EasyMock.createNiceMock( UrlRewriteEnvironment.class );
-    EasyMock.expect( env.getAttribute( GatewayServices.GATEWAY_SERVICES_ATTRIBUTE ) ).andReturn( svc ).anyTimes();
-    EasyMock.expect( env.getAttribute( GatewayServices.GATEWAY_CLUSTER_ATTRIBUTE ) ).andReturn( "test-cluster" ).anyTimes();
+    ctx = EasyMock.createNiceMock(UrlRewriteContext.class);
+    EasyMock.expect(ctx.getDirection()).andReturn(UrlRewriter.Direction.IN).anyTimes();
 
-    ctx = EasyMock.createNiceMock( UrlRewriteContext.class );
-    EasyMock.expect( ctx.getDirection() ).andReturn( UrlRewriter.Direction.IN ).anyTimes();
+    desc = EasyMock.createNiceMock(ServiceMappedHostFunctionDescriptor.class);
 
-    desc = EasyMock.createNiceMock( ServiceMappedHostFunctionDescriptor.class );
+    HaProvider haProvider = EasyMock.createNiceMock(HaProvider.class);
 
-     HaProvider haProvider = EasyMock.createNiceMock( HaProvider.class );
+    EasyMock.expect(env.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(haProvider).anyTimes();
 
-     EasyMock.expect(env.getAttribute(HaServletContextListener.PROVIDER_ATTRIBUTE_NAME)).andReturn(haProvider).anyTimes();
+    EasyMock.expect(haProvider.isHaEnabled(EasyMock.anyObject(String.class))).andReturn(Boolean.FALSE).anyTimes();
 
-     EasyMock.expect(haProvider.isHaEnabled(EasyMock.anyObject(String.class))).andReturn(Boolean.FALSE).anyTimes();
-
-     EasyMock.replay( hm, hms, reg, svc, env, desc, ctx, haProvider );
+    EasyMock.replay(hm, hms, reg, svc, env, desc, ctx, haProvider);
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -103,13 +102,13 @@ public class ServiceMappedHostFunctionProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     ServiceMappedHostFunctionProcessor func = new ServiceMappedHostFunctionProcessor();
     assertThat( func.name(), is( "serviceMappedHost" ) );
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  void testInitialize() throws Exception {
     ServiceMappedHostFunctionProcessor func = new ServiceMappedHostFunctionProcessor();
     try {
       func.initialize( null, desc );
@@ -133,7 +132,7 @@ public class ServiceMappedHostFunctionProcessorTest {
   }
 
   @Test
-  public void testDestroy() throws Exception {
+  void testDestroy() throws Exception {
     ServiceMappedHostFunctionProcessor func = new ServiceMappedHostFunctionProcessor();
     func.initialize( env, desc );
     func.destroy();
@@ -143,7 +142,7 @@ public class ServiceMappedHostFunctionProcessorTest {
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() throws Exception {
     ServiceMappedHostFunctionProcessor func = new ServiceMappedHostFunctionProcessor();
     func.initialize( env, desc );
 
@@ -153,5 +152,4 @@ public class ServiceMappedHostFunctionProcessorTest {
 
     func.destroy();
   }
-
 }

@@ -17,11 +17,7 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,9 +33,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 //TODO: Test to make sure that extra unmatched query parameters prevent a match.
-@Category( { UnitTests.class, FastTests.class } )
-public class MatcherTest {
-
+class MatcherTest {
   private void addTemplate( Matcher<String> matcher, String template ) throws URISyntaxException {
     matcher.add( Parser.parseTemplate( template ), template );
   }
@@ -56,7 +50,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testGlobMatching() throws Exception {
+  void testGlobMatching() throws Exception {
     Matcher<String> matcher;
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -107,7 +101,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testDefaultAppDeployment() throws Exception {
+  void testDefaultAppDeployment() throws Exception {
     Matcher<String> matcher;
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -176,7 +170,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testWildcardCharacterInInputTemplate() throws URISyntaxException {
+  void testWildcardCharacterInInputTemplate() throws URISyntaxException {
     Matcher<String> matcher;
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -209,7 +203,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testRootPathMatching() throws Exception {
+  void testRootPathMatching() throws Exception {
     Matcher<String> matcher;
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -308,7 +302,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testDefaultPortMatching() throws Exception {
+  void testDefaultPortMatching() throws Exception {
     Matcher<String> matcher = new Matcher<>();
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -338,7 +332,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testTopLevelPathGlobMatch() throws Exception {
+  void testTopLevelPathGlobMatch() throws Exception {
     Matcher<String> matcher;
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -359,7 +353,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testQueryHandling() throws Exception {
+  void testQueryHandling() throws Exception {
     Matcher<String> matcher;
     Template patternTemplate, inputTemplate;
     Matcher<String>.Match match;
@@ -491,7 +485,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatchCompleteUrl() throws Exception {
+  void testMatchCompleteUrl() throws Exception {
     Matcher<String> matcher;
     String pattern, input;
     Template patternTemplate, inputTemplate;
@@ -524,7 +518,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatch() throws Exception {
+  void testMatch() throws Exception {
     Matcher<String> matcher;
     String pattern, input;
     Template patternTemplate, inputTemplate;
@@ -540,7 +534,6 @@ public class MatcherTest {
     match = matcher.match( inputTemplate );
     assertThat( match.getTemplate(), sameInstance( patternTemplate ) );
     assertThat( match.getValue(), equalTo( pattern ) );
-
 
     matcher = new Matcher<>();
     pattern = "/path";
@@ -616,7 +609,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testVariousPatterns() throws URISyntaxException {
+  void testVariousPatterns() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/webhdfs" ), "/webhdfs" );
     matcher.add( Parser.parseTemplate( "/webhdfs/dfshealth.jsp" ), "/webhdfs/dfshealth.jsp" );
@@ -640,7 +633,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testStar() throws URISyntaxException {
+  void testStar() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/webhdfs/*" ), "/webhdfs/*" );
     assertValidMatch( matcher, "/webhdfs/*", "/webhdfs/*" );
@@ -651,7 +644,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testGlob() throws URISyntaxException {
+  void testGlob() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/webhdfs/**" ), "/webhdfs/**" );
     assertValidMatch( matcher, "/webhdfs/file", "/webhdfs/**" );
@@ -661,7 +654,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatrixParam() throws URISyntaxException {
+  void testMatrixParam() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/webhdfs/**" ), "/webhdfs/**" );
     matcher.add( Parser.parseTemplate( "/webhdfs/browseDirectory.jsp;dn=*" ), "/webhdfs/browseDirectory.jsp;dn=*" );
@@ -669,7 +662,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testTwoGlobsAtDifferentDepths() throws URISyntaxException {
+  void testTwoGlobsAtDifferentDepths() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/webhdfs/**" ), "/webhdfs/**" );
     matcher.add( Parser.parseTemplate( "/webhdfs/v1/**" ), "/webhdfs/v1/**" );
@@ -685,7 +678,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testGlobsVsStarsAtSameDepth() throws URISyntaxException {
+  void testGlobsVsStarsAtSameDepth() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/webhdfs/*" ), "/webhdfs/*" );
     matcher.add( Parser.parseTemplate( "/webhdfs/**" ), "/webhdfs/**" );
@@ -701,7 +694,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatchingPatternsWithinPathSegments() throws URISyntaxException {
+  void testMatchingPatternsWithinPathSegments() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "/path/{file}" ), "default" );
     assertValidMatch( matcher, "/path/file-name", "default" );
@@ -721,7 +714,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatchingPatternsWithinQuerySegments() throws URISyntaxException {
+  void testMatchingPatternsWithinQuerySegments() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     matcher.add( Parser.parseTemplate( "?query={queryParam}" ), "default" );
     assertValidMatch( matcher, "?query=value", "default" );
@@ -741,7 +734,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatchingForTemplatesThatVaryOnlyByQueryParams() throws URISyntaxException {
+  void testMatchingForTemplatesThatVaryOnlyByQueryParams() throws URISyntaxException {
     Matcher<String> matcher = new Matcher<>();
     addTemplate( matcher, "?one={queryParam}" );
     addTemplate( matcher, "?two={queryParam}" );
@@ -753,7 +746,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testFullUrlExtraction() throws URISyntaxException {
+  void testFullUrlExtraction() throws URISyntaxException {
     Template template;
     Template input;
     Matcher<?> matcher;
@@ -792,7 +785,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMultipleDoubleStarPathMatching() throws URISyntaxException {
+  void testMultipleDoubleStarPathMatching() throws URISyntaxException {
     Template template;
     Template input;
     Matcher<String> stringMatcher;
@@ -834,7 +827,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testPathExtraction() throws Exception {
+  void testPathExtraction() throws Exception {
     Template template;
     Template input;
     Matcher<?> matcher;
@@ -927,7 +920,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testQueryExtraction() throws Exception {
+  void testQueryExtraction() throws Exception {
     Template template;
     Template input;
     Matcher<?> matcher;
@@ -958,7 +951,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testEdgeCaseExtraction() throws Exception {
+  void testEdgeCaseExtraction() throws Exception {
     Template template;
     Template input;
     Matcher<?> matcher;
@@ -975,7 +968,7 @@ public class MatcherTest {
   }
 
   @Test
-  public void testBugKnox599() throws Exception {
+  void testBugKnox599() throws Exception {
     Template template;
     Template input;
     Matcher<String> matcher;

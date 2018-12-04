@@ -18,7 +18,7 @@
 package org.apache.knox.gateway.filter.rewrite.api;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 
@@ -28,10 +28,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
-public class UrlRewriteServletEnvironmentTest {
-
+class UrlRewriteServletEnvironmentTest {
   @Test
-  public void testGetResource() throws Exception {
+  void testGetResource() throws Exception {
     ServletContext context = EasyMock.createNiceMock( ServletContext.class );
     EasyMock.expect( context.getResource( "test-resource-name" ) ).andReturn( new URL( "http:/test-resource-value" ) ).anyTimes();
     EasyMock.replay( context );
@@ -40,7 +39,7 @@ public class UrlRewriteServletEnvironmentTest {
   }
 
   @Test
-  public void testGetAttribute() throws Exception {
+  void testGetAttribute() {
     ServletContext context = EasyMock.createNiceMock( ServletContext.class );
     EasyMock.expect(  context.getAttribute( "test-attribute-name" ) ).andReturn( "test-attribute-value" ).anyTimes();
     EasyMock.replay( context );
@@ -49,12 +48,11 @@ public class UrlRewriteServletEnvironmentTest {
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() {
     ServletContext context = EasyMock.createNiceMock( ServletContext.class );
     EasyMock.expect( context.getInitParameter( "test-parameter-name" ) ).andReturn( "test-parameter-value" );
     EasyMock.replay( context );
     UrlRewriteServletEnvironment env = new UrlRewriteServletEnvironment( context );
     assertThat( env.resolve( "test-parameter-name" ), contains( "test-parameter-value" ) );
   }
-
 }

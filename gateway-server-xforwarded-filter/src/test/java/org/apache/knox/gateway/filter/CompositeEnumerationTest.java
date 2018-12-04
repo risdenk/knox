@@ -17,7 +17,8 @@
  */
 package org.apache.knox.gateway.filter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,9 +28,9 @@ import java.util.NoSuchElementException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class CompositeEnumerationTest {
+class CompositeEnumerationTest {
   @Test
-  public void testBasics() {
+  void testBasics() {
     String[] a = new String[]{ "1", "2" };
     Enumeration<String> ea = Collections.enumeration( Arrays.asList( a ) );
 
@@ -46,7 +47,7 @@ public class CompositeEnumerationTest {
   }
 
   @Test
-  public void testSingleValues() {
+  void testSingleValues() {
     String[] a = new String[]{ "1" };
     Enumeration<String> ea = Collections.enumeration( Arrays.asList( a ) );
 
@@ -61,9 +62,8 @@ public class CompositeEnumerationTest {
   }
 
   @Test
-  public void testEmptyEnumerations() {
+  void testEmptyEnumerations() {
     String[] a = new String[]{ "1", "2" };
-    String[] b = new String[]{ "3", "4" };
     String[] c = new String[]{};
 
     Enumeration<String> e1 = Collections.enumeration( Arrays.asList( a ) );
@@ -86,15 +86,16 @@ public class CompositeEnumerationTest {
     assertThat( ce.hasMoreElements(), is( false ) );
   }
 
-  @Test (expected = NoSuchElementException.class)
-  public void testEmpty() {
+  @Test
+  void testEmpty() {
     CompositeEnumeration<String> ce = new CompositeEnumeration<>();
     assertThat( ce.hasMoreElements(), is( false ) );
-    ce.nextElement();
+    Assertions.assertThrows(NoSuchElementException.class, ce::nextElement);
   }
 
-  @Test (expected = IllegalArgumentException.class)
-  public void testNulls() {
-    new CompositeEnumeration<>( null );
+  @Test
+  void testNulls() {
+    Assertions.assertThrows(IllegalArgumentException.class,
+        () -> new CompositeEnumeration<>(null));
   }
 }

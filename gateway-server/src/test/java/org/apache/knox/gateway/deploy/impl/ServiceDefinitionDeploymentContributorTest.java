@@ -33,7 +33,7 @@ import org.apache.knox.gateway.topology.Provider;
 import org.apache.knox.gateway.topology.Service;
 import org.apache.knox.gateway.topology.Topology;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,14 +43,13 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceDefinitionDeploymentContributorTest {
-
+class ServiceDefinitionDeploymentContributorTest {
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( ProviderDeploymentContributor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -66,8 +65,7 @@ public class ServiceDefinitionDeploymentContributorTest {
    * Test that service param useTwoWaySsl in topologies overrides the corresponding custom dispatch property.
    */
   @Test
-  public void testServiceAttributeUseTwoWaySSLParamOverride() throws Exception {
-
+  void testServiceAttributeUseTwoWaySSLParamOverride() throws Exception {
     final String TEST_SERVICE_ROLE     = "Test";
     final String USE_TWO_WAY_SSL_PARAM = "useTwoWaySsl";
 
@@ -157,10 +155,10 @@ public class ServiceDefinitionDeploymentContributorTest {
       }
     }
 
-    assertEquals("Expected only a single filter param named " + USE_TWO_WAY_SSL_PARAM,
-                 1, useTwoWaySslFilterParamValues.size());
-    assertEquals("Expected the service param to override the service definition value for " + USE_TWO_WAY_SSL_PARAM,
-                 "true", useTwoWaySslFilterParamValues.get(0));
+    assertEquals(1, useTwoWaySslFilterParamValues.size(),
+        "Expected only a single filter param named " + USE_TWO_WAY_SSL_PARAM);
+    assertEquals("true", useTwoWaySslFilterParamValues.get(0),
+        "Expected the service param to override the service definition value for " + USE_TWO_WAY_SSL_PARAM);
   }
 
   /*
@@ -169,8 +167,7 @@ public class ServiceDefinitionDeploymentContributorTest {
    * @since 1.2.0
    */
   @Test
-  public void testTopologyDispatch() throws Exception {
-
+  void testTopologyDispatch() throws Exception {
     final String TEST_SERVICE_ROLE     = "Test";
     final String DISPATCH = "dispatch-impl";
     final String EXPECTED_DISPATCH_CLASS = "org.apache.knox.gateway.hdfs.dispatch.HdfsHttpClientDispatch";
@@ -273,9 +270,8 @@ public class ServiceDefinitionDeploymentContributorTest {
       }
     }
 
-    assertEquals("Expected the topology dispatch to override the service definition value for dispatch ",
-        EXPECTED_HA_DISPATCH_CLASS, dispatchImpl.get(0));
-
+    assertEquals(EXPECTED_HA_DISPATCH_CLASS, dispatchImpl.get(0),
+        "Expected the topology dispatch to override the service definition value for dispatch ");
   }
 
   @Test
@@ -368,5 +364,4 @@ public class ServiceDefinitionDeploymentContributorTest {
 
   private static class TestGatewayDescriptor extends GatewayDescriptorImpl {
   }
-
 }

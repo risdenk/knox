@@ -19,15 +19,14 @@ package org.apache.knox.gateway.topology.validation;
 import java.net.URL;
 
 import org.apache.knox.test.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class TopologyValidatorTest {
-
+class TopologyValidatorTest {
   @Test
-  public void testValidateApplications() throws Exception {
+  void testValidateApplications() throws Exception {
     URL url;
     TopologyValidator validator;
 

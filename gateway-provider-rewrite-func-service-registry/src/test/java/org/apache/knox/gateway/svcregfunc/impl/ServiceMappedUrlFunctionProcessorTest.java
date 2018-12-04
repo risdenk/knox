@@ -30,8 +30,8 @@ import org.apache.knox.gateway.services.hostmap.HostMapperService;
 import org.apache.knox.gateway.services.registry.ServiceRegistry;
 import org.apache.knox.gateway.svcregfunc.api.ServiceMappedUrlFunctionDescriptor;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,20 +43,19 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ServiceMappedUrlFunctionProcessorTest {
+class ServiceMappedUrlFunctionProcessorTest {
+  private HostMapperService hms;
+  private HostMapper hm;
+  private ServiceRegistry reg;
+  private GatewayServices svc;
+  private UrlRewriteEnvironment env;
+  private UrlRewriteContext ctx;
+  private ServiceMappedUrlFunctionDescriptor desc;
 
-  HostMapperService hms;
-  HostMapper hm;
-  ServiceRegistry reg;
-  GatewayServices svc;
-  UrlRewriteEnvironment env;
-  UrlRewriteContext ctx;
-  ServiceMappedUrlFunctionDescriptor desc;
-
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     hm = EasyMock.createNiceMock( HostMapper.class );
     EasyMock.expect( hm.resolveInboundHostName( "test-host" ) ).andReturn( "test-internal-host" ).anyTimes();
 
@@ -90,7 +89,7 @@ public class ServiceMappedUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -104,13 +103,13 @@ public class ServiceMappedUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     ServiceMappedUrlFunctionProcessor func = new ServiceMappedUrlFunctionProcessor();
     assertThat( func.name(), is( "serviceMappedUrl" ) );
   }
 
   @Test
-  public void testInitialize() throws Exception {
+  void testInitialize() throws Exception {
     ServiceMappedUrlFunctionProcessor func = new ServiceMappedUrlFunctionProcessor();
     try {
       func.initialize( null, desc );
@@ -134,7 +133,7 @@ public class ServiceMappedUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testDestroy() throws Exception {
+  void testDestroy() throws Exception {
     ServiceMappedUrlFunctionProcessor func = new ServiceMappedUrlFunctionProcessor();
     func.initialize( env, desc );
     func.destroy();
@@ -144,7 +143,7 @@ public class ServiceMappedUrlFunctionProcessorTest {
   }
 
   @Test
-  public void testResolve() throws Exception {
+  void testResolve() throws Exception {
     ServiceMappedUrlFunctionProcessor func = new ServiceMappedUrlFunctionProcessor();
     func.initialize( env, desc );
 
@@ -154,5 +153,4 @@ public class ServiceMappedUrlFunctionProcessorTest {
 
     func.destroy();
   }
-
 }

@@ -17,13 +17,14 @@
  */
 package org.apache.knox.gateway.service.health;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PingResourceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class PingResourceTest {
   @Test
-  public void testPingCdoGetontent() {
+  void testPingCdoGetontent() {
     PingResource pr = new PingResource();
-    Assert.assertEquals(pr.getPingContent(), pr.CONTENT);
+    assertEquals(pr.getPingContent(), pr.CONTENT);
   }
 }

@@ -17,25 +17,24 @@
 package org.apache.knox.gateway.topology.discovery.ambari;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SparkServiceURLCreatorTest {
-
+class SparkServiceURLCreatorTest {
   @Test
-  public void testSparkHistoryUI() {
+  void testSparkHistoryUI() {
     doTestSparkHistoryUI("SPARK_JOBHISTORYSERVER");
   }
 
   @Test
-  public void testSpark2HistoryUI() {
+  void testSpark2HistoryUI() {
     doTestSparkHistoryUI("SPARK2_JOBHISTORYSERVER");
   }
 
@@ -62,44 +61,43 @@ public class SparkServiceURLCreatorTest {
     assertEquals("http://host2:" + PORT, urls.get(1));
   }
 
-
   @Test
-  public void testSparkHistoryUI_SSL() {
+  void testSparkHistoryUI_SSL() {
     doTestSparkHistoryUI_SSL("SPARK_JOBHISTORYSERVER", true, false, "4321");
   }
 
   @Test
-  public void testSparkHistoryUI_SSL_FALLBACK_FLAG() {
+  void testSparkHistoryUI_SSL_FALLBACK_FLAG() {
     doTestSparkHistoryUI_SSL("SPARK_JOBHISTORYSERVER", false, true, "4321");
   }
 
   @Test
-  public void testSparkHistoryUI_SSL_FALLBACK_PORT() {
+  void testSparkHistoryUI_SSL_FALLBACK_PORT() {
     doTestSparkHistoryUI_SSL("SPARK_JOBHISTORYSERVER", true, false, null);
   }
 
   @Test
-  public void testSparkHistoryUI_SSL_FALLBACK_FLAG_AND_PORT() {
+  void testSparkHistoryUI_SSL_FALLBACK_FLAG_AND_PORT() {
     doTestSparkHistoryUI_SSL("SPARK_JOBHISTORYSERVER", false, true, null);
   }
 
   @Test
-  public void testSpark2HistoryUI_SSL() {
+  void testSpark2HistoryUI_SSL() {
     doTestSparkHistoryUI_SSL("SPARK2_JOBHISTORYSERVER", true, false, "4321");
   }
 
   @Test
-  public void testSparkwHistoryUI_SSL_FALLBACK_FLAG() {
+  void testSparkwHistoryUI_SSL_FALLBACK_FLAG() {
     doTestSparkHistoryUI_SSL("SPARK2_JOBHISTORYSERVER", false, true, "4321");
   }
 
   @Test
-  public void testSpark2HistoryUI_SSL_FALLBACK_PORT() {
+  void testSpark2HistoryUI_SSL_FALLBACK_PORT() {
     doTestSparkHistoryUI_SSL("SPARK2_JOBHISTORYSERVER", true, false, null);
   }
 
   @Test
-  public void testSpark2HistoryUI_SSL_FALLBACK_FLAG_AND_PORT() {
+  void testSpark2HistoryUI_SSL_FALLBACK_FLAG_AND_PORT() {
     doTestSparkHistoryUI_SSL("SPARK2_JOBHISTORYSERVER", false, true, null);
   }
 
@@ -146,9 +144,8 @@ public class SparkServiceURLCreatorTest {
     }
   }
 
-
   @Test
-  public void testSparkAndSpark2HistoryUI() {
+  void testSparkAndSpark2HistoryUI() {
     final String PORT  = "4545";
     final String PORT2 = "6767";
 
@@ -177,14 +174,13 @@ public class SparkServiceURLCreatorTest {
     assertEquals("http://host2:" + PORT, urls.get(1));
   }
 
-
   @Test
-  public void testLivyServer() {
+  void testLivyServer() {
     doTestLivyServer("LIVY_SERVER");
   }
 
   @Test
-  public void testLivy2Server() {
+  void testLivy2Server() {
     doTestLivyServer("LIVY2_SERVER");
   }
 
@@ -212,12 +208,12 @@ public class SparkServiceURLCreatorTest {
   }
 
   @Test
-  public void testLivyServer_SSL() {
+  void testLivyServer_SSL() {
     doTestLivyServerSSL("LIVY_SERVER");
   }
 
   @Test
-  public void testLivy2Server_SSL() {
+  void testLivy2Server_SSL() {
     doTestLivyServerSSL("LIVY2_SERVER");
   }
 
@@ -246,7 +242,7 @@ public class SparkServiceURLCreatorTest {
   }
 
   @Test
-  public void testLivyAndLivy2Server() {
+  void testLivyAndLivy2Server() {
     final String PORT  = "4545";
     final String PORT2 = "2323";
 
@@ -275,29 +271,27 @@ public class SparkServiceURLCreatorTest {
     assertEquals("http://host2:" + PORT, urls.get(1));
   }
 
-
   @Test
-  public void testSparkThriftUI() {
+  void testSparkThriftUI() {
     doTestSparkThriftUI("SPARK_THRIFTSERVER", null);
   }
 
   @Test
-  public void testSpark2ThriftUI() {
+  void testSpark2ThriftUI() {
     doTestSparkThriftUI("SPARK2_THRIFTSERVER", null);
   }
 
   @Test
-  public void testSparkThriftUIWithEndpointPath() { doTestSparkThriftUIWithEndpointPath("SPARK_THRIFTSERVER"); }
+  void testSparkThriftUIWithEndpointPath() { doTestSparkThriftUIWithEndpointPath("SPARK_THRIFTSERVER"); }
 
   @Test
-  public void testSpark2ThriftUIWithEndpointPath() { doTestSparkThriftUIWithEndpointPath("SPARK2_THRIFTSERVER"); }
+  void testSpark2ThriftUIWithEndpointPath() { doTestSparkThriftUIWithEndpointPath("SPARK2_THRIFTSERVER"); }
 
   @Test
-  public void testSparkThriftUIBinaryTransport() { doTestSparkThriftUIBinaryTransport("SPARK_THRIFTSERVER"); }
+  void testSparkThriftUIBinaryTransport() { doTestSparkThriftUIBinaryTransport("SPARK_THRIFTSERVER"); }
 
   @Test
-  public void testSpark2ThriftUIBinaryTransport() { doTestSparkThriftUIBinaryTransport("SPARK2_THRIFTSERVER"); }
-
+  void testSpark2ThriftUIBinaryTransport() { doTestSparkThriftUIBinaryTransport("SPARK2_THRIFTSERVER"); }
 
   private void doTestSparkThriftUIWithEndpointPath(String componentName) {
     doTestSparkThriftUI(componentName, "http", "mypath");
@@ -307,11 +301,9 @@ public class SparkServiceURLCreatorTest {
     doTestSparkThriftUI(componentName, "binary", null);
   }
 
-
   private void doTestSparkThriftUI(String componentName, String endpointPath) {
     doTestSparkThriftUI(componentName, "http", endpointPath);
   }
-
 
   private void doTestSparkThriftUI(String componentName, String transportMode, String endpointPath) {
     final String PORT = "4545";
@@ -342,6 +334,4 @@ public class SparkServiceURLCreatorTest {
       assertTrue(urls.isEmpty());
     }
   }
-
-
 }

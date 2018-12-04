@@ -19,15 +19,13 @@ package org.apache.knox.gateway;
 
 import com.mycila.xmltool.XMLDoc;
 import com.mycila.xmltool.XMLTag;
-import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.knox.test.mock.MockServer;
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -36,9 +34,8 @@ import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.is;
 
-@Category(ReleaseTest.class)
-public class WebHdfsHaFuncTest {
-
+@Tag("release")
+class WebHdfsHaFuncTest {
    // Specifies if the test requests should go through the gateway or directly to the services.
    // This is frequently used to verify the behavior of the test both with and without the gateway.
    private static final boolean USE_GATEWAY = true;
@@ -64,8 +61,8 @@ public class WebHdfsHaFuncTest {
     *
     * @throws Exception Thrown if any failure occurs.
     */
-   @Before
-   public void setup() throws Exception {
+   @BeforeEach
+   void setUp() throws Exception {
       LOG_ENTER();
       //Log.setLog(new NoOpLogger());
       masterServer = new MockServer("master", true);
@@ -79,8 +76,8 @@ public class WebHdfsHaFuncTest {
       LOG_EXIT();
    }
 
-   @After
-   public void cleanup() throws Exception {
+   @AfterEach
+   void cleanup() throws Exception {
       LOG_ENTER();
       driver.cleanup();
       driver.reset();
@@ -151,8 +148,8 @@ public class WebHdfsHaFuncTest {
             .gotoRoot();
    }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   public void testBasicListOperation() throws IOException {
+   @Test
+   void testBasicListOperation() throws IOException {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -178,9 +175,9 @@ public class WebHdfsHaFuncTest {
       LOG_EXIT();
    }
 
-   @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   @Ignore( "KNOX-446" )
-   public void testFailoverListOperation() throws Exception {
+   @Test
+   @Disabled( "KNOX-446" )
+   void testFailoverListOperation() throws Exception {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -209,8 +206,8 @@ public class WebHdfsHaFuncTest {
       LOG_EXIT();
    }
 
-   @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   public void testFailoverLimit() throws Exception {
+   @Test
+   void testFailoverLimit() throws Exception {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -231,9 +228,9 @@ public class WebHdfsHaFuncTest {
    }
 
 
-   @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   @Ignore( "KNOX-446" )
-   public void testServerInStandby() throws IOException {
+   @Test
+   @Disabled( "KNOX-446" )
+   void testServerInStandby() throws IOException {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -271,8 +268,8 @@ public class WebHdfsHaFuncTest {
       LOG_EXIT();
    }
 
-   @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   public void testServerInStandbyFailoverLimit() throws IOException {
+   @Test
+   void testServerInStandbyFailoverLimit() throws IOException {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -326,8 +323,8 @@ public class WebHdfsHaFuncTest {
       LOG_EXIT();
    }
 
-   @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   public void testServerInSafeMode() throws IOException {
+   @Test
+   void testServerInSafeMode() throws IOException {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -365,8 +362,8 @@ public class WebHdfsHaFuncTest {
       LOG_EXIT();
    }
 
-   @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-   public void testServerInSafeModeFailover() throws IOException {
+   @Test
+   void testServerInSafeModeFailover() throws IOException {
       LOG_ENTER();
       String username = "hdfs";
       String password = "hdfs-password";
@@ -410,5 +407,4 @@ public class WebHdfsHaFuncTest {
       masterServer.isEmpty();
       LOG_EXIT();
    }
-
 }

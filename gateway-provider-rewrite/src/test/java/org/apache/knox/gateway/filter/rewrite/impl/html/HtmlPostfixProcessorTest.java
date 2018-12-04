@@ -17,24 +17,19 @@
 package org.apache.knox.gateway.filter.rewrite.impl.html;
 
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteFunctionProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class HtmlPostfixProcessorTest {
-
-  public HtmlPostfixProcessorTest() {
-    super();
-  }
-
+class HtmlPostfixProcessorTest {
   @SuppressWarnings("rawtypes")
   @Test
-  public void testServiceLoader() throws Exception {
+  void testServiceLoader() {
     ServiceLoader loader = ServiceLoader.load( UrlRewriteFunctionProcessor.class );
     Iterator iterator = loader.iterator();
     assertThat( "Service iterator empty.", iterator.hasNext() );
@@ -48,10 +43,8 @@ public class HtmlPostfixProcessorTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  void testName() {
     HtmlPostfixProcessor processor = new HtmlPostfixProcessor();
     assertThat( processor.name(), is( "postfix" ) );
   }
-
-
 }

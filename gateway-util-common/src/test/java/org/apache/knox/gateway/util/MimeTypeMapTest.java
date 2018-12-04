@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -25,10 +25,9 @@ import javax.activation.MimeTypeParseException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class MimeTypeMapTest {
-
+class MimeTypeMapTest {
   @Test
-  public void testTypeFallback() throws MimeTypeParseException {
+  void testTypeFallback() throws MimeTypeParseException {
      MimeTypeMap<String> map = new MimeTypeMap<>();
 
     map.put( new MimeType( "text/xml" ), "text/xml" );
@@ -46,7 +45,5 @@ public class MimeTypeMapTest {
     assertThat( map.get( "custom/xml" ), is( "*/xml" ) );
     assertThat( map.get( "text/custom" ), is( "text/*" ) );
     assertThat( map.get( "custom/custom" ), is( "*/*" ) );
-
   }
-
 }

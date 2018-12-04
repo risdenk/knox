@@ -19,7 +19,7 @@ package org.apache.knox.gateway.service.config.remote.config;
 import org.apache.commons.io.FileUtils;
 import org.apache.knox.gateway.service.config.remote.RemoteConfigurationRegistryConfig;
 import org.apache.knox.gateway.service.config.remote.util.RemoteRegistryConfigTestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -27,13 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RemoteConfigurationRegistryConfigParserTest {
-
+class RemoteConfigurationRegistryConfigParserTest {
     @Test
-    public void testExternalXMLParsing() throws Exception {
+    void testExternalXMLParsing() throws Exception {
         final String CONN_STR = "http://my.zookeeper.host:2181";
 
         Map<String, Map<String, String>> testRegistryConfigurations = new HashMap<>();
@@ -110,5 +109,4 @@ public class RemoteConfigurationRegistryConfigParserTest {
         assertEquals(Boolean.valueOf(expected.get(
             RemoteRegistryConfigTestUtils.PROPERTY_USE_TICKET_CACHE)), config.isUseTicketCache());
     }
-
 }

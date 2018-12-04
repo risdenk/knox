@@ -21,7 +21,7 @@ import org.apache.knox.gateway.ha.provider.HaServiceConfig;
 
 public class MockURLManager extends DefaultURLManager {
 
-  HaServiceConfig config;
+  private HaServiceConfig config;
 
   @Override
   public boolean supportsConfig(HaServiceConfig config) {

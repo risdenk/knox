@@ -19,9 +19,8 @@ package org.apache.knox.gateway;
 
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.config.impl.GatewayConfigImpl;
-import org.apache.knox.test.TestUtils;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URL;
@@ -29,12 +28,11 @@ import java.net.URL;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GatewayGlobalConfigTest {
-
+class GatewayGlobalConfigTest {
   private String getHomeDirName( String resource ) {
     URL url = ClassLoader.getSystemResource( resource );
     String fileName = url.getFile();
@@ -43,27 +41,29 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testFullConfig() {
-    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR, getHomeDirName( "conf-full/conf/gateway-default.xml" ) );
+  void testFullConfig() {
+    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR,
+        getHomeDirName( "conf-full/conf/gateway-default.xml" ) );
     GatewayConfig config = new GatewayConfigImpl();
     assertThat( config.getGatewayPort(), is( 7777 ) );
     assertThat( config.isClientAuthNeeded(), is( false ) );
-    assertNull("ssl.exclude.protocols should be null.", config.getExcludedSSLProtocols());
-    //assertThat( config.getShiroConfigFile(), is( "full-shiro.ini") );
+    assertNull(config.getExcludedSSLProtocols(),
+        "ssl.exclude.protocols should be null.");
   }
 
   @Test
-  public void testDemoConfig() {
-    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR, getHomeDirName( "conf-demo/conf/gateway-default.xml" ) );
+  void testDemoConfig() {
+    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR,
+        getHomeDirName( "conf-demo/conf/gateway-default.xml" ) );
     GatewayConfig config = new GatewayConfigImpl();
     assertThat(config.getGatewayPort(), is( 8888 ) );
     assertEquals("SSLv3", config.getExcludedSSLProtocols().get(0));
-    //assertThat( config.getShiroConfigFile(), is( "full-shiro.ini") );
   }
 
   @Test
-  public void testSiteConfig() {
-    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR, getHomeDirName( "conf-site/conf/gateway-site.xml" ) );
+  void testSiteConfig() {
+    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR,
+        getHomeDirName( "conf-site/conf/gateway-site.xml" ) );
     GatewayConfig config = new GatewayConfigImpl();
     assertThat( config.getGatewayPort(), is( 5555 ) );
     assertThat( config.isClientAuthNeeded(), is( true ) );
@@ -73,15 +73,15 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testEmptyConfig() {
-    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR, getHomeDirName( "conf-empty/conf/empty" ) );
+  void testEmptyConfig() {
+    System.setProperty( GatewayConfigImpl.GATEWAY_HOME_VAR,
+        getHomeDirName( "conf-empty/conf/empty" ) );
     GatewayConfig config = new GatewayConfigImpl();
     assertThat( config.getGatewayPort(), is( 8888 ) );
-    //assertThat( config.getShiroConfigFile(), is( "shiro.ini") );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testDefaultTopologyName() {
+  @Test
+  void testDefaultTopologyName() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     assertThat( config.getDefaultTopologyName(), is( nullValue() ) );
 
@@ -89,8 +89,8 @@ public class GatewayGlobalConfigTest {
     assertThat( config.getDefaultTopologyName(), is( "test-topo-name" ) );
   }
 
-  @Test( timeout = TestUtils.SHORT_TIMEOUT )
-  public void testDefaultAppRedirectPath() {
+  @Test
+  void testDefaultAppRedirectPath() {
     GatewayConfigImpl config = new GatewayConfigImpl();
     assertThat( config.getDefaultAppRedirectPath(), nullValue() );
 
@@ -99,7 +99,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testForUpdatedDeploymentDir() {
+  void testForUpdatedDeploymentDir() {
     String homeDirName = getHomeDirName("conf-demo/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.setProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR, homeDirName);
@@ -108,7 +108,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testDefaultDeploymentDir() {
+  void testDefaultDeploymentDir() {
     String homeDirName = getHomeDirName("conf-site/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.setProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR, homeDirName);
@@ -117,7 +117,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testForDefaultSecurityDataDir() {
+  void testForDefaultSecurityDataDir() {
     String homeDirName = getHomeDirName("conf-site/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.setProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR, homeDirName);
@@ -126,7 +126,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testForUpdatedSecurityDataDir() {
+  void testForUpdatedSecurityDataDir() {
     String homeDirName = getHomeDirName("conf-demo/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.setProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR, homeDirName);
@@ -135,7 +135,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testForDataDirSetAsSystemProperty() {
+  void testForDataDirSetAsSystemProperty() {
     String homeDirName = getHomeDirName("conf-demo/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR, homeDirName + File.separator
         + "DataDirSystemProperty");
@@ -145,7 +145,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testForDataDirSetAsConfiguration() {
+  void testForDataDirSetAsConfiguration() {
     String homeDirName = getHomeDirName("conf-demo/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.clearProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR);
@@ -155,7 +155,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testForDefaultDataDir() {
+  void testForDefaultDataDir() {
     String homeDirName = getHomeDirName("conf-site/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.clearProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR);
@@ -168,7 +168,7 @@ public class GatewayGlobalConfigTest {
    * value should be considered
    **/
   @Test
-  public void testDataDirSetAsBothSystemPropertyAndConfig() {
+  void testDataDirSetAsBothSystemPropertyAndConfig() {
     String homeDirName = getHomeDirName("conf-demo/conf/gateway-site.xml");
     System.setProperty(GatewayConfigImpl.GATEWAY_HOME_VAR, homeDirName);
     System.setProperty(GatewayConfigImpl.GATEWAY_DATA_HOME_VAR, homeDirName + File.separator
@@ -179,7 +179,7 @@ public class GatewayGlobalConfigTest {
   }
 
   @Test
-  public void testStacksServicesDir() {
+  void testStacksServicesDir() {
     System.clearProperty(GatewayConfigImpl.GATEWAY_HOME_VAR);
     GatewayConfig config = new GatewayConfigImpl();
     assertThat(config.getGatewayServicesDir(), Matchers.endsWith("data" + File.separator + "services"));

@@ -19,30 +19,31 @@ package org.apache.knox.gateway.ha.provider.impl;
 
 import org.apache.knox.gateway.ha.provider.URLManager;
 import org.apache.knox.gateway.ha.provider.URLManagerLoader;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class URLManagerLoaderTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+class URLManagerLoaderTest {
   @Test
-  public void testURLManagerLoader() {
+  void testURLManagerLoader() {
     DefaultHaServiceConfig serviceConfig = new DefaultHaServiceConfig("mock-test");
     URLManager manager = URLManagerLoader.loadURLManager(serviceConfig);
-    Assert.assertNotNull(manager);
-    Assert.assertTrue(manager instanceof MockURLManager);
-    Assert.assertNotNull(((MockURLManager) manager).getConfig());
-    Assert.assertEquals("mock-test", ((MockURLManager) manager).getConfig().getServiceName());
+    assertNotNull(manager);
+    assertTrue(manager instanceof MockURLManager);
+    assertNotNull(((MockURLManager) manager).getConfig());
+    assertEquals("mock-test", ((MockURLManager) manager).getConfig().getServiceName());
   }
 
   @Test
-  public void testDefaultURLManager() {
+  void testDefaultURLManager() {
     DefaultHaServiceConfig serviceConfig = new DefaultHaServiceConfig("nothing like this exists");
     URLManager manager = URLManagerLoader.loadURLManager(serviceConfig);
-    Assert.assertNotNull(manager);
-    Assert.assertTrue(manager instanceof DefaultURLManager);
+    assertNotNull(manager);
+    assertTrue(manager instanceof DefaultURLManager);
     manager = URLManagerLoader.loadURLManager(null);
-    Assert.assertNotNull(manager);
-    Assert.assertTrue(manager instanceof DefaultURLManager);
+    assertNotNull(manager);
+    assertTrue(manager instanceof DefaultURLManager);
   }
-
 }

@@ -19,13 +19,12 @@ package org.apache.knox.gateway;
 import com.mycila.xmltool.XMLDoc;
 import com.mycila.xmltool.XMLTag;
 import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.ReleaseTest;
 import org.apache.knox.test.mock.MockServer;
 import org.apache.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,10 +36,9 @@ import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Test the Gateway Topology Port Mapping functionality
- *
  */
-@Category(ReleaseTest.class)
-public class GatewayPortMappingFuncTest {
+@Tag("release")
+class GatewayPortMappingFuncTest {
 
   // Specifies if the test requests should go through the gateway or directly to the services.
   // This is frequently used to verify the behavior of the test both with and without the gateway.
@@ -56,10 +54,6 @@ public class GatewayPortMappingFuncTest {
 
   private static int eeriePort;
 
-  public GatewayPortMappingFuncTest() {
-    super();
-  }
-
   /**
    * Creates a deployment of a gateway instance that all test methods will share.  This method also creates a
    * registry of sorts for all of the services that will be used by the test methods.
@@ -71,11 +65,11 @@ public class GatewayPortMappingFuncTest {
    *
    * @throws Exception Thrown if any failure occurs.
    */
-  @BeforeClass
-  public static void setup() throws Exception {
+  @BeforeAll
+  static void setUp() throws Exception {
     LOG_ENTER();
 
-    eeriePort = getAvailablePort(1240, 49151);
+    eeriePort = TestUtils.findFreePort();
 
     ConcurrentHashMap<String, Integer> topologyPortMapping = new ConcurrentHashMap<>();
     topologyPortMapping.put("eerie", eeriePort);
@@ -98,8 +92,8 @@ public class GatewayPortMappingFuncTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void cleanup() throws Exception {
+  @AfterAll
+  static void cleanup() throws Exception {
     LOG_ENTER();
     driver.cleanup();
     driver.reset();
@@ -111,8 +105,8 @@ public class GatewayPortMappingFuncTest {
    * Test the standard case:
    * http://localhost:{gatewayPort}/gateway/eerie/webhdfs/v1
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testBasicListOperation() throws IOException {
+  @Test
+  void testBasicListOperation() throws IOException {
     LOG_ENTER();
     test("http://localhost:" + driver.getGatewayPort() + "/gateway/eerie" + "/webhdfs" );
     LOG_EXIT();
@@ -124,8 +118,8 @@ public class GatewayPortMappingFuncTest {
    *
    * http://localhost:{eeriePort}/gateway/eerie/webhdfs/v1
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testDefaultTopologyFeature() throws IOException {
+  @Test
+  void testDefaultTopologyFeature() throws IOException {
     LOG_ENTER();
     test("http://localhost:" + driver.getGatewayPort() + "/webhdfs" );
     LOG_EXIT();
@@ -136,8 +130,8 @@ public class GatewayPortMappingFuncTest {
    *
    * http://localhost:{eeriePort}/webhdfs/v1
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testMultiPortOperation() throws IOException {
+  @Test
+  void testMultiPortOperation() throws IOException {
     LOG_ENTER();
     test("http://localhost:" + eeriePort + "/webhdfs" );
     LOG_EXIT();
@@ -148,8 +142,8 @@ public class GatewayPortMappingFuncTest {
    *
    * http://localhost:{eeriePort}/gateway/eerie/webhdfs/v1
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testMultiPortWithGatewayPath() throws IOException {
+  @Test
+  void testMultiPortWithGatewayPath() throws IOException {
     LOG_ENTER();
     test("http://localhost:" + eeriePort + "/gateway/eerie" + "/webhdfs" );
     LOG_EXIT();
@@ -243,24 +237,4 @@ public class GatewayPortMappingFuncTest {
         .addTag("url").addText("http://localhost:" + gatewayPort + "/webhdfs")
         .gotoRoot();
   }
-
-  /**
-   * This utility method will return the next available port
-   * that can be used.
-   * @param min min port to check
-   * @param max max port to check
-   * @return Port that is available.
-   */
-  public static int getAvailablePort(final int min, final int max) {
-
-    for (int i = min; i <= max; i++) {
-
-      if (!GatewayServer.isPortInUse(i)) {
-        return i;
-      }
-    }
-    // too bad
-    return -1;
-  }
-
 }

@@ -41,5 +41,4 @@ public class TestJerseyServiceDeploymentContributor extends
   public String getName() {
     return "test-jersey-service-name";
   }
-
 }

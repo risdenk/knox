@@ -32,11 +32,10 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +51,11 @@ import static io.restassured.RestAssured.given;
 import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class AmbariServiceDefinitionTest {
-
-  private static Logger LOG = LoggerFactory.getLogger( AmbariServiceDefinitionTest.class );
+class AmbariServiceDefinitionTest {
+  private static final Logger LOG = LoggerFactory.getLogger( AmbariServiceDefinitionTest.class );
   private static Class<?> DAT = AmbariServiceDefinitionTest.class;
 
   private static GatewayTestConfig config;
@@ -73,8 +72,8 @@ public class AmbariServiceDefinitionTest {
   private static VelocityEngine velocity;
   private static VelocityContext context;
 
-  @BeforeClass
-  public static void setupSuite() throws Exception {
+  @BeforeAll
+  static void setupSuite() throws Exception {
     LOG_ENTER();
     setupGateway();
     String topoStr = TestUtils.merge( DAT, "test-topology.xml", params );
@@ -84,23 +83,23 @@ public class AmbariServiceDefinitionTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void cleanupSuite() throws Exception {
+  @AfterAll
+  static void cleanupSuite() throws Exception {
     LOG_ENTER();
     gateway.stop();
     FileUtils.deleteQuietly( new File( config.getGatewayHomeDir() ) );
     LOG_EXIT();
   }
 
-  @After
-  public void cleanupTest() throws Exception {
+  @AfterEach
+  void cleanupTest() throws Exception {
     FileUtils.cleanDirectory( new File( config.getGatewayTopologyDir() ) );
     // Test run should not fail if deleting deployment files is not successful.
     // Deletion has been already done by TopologyService.
     FileUtils.deleteQuietly( new File( config.getGatewayDeploymentDir() ) );
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -118,11 +117,11 @@ public class AmbariServiceDefinitionTest {
     startGatewayServer();
   }
 
-  public static void setupMockServers() throws Exception {
+  static void setupMockServers() throws Exception {
     mockAmbari = new MockServer( "AMBARI", true );
   }
 
-  public static void startGatewayServer() throws Exception {
+  static void startGatewayServer() throws Exception {
     services = new DefaultGatewayServices();
     Map<String,String> options = new HashMap<>();
     options.put( "persist-master", "false" );
@@ -159,8 +158,8 @@ public class AmbariServiceDefinitionTest {
     context.put( "cluster_path", clusterPath );
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void clusters() throws Exception {
+  @Test
+  void clusters() throws Exception {
     LOG_ENTER();
 
     String username = "guest";
@@ -195,8 +194,8 @@ public class AmbariServiceDefinitionTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void historyServer() throws Exception {
+  @Test
+  void historyServer() throws Exception {
     LOG_ENTER();
 
     String username = "guest";
@@ -229,8 +228,8 @@ public class AmbariServiceDefinitionTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void unwiseCharacterRequest() throws Exception {
+  @Test
+  void unwiseCharacterRequest() throws Exception {
     String username = "guest";
     String password = "guest-password";
     String serviceUrl = clusterUrl + "/ambari/api/v1/clusters/test/components";
@@ -256,8 +255,8 @@ public class AmbariServiceDefinitionTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void encryptedResponse() throws Exception {
+  @Test
+  void encryptedResponse() throws Exception {
     LOG_ENTER();
 
     String username = "guest";
@@ -280,12 +279,12 @@ public class AmbariServiceDefinitionTest {
         .contentType( "text/plain" )
         .when().get( serviceUrl ).asString();
 
-    Assert.assertNotNull(body);
+    assertNotNull(body);
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void postDataWithWrongContentType() throws Exception {
+  @Test
+  void postDataWithWrongContentType() throws Exception {
     LOG_ENTER();
 
     String username = "guest";
@@ -309,12 +308,12 @@ public class AmbariServiceDefinitionTest {
         .contentType( "application/x-www-form-urlencoded" )
         .when().post( serviceUrl ).asString();
 
-    Assert.assertNotNull(body);
+    assertNotNull(body);
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void contextPathInViewsResponse() throws Exception {
+  @Test
+  void contextPathInViewsResponse() throws Exception {
     LOG_ENTER();
 
     String username = "guest";
@@ -351,5 +350,4 @@ public class AmbariServiceDefinitionTest {
     MatcherAssert.assertThat(body, sameJSONAs(expected));
     LOG_EXIT();
   }
-
 }

@@ -27,7 +27,7 @@ import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteFilterDetectDescript
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteRulesDescriptor;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteRulesDescriptorFactory;
 import org.apache.knox.test.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,13 +40,12 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class JsonFilterReaderTest {
-
+class JsonFilterReaderTest {
   @Test
-  public void testValueNumberWithBuffering() throws Exception {
+  void testValueNumberWithBuffering() throws Exception {
     String input = "{ \"apps\" : {\"app\":[{\"id\":\"one\", \"progress\":100.0, \"startedTime\":1399975176760}]} }";
 
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
@@ -62,7 +61,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testString() throws IOException {
+  void testString() throws IOException {
     String inputJson = "\"abc\"";
     StringReader inputReader = new StringReader( inputJson );
     JsonFilterReader filterReader = new TestJsonFilterReader( inputReader, null );
@@ -71,7 +70,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testNumber() throws IOException {
+  void testNumber() throws IOException {
     int num = new Random().nextInt();
     String inputJson = String.valueOf(num);
     StringReader inputReader = new StringReader( inputJson );
@@ -81,7 +80,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testBoolean() throws IOException {
+  void testBoolean() throws IOException {
     List<Boolean> booleans = Arrays.asList(true, false);
     for(boolean bool : booleans) {
       String inputJson = String.valueOf(bool);
@@ -93,7 +92,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testNull() throws IOException {
+  void testNull() throws IOException {
     String inputJson = "null";
     StringReader inputReader = new StringReader( inputJson );
     JsonFilterReader filterReader = new TestJsonFilterReader( inputReader, null );
@@ -102,7 +101,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testSimple() throws IOException {
+  void testSimple() throws IOException {
     String inputJson = "{ \"test-name\" : \"test-value\" }";
     StringReader inputReader = new StringReader( inputJson );
     JsonFilterReader filterReader = new TestJsonFilterReader( inputReader, null );
@@ -112,7 +111,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testRootArray() throws Exception {
+  void testRootArray() throws Exception {
     String inputJson = "[\"test-value-1\",\"test-value-2\",\"test-value-3\"]";
     StringReader inputReader = new StringReader( inputJson );
     JsonFilterReader filterReader = new TestJsonFilterReader( inputReader, null );
@@ -130,7 +129,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testEmptyObject() throws IOException {
+  void testEmptyObject() throws IOException {
     String inputJson = "{}";
     StringReader inputReader = new StringReader( inputJson );
     JsonFilterReader filterReader = new TestJsonFilterReader( inputReader, null );
@@ -140,7 +139,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testEmptyArray() throws IOException {
+  void testEmptyArray() throws IOException {
     String inputJson = "[]";
     StringReader inputReader = new StringReader( inputJson );
     JsonFilterReader filterReader = new TestJsonFilterReader( inputReader, null );
@@ -150,7 +149,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testUnscopedStreaming() throws IOException {
+  void testUnscopedStreaming() throws IOException {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "simple-values.json" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -167,7 +166,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testNamesWithDots() throws IOException {
+  void testNamesWithDots() throws IOException {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "dotted-field-name.json" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -190,7 +189,7 @@ public class JsonFilterReaderTest {
   }
 
 //  @Test
-//  public void testJsonPathObject() throws IOException {
+//  void testJsonPathObject() throws IOException {
 //    InputStream stream = TestUtils.getResourceStream( this.getClass(), "complex.json" );
 //    String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 //
@@ -208,7 +207,7 @@ public class JsonFilterReaderTest {
 //  }
 //
 //  @Test
-//  public void testJsonPathArray() throws IOException {
+//  void testJsonPathArray() throws IOException {
 //    InputStream stream = TestUtils.getResourceStream( this.getClass(), "array.json" );
 //    String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 //
@@ -221,7 +220,7 @@ public class JsonFilterReaderTest {
 //  }
 
   @Test
-  public void testBuffered() throws IOException {
+  void testBuffered() throws IOException {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "simple-values.json" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -239,7 +238,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testBufferedDetectApply() throws IOException {
+  void testBufferedDetectApply() throws IOException {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties.json" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -263,7 +262,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testBufferedApply() throws IOException {
+  void testBufferedApply() throws IOException {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties.json" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -286,7 +285,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testBufferedMultiApply() throws IOException {
+  void testBufferedMultiApply() throws IOException {
     InputStream stream = TestUtils.getResourceStream( this.getClass(), "properties.json" );
     String input = IOUtils.toString( stream, StandardCharsets.UTF_8 );
 
@@ -309,7 +308,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testInvalidConfigShouldThrowException() throws Exception {
+  void testInvalidConfigShouldThrowException() {
     String input = "{\"test-name\":\"test-value\"}";
 
     UrlRewriteRulesDescriptor rulesConfig = UrlRewriteRulesDescriptorFactory.create();
@@ -329,7 +328,7 @@ public class JsonFilterReaderTest {
   }
 
   @Test
-  public void testEscapeCharactersBugKnox616() throws Exception {
+  void testEscapeCharactersBugKnox616() throws Exception {
     String input, output;
     JsonFilterReader filter;
 

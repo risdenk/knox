@@ -17,13 +17,6 @@
  */
 package org.apache.knox.gateway.websockets;
 
-import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_SIGNING_KEYSTORE_PASSWORD_ALIAS;
-import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_SIGNING_KEYSTORE_TYPE;
-import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_SIGNING_KEY_PASSPHRASE_ALIAS;
-import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_IDENTITY_KEYSTORE_PASSWORD_ALIAS;
-import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_IDENTITY_KEYSTORE_TYPE;
-import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_IDENTITY_KEY_PASSPHRASE_ALIAS;
-
 import com.mycila.xmltool.XMLDoc;
 import com.mycila.xmltool.XMLTag;
 import org.apache.commons.io.FileUtils;
@@ -44,9 +37,9 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.websocket.ContainerProvider;
 import javax.websocket.Endpoint;
@@ -71,11 +64,18 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_IDENTITY_KEYSTORE_PASSWORD_ALIAS;
+import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_IDENTITY_KEYSTORE_TYPE;
+import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_IDENTITY_KEY_PASSPHRASE_ALIAS;
+import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_SIGNING_KEYSTORE_PASSWORD_ALIAS;
+import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_SIGNING_KEYSTORE_TYPE;
+import static org.apache.knox.gateway.config.GatewayConfig.DEFAULT_SIGNING_KEY_PASSPHRASE_ALIAS;
+
 /**
  * Test how Knox holds up under multiple concurrent connections.
  *
  */
-public class WebsocketMultipleConnectionTest {
+class WebsocketMultipleConnectionTest {
   private static final String TEST_KEY_ALIAS = "test-identity";
 
   /**
@@ -113,27 +113,21 @@ public class WebsocketMultipleConnectionTest {
   /**
    * Maximum number of open connections to test.
    */
-  private static int MAX_CONNECTIONS = 100;
+  private static final int MAX_CONNECTIONS = 100;
 
-  public WebsocketMultipleConnectionTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void startServers() throws Exception {
+  @BeforeAll
+  static void startServers() throws Exception {
     topoDir = createDir();
     dataDir = Paths.get(topoDir.getAbsolutePath(), "data").toAbsolutePath();
     securityDir = dataDir.resolve("security");
     keystoresDir = securityDir.resolve("keystores");
     keystoreFile = keystoresDir.resolve("tls.jks");
-
     startWebsocketServer();
     startGatewayServer();
-
   }
 
-  @AfterClass
-  public static void stopServers() {
+  @AfterAll
+  static void stopServers() {
     try {
       gatewayServer.stop();
       backendServer.stop();
@@ -149,7 +143,7 @@ public class WebsocketMultipleConnectionTest {
    * Test websocket proxying through gateway.
    */
   @Test
-  public void testMultipleConnections() throws Exception {
+  void testMultipleConnections() throws Exception {
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
     final CountDownLatch latch = new CountDownLatch(MAX_CONNECTIONS);

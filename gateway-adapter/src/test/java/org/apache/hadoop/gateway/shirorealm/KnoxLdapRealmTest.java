@@ -16,53 +16,52 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.apache.hadoop.gateway.shirorealm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SuppressWarnings("deprecation")
-public class KnoxLdapRealmTest {
+class KnoxLdapRealmTest {
   @Test
-  public void setGetSearchBase() {
+  void setGetSearchBase() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setSearchBase("dc=hadoop,dc=apache,dc=org");
     assertEquals(realm.getSearchBase(), "dc=hadoop,dc=apache,dc=org");
   }
 
   @Test
-  public void setGetGroupObjectClass() {
+  void setGetGroupObjectClass() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setGroupObjectClass("groupOfMembers");
     assertEquals(realm.getGroupObjectClass(), "groupOfMembers");
   }
 
   @Test
-  public void setGetUniqueMemberAttribute() {
+  void setGetUniqueMemberAttribute() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setMemberAttribute("member");
     assertEquals(realm.getMemberAttribute(), "member");
   }
 
   @Test
-  public void setGetUserSearchAttributeName() {
+  void setGetUserSearchAttributeName() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setUserSearchAttributeName("uid");
     assertEquals(realm.getUserSearchAttributeName(), "uid");
   }
 
   @Test
-  public void setGetUserObjectClass() {
+  void setGetUserObjectClass() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setUserObjectClass("inetuser");
     assertEquals(realm.getUserObjectClass(), "inetuser");
   }
 
   @Test
-  public void setGetUserSearchBase() {
+  void setGetUserSearchBase() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setSearchBase("dc=example,dc=com");
     realm.setUserSearchBase("dc=knox,dc=example,dc=com");
@@ -70,7 +69,7 @@ public class KnoxLdapRealmTest {
   }
 
   @Test
-  public void setGetGroupSearchBase() {
+  void setGetGroupSearchBase() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setSearchBase("dc=example,dc=com");
     realm.setGroupSearchBase("dc=knox,dc=example,dc=com");
@@ -78,26 +77,26 @@ public class KnoxLdapRealmTest {
   }
 
   @Test
-  public void verifyDefaultUserSearchAttributeName() {
+  void verifyDefaultUserSearchAttributeName() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     assertNull(realm.getUserSearchAttributeName());
   }
 
   @Test
-  public void verifyDefaultGetUserObjectClass() {
+  void verifyDefaultGetUserObjectClass() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     assertEquals(realm.getUserObjectClass(), "person");
   }
 
   @Test
-  public void verifyDefaultUserSearchBase() {
+  void verifyDefaultUserSearchBase() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setSearchBase("dc=knox,dc=example,dc=com");
     assertEquals(realm.getUserSearchBase(), "dc=knox,dc=example,dc=com");
   }
 
   @Test
-  public void verifyDefaultGroupSearchBase() {
+  void verifyDefaultGroupSearchBase() {
     KnoxLdapRealm realm = new KnoxLdapRealm();
     realm.setSearchBase("dc=knox,dc=example,dc=com");
     assertEquals(realm.getGroupSearchBase(), "dc=knox,dc=example,dc=com");

@@ -17,38 +17,30 @@
  */
 package org.apache.knox.gateway.security.principal;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-/**
-*
-*/
-@Category( { UnitTests.class, FastTests.class } )
-public class PrincipalMapperTest {
-  PrincipalMapper mapper;
+class PrincipalMapperTest {
+  private PrincipalMapper mapper;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     mapper = new SimplePrincipalMapper();
   }
 
   @Test
-  public void testSimplePrincipalMappingWithWildcardGroups() {
+  void testSimplePrincipalMappingWithWildcardGroups() {
     String principalMapping = "";
     String groupMapping = "*=users";
     try {
       mapper.loadMappingTable(principalMapping, groupMapping);
-    }
-    catch (PrincipalMappingException pme) {
-      pme.printStackTrace();
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("lmccay", mapper.mapUserPrincipal("lmccay"));
@@ -57,15 +49,13 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testSimplePrincipalMappingWithWildcardAndExplicitGroups() {
+  void testSimplePrincipalMappingWithWildcardAndExplicitGroups() {
     String principalMapping = "";
     String groupMapping = "*=users;lmccay=mrgroup";
     try {
       mapper.loadMappingTable(principalMapping, groupMapping);
-    }
-    catch (PrincipalMappingException pme) {
-      pme.printStackTrace();
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("lmccay", mapper.mapUserPrincipal("lmccay"));
@@ -77,15 +67,13 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testSimplePrincipalMappingWithUserAndWildcardAndExplicitGroups() {
+  void testSimplePrincipalMappingWithUserAndWildcardAndExplicitGroups() {
     String principalMapping = "guest=lmccay";
     String groupMapping = "*=users;lmccay=mrgroup";
     try {
       mapper.loadMappingTable(principalMapping, groupMapping);
-    }
-    catch (PrincipalMappingException pme) {
-      pme.printStackTrace();
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("lmccay", mapper.mapUserPrincipal("guest"));
@@ -99,15 +87,13 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testNonNullSimplePrincipalMappingWithGroups() {
+  void testNonNullSimplePrincipalMappingWithGroups() {
     String principalMapping = "lmccay,kminder=hdfs;newuser=mapred";
     String groupMapping = "hdfs=group1;mapred=mrgroup,mrducks";
     try {
       mapper.loadMappingTable(principalMapping, groupMapping);
-    }
-    catch (PrincipalMappingException pme) {
-      pme.printStackTrace();
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("hdfs", mapper.mapUserPrincipal("lmccay"));
@@ -126,14 +112,12 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testNonNullSimplePrincipalMapping() {
+  void testNonNullSimplePrincipalMapping() {
     String principalMapping = "lmccay,kminder=hdfs;newuser=mapred";
     try {
       mapper.loadMappingTable(principalMapping, null);
-    }
-    catch (PrincipalMappingException pme) {
-      pme.printStackTrace();
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("hdfs", mapper.mapUserPrincipal("lmccay"));
@@ -148,13 +132,12 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testNonNullEndingSemiColonSimplePrincipalMapping() {
+  void testNonNullEndingSemiColonSimplePrincipalMapping() {
     String principalMapping = "lmccay,kminder=hdfs;newuser=mapred;";
     try {
       mapper.loadMappingTable(principalMapping, null);
-    }
-    catch (PrincipalMappingException pme) {
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("hdfs", mapper.mapUserPrincipal("lmccay"));
@@ -169,13 +152,12 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testNullSimplePrincipalMapping() {
+  void testNullSimplePrincipalMapping() {
     String principalMapping = null;
     try {
       mapper.loadMappingTable(principalMapping, null);
-    }
-    catch (PrincipalMappingException pme) {
-      fail();
+    } catch (PrincipalMappingException pme) {
+      fail(pme);
     }
 
     assertEquals("lmccay", mapper.mapUserPrincipal("lmccay"));
@@ -190,14 +172,10 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testInvalidSimplePrincipalMapping() {
+  void testInvalidSimplePrincipalMapping() {
     String principalMapping = "ksdlhfjkdshf;kjdshf";
-    try {
-      mapper.loadMappingTable(principalMapping, null);
-    }
-    catch (PrincipalMappingException pme) {
-      // expected
-    }
+    Assertions.assertThrows(PrincipalMappingException.class,
+        () -> mapper.loadMappingTable(principalMapping, null));
 
     assertEquals("lmccay", mapper.mapUserPrincipal("lmccay"));
     assertEquals("kminder", mapper.mapUserPrincipal("kminder"));
@@ -211,14 +189,10 @@ public class PrincipalMapperTest {
   }
 
   @Test
-  public void testPartiallyInvalidSimplePrincipalMapping() {
+  void testPartiallyInvalidSimplePrincipalMapping() {
     String principalMapping = "lmccay=hdfs;kjdshf";
-    try {
-      mapper.loadMappingTable(principalMapping, null);
-    }
-    catch (PrincipalMappingException pme) {
-      // expected
-    }
+    Assertions.assertThrows(PrincipalMappingException.class,
+        () -> mapper.loadMappingTable(principalMapping, null));
 
     assertEquals("lmccay", mapper.mapUserPrincipal("lmccay"));
     assertEquals("kminder", mapper.mapUserPrincipal("kminder"));

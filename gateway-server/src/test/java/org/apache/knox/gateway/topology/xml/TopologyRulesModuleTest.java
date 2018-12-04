@@ -27,13 +27,12 @@ import org.apache.knox.gateway.topology.Topology;
 import org.apache.knox.gateway.topology.Version;
 import org.apache.knox.gateway.topology.builder.TopologyBuilder;
 import org.apache.knox.test.TestUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 
@@ -44,18 +43,18 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TopologyRulesModuleTest {
+class TopologyRulesModuleTest {
   private static DigesterLoader loader;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     loader = newLoader( new KnoxFormatXmlTopologyRules(), new AmbariFormatXmlTopologyRules() );
   }
 
   @Test
-  public void testParseSimpleTopologyXmlInKnoxFormat() throws IOException, SAXException, URISyntaxException {
+  void testParseSimpleTopologyXmlInKnoxFormat() throws IOException, SAXException {
     Digester digester = loader.newDigester();
     String name = "org/apache/knox/gateway/topology/xml/simple-topology-knox-format.xml";
     URL url = ClassLoader.getSystemResource( name );
@@ -101,7 +100,7 @@ public class TopologyRulesModuleTest {
   }
 
   @Test
-  public void testParseServiceParamsInKnoxFormat() throws IOException, SAXException {
+  void testParseServiceParamsInKnoxFormat() throws IOException, SAXException {
     Digester digester = loader.newDigester();
     String name = "org/apache/knox/gateway/topology/xml/service-param-topology-knox-format.xml";
     URL url = ClassLoader.getSystemResource( name );
@@ -137,7 +136,7 @@ public class TopologyRulesModuleTest {
 
 
   @Test
-  public void testParseSimpleTopologyXmlInHadoopFormat() throws IOException, SAXException, URISyntaxException {
+  void testParseSimpleTopologyXmlInHadoopFormat() throws IOException, SAXException {
     Digester digester = loader.newDigester();
     String name = "org/apache/knox/gateway/topology/xml/simple-topology-ambari-format.conf";
     URL url = ClassLoader.getSystemResource( name );
@@ -200,7 +199,7 @@ public class TopologyRulesModuleTest {
   }
 
   @Test
-  public void testParseServiceParamsInAmbariFormat() throws IOException, SAXException {
+  void testParseServiceParamsInAmbariFormat() throws IOException, SAXException {
     Digester digester = loader.newDigester();
     String name = "org/apache/knox/gateway/topology/xml/service-param-topology-ambari-format.conf";
     URL url = ClassLoader.getSystemResource( name );
@@ -236,7 +235,7 @@ public class TopologyRulesModuleTest {
   }
 
   @Test
-  public void testParseTopologyWithApplication() throws IOException, SAXException {
+  void testParseTopologyWithApplication() throws IOException, SAXException {
     Digester digester = loader.newDigester();
     String name = "topology-with-application.xml";
     URL url = TestUtils.getResourceUrl( TopologyRulesModuleTest.class, name );
@@ -256,7 +255,7 @@ public class TopologyRulesModuleTest {
   }
 
   @Test
-  public void testParseTopologyWithDispatch() throws IOException, SAXException {
+  void testParseTopologyWithDispatch() throws IOException, SAXException {
     final Digester digester = loader.newDigester();
     final String name = "topology-with-dispatch.xml";
     final URL url = TestUtils.getResourceUrl( TopologyRulesModuleTest.class, name );

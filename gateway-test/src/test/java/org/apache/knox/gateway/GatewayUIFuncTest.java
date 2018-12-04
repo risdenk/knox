@@ -22,21 +22,18 @@ import java.nio.charset.StandardCharsets;
 import com.mycila.xmltool.XMLDoc;
 import com.mycila.xmltool.XMLTag;
 import org.apache.http.HttpStatus;
-import org.apache.knox.test.TestUtils;
-import org.apache.knox.test.category.MediumTests;
-import org.apache.knox.test.category.VerifyTest;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.knox.test.TestUtils.LOG_ENTER;
 import static org.apache.knox.test.TestUtils.LOG_EXIT;
 
-@Category( { VerifyTest.class, MediumTests.class } )
-public class GatewayUIFuncTest {
+@Tag("verify")
+class GatewayUIFuncTest {
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
   // Controls the host name to which the gateway dispatch requests.  This may be the name of a sandbox VM
@@ -62,8 +59,8 @@ public class GatewayUIFuncTest {
    * The driver.setupGateway invocation is where the creation of GATEWAY_HOME occurs.
    * @throws Exception Thrown if any failure occurs.
    */
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     GatewayTestConfig config = new GatewayTestConfig();
     driver.setResourceBase(GatewayUIFuncTest.class);
@@ -73,8 +70,8 @@ public class GatewayUIFuncTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     if( CLEANUP_TEST ) {
       driver.cleanup();
@@ -82,8 +79,8 @@ public class GatewayUIFuncTest {
     LOG_EXIT();
   }
 
-  @After
-  public void cleanupTest() {
+  @AfterEach
+  void cleanupTest() {
     driver.reset();
   }
 
@@ -132,8 +129,8 @@ public class GatewayUIFuncTest {
             .addTag( "url" ).addText( driver.getRealUrl( "OOZIEUI" ) ).gotoParent();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testOozieUIRoutesAndRewriteRules() {
+  @Test
+  void testOozieUIRoutesAndRewriteRules() {
     LOG_ENTER();
     String username = "guest";
     String password = "guest-password";

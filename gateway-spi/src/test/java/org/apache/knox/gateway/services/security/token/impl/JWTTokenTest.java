@@ -26,31 +26,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class JWTTokenTest {
+class JWTTokenTest {
   private static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0MTY5MjkxMDksImp0aSI6ImFhN2Y4ZDBhOTVjIiwic2NvcGVzIjpbInJlcG8iLCJwdWJsaWNfcmVwbyJdfQ.XCEwpBGvOLma4TCoh36FU7XhUbcskygS81HE1uHLf0E";
   private static final String HEADER = "{\"typ\":\"JWT\",\"alg\":\"HS256\"}";
 
   private static RSAPublicKey publicKey;
   private static RSAPrivateKey privateKey;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
     kpg.initialize(2048);
 
@@ -60,14 +59,14 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenParsing() throws Exception {
+  void testTokenParsing() throws Exception {
     JWTToken token = JWTToken.parseToken(JWT_TOKEN);
     assertEquals(token.getHeader(), HEADER);
     assertEquals(token.getClaim("jti"), "aa7f8d0a95c");
   }
 
   @Test
-  public void testTokenCreation() throws Exception {
+  void testTokenCreation() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -81,7 +80,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenCreationWithAudienceListSingle() throws Exception {
+  void testTokenCreationWithAudienceListSingle() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -99,7 +98,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenCreationWithAudienceListMultiple() throws Exception {
+  void testTokenCreationWithAudienceListMultiple() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -118,7 +117,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenCreationWithAudienceListCombined() throws Exception {
+  void testTokenCreationWithAudienceListCombined() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -137,7 +136,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenCreationWithNullAudienceList() throws Exception {
+  void testTokenCreationWithNullAudienceList() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -154,7 +153,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenCreationRS512() throws Exception {
+  void testTokenCreationRS512() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -169,7 +168,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenSignature() throws Exception {
+  void testTokenSignature() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -192,7 +191,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenSignatureRS512() throws Exception {
+  void testTokenSignatureRS512() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -216,7 +215,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testTokenExpiry() throws Exception {
+  void testTokenExpiry() {
     String[] claims = new String[4];
     claims[0] = "KNOXSSO";
     claims[1] = "john.doe@example.com";
@@ -230,7 +229,7 @@ public class JWTTokenTest {
   }
 
   @Test
-  public void testUnsignedToken() throws Exception {
+  void testUnsignedToken() {
     String unsignedToken = "eyJhbGciOiJub25lIn0.eyJzdWIiOiJhbGljZSIsImp0aSI6ImY2YmNj"
                                + "MDVjLWI4MTktNGM0Mi1iMGMyLWJlYmY1MDE4YWFiZiJ9.";
 

@@ -27,15 +27,14 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteFilterContentDescriptor;
 import org.apache.knox.gateway.filter.rewrite.impl.UrlRewriteFilterContentDescriptorImpl;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class JavaScriptFilterReaderTest {
+class JavaScriptFilterReaderTest {
   public static class NoopJsFilterReader extends JavaScriptFilterReader {
-    public NoopJsFilterReader( Reader reader, UrlRewriteFilterContentDescriptor config ) throws IOException {
+    NoopJsFilterReader( Reader reader, UrlRewriteFilterContentDescriptor config ) throws IOException {
       super( reader, config );
     }
 
@@ -47,7 +46,7 @@ public class JavaScriptFilterReaderTest {
 
   public static class MatchRuleJsFilterReader extends JavaScriptFilterReader {
     private Map<String, Map<String,String>> rules;
-    public MatchRuleJsFilterReader( Reader reader, Map<String, Map<String,String>> rules, UrlRewriteFilterContentDescriptor config ) throws IOException {
+    MatchRuleJsFilterReader( Reader reader, Map<String, Map<String,String>> rules, UrlRewriteFilterContentDescriptor config ) throws IOException {
       super( reader, config );
       this.rules = rules;
     }
@@ -68,7 +67,7 @@ public class JavaScriptFilterReaderTest {
   }
 
   @Test
-  public void testSimple() throws IOException {
+  void testSimple() throws IOException {
     String inputJs = "function load_page() {}\n";
     StringReader inputReader = new StringReader( inputJs );
     UrlRewriteFilterContentDescriptor config = new UrlRewriteFilterContentDescriptorImpl();
@@ -78,7 +77,7 @@ public class JavaScriptFilterReaderTest {
   }
 
   @Test
-  public void testSimpleMultipleLines() throws IOException {
+  void testSimpleMultipleLines() throws IOException {
     String inputJs =
         "var url = '/webhdfs/v1' + abs_path + '?op=GET_BLOCK_LOCATIONS';\n" +
         "$.ajax({\"url\": url, \"crossDomain\": true}).done(function(data) {}).error(network_error_handler(url));\n";
@@ -91,7 +90,7 @@ public class JavaScriptFilterReaderTest {
   }
 
   @Test
-  public void testMatchedJsContent() throws IOException {
+  void testMatchedJsContent() throws IOException {
     Map<String, Map<String, String>> rules = new HashMap<>();
     Map<String, String> map = new HashMap<>();
     map.put( "(https?://[^/':,]+:[\\d]+)?/cluster/app", "https://knoxhost:8443/cluster/app" );

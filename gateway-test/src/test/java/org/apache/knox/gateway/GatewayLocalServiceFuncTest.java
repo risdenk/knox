@@ -23,13 +23,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.DefaultGatewayServices;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
-import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.log.NoOpAppender;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Appender;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,18 +47,18 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class GatewayLocalServiceFuncTest {
+class GatewayLocalServiceFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayTestDriver.class );
 
-  public static Enumeration<Appender> appenders;
+  private static Enumeration<Appender> appenders;
   public static GatewayConfig config;
   public static GatewayServer gateway;
   public static String gatewayUrl;
   public static String clusterUrl;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     appenders = NoOpAppender.setUpAndReturnOriginalAppenders();
     driver.setupLdap(0);
@@ -67,8 +66,8 @@ public class GatewayLocalServiceFuncTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     gateway.stop();
     driver.cleanup();
@@ -78,7 +77,7 @@ public class GatewayLocalServiceFuncTest {
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -150,8 +149,8 @@ public class GatewayLocalServiceFuncTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testJerseyService() throws ClassNotFoundException {
+  @Test
+  void testJerseyService() throws ClassNotFoundException {
     LOG_ENTER();
     assertThat( ClassLoader.getSystemClassLoader().loadClass( "org.glassfish.jersey.servlet.ServletContainer" ), notNullValue() );
     assertThat( ClassLoader.getSystemClassLoader().loadClass(

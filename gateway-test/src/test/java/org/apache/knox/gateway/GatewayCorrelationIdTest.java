@@ -25,13 +25,12 @@ import org.apache.knox.gateway.audit.log4j.correlation.Log4jCorrelationService;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.DefaultGatewayServices;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
-import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.log.CollectAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.hamcrest.MatcherAssert;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +56,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class GatewayCorrelationIdTest {
+class GatewayCorrelationIdTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayCorrelationIdTest.class );
 
   public static GatewayConfig config;
@@ -66,8 +65,8 @@ public class GatewayCorrelationIdTest {
   public static String clusterUrl;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     URL resource = GatewayCorrelationIdTest.class.getClassLoader().getResource("users-dynamic.ldif");
     assert resource != null;
@@ -77,8 +76,8 @@ public class GatewayCorrelationIdTest {
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     gateway.stop();
     driver.cleanup();
@@ -86,7 +85,7 @@ public class GatewayCorrelationIdTest {
     LOG_EXIT();
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -159,8 +158,8 @@ public class GatewayCorrelationIdTest {
         .gotoRoot();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testTestService() throws Exception {
+  @Test
+  void testTestService() throws Exception {
     LOG_ENTER();
     String username = "guest";
     String password = "guest-password";

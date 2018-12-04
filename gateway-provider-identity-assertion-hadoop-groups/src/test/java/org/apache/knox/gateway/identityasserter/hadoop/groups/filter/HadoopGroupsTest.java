@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.Groups;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Hadoop {@link Groups} class. Basically to make sure that the
@@ -32,12 +32,11 @@ import org.junit.Test;
  *
  * @since 0.11.0
  */
-public class HadoopGroupsTest {
-
+class HadoopGroupsTest {
   /**
    * Use the default group mapping
    */
-  public static final String GROUP_MAPPING = "org.apache.hadoop.security.JniBasedUnixGroupsMappingWithFallback";
+  private static final String GROUP_MAPPING = "org.apache.hadoop.security.JniBasedUnixGroupsMappingWithFallback";
 
   /**
    * Username
@@ -45,41 +44,25 @@ public class HadoopGroupsTest {
   private String username;
 
   /**
-   * Configuration object needed by for hadoop classes
-   */
-  private Configuration hadoopConfig;
-
-  /**
    * Hadoop Groups implementation.
    */
   private Groups hadoopGroups;
 
-  /* create instance */
-  public HadoopGroupsTest() {
-    super();
-  }
-
-  @Before
-  public void init() {
+  @BeforeEach
+  void init() {
     username = System.getProperty("user.name");
-
-    hadoopConfig = new Configuration(false);
-
+    Configuration hadoopConfig = new Configuration(false);
     hadoopConfig.set("hadoop.security.group.mapping", GROUP_MAPPING);
-
     hadoopGroups = new Groups(hadoopConfig);
-
   }
 
   /*
    * Test Groups on the machine running the unit test.
    */
   @Test
-  public void testLocalGroups() throws Exception {
-
+  void testLocalGroups() throws Exception {
     final List<String> groupList = hadoopGroups.getGroups(username);
 
     assertThat("No groups found for user " + username, !groupList.isEmpty());
-
   }
 }

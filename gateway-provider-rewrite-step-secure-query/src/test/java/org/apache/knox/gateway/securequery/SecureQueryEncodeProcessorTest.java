@@ -27,7 +27,7 @@ import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Template;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -36,10 +36,9 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SecureQueryEncodeProcessorTest {
-
+class SecureQueryEncodeProcessorTest {
   @Test
-  public void testSimpleQueryEncoding() throws Exception {
+  void testSimpleQueryEncoding() throws Exception {
     AliasService as = EasyMock.createNiceMock( AliasService.class );
     String secret = "sdkjfhsdkjfhsdfs";
     EasyMock.expect( as.getPasswordFromAliasForCluster("test-cluster-name", "encryptQueryString")).andReturn( secret.toCharArray() ).anyTimes();
@@ -66,10 +65,9 @@ public class SecureQueryEncodeProcessorTest {
     processor.process( context );
 
     String encQuery = Base64.getEncoder().encodeToString( "query".getBytes(StandardCharsets.UTF_8) );
-    encQuery = encQuery.replaceAll( "\\=", "" );
+    encQuery = encQuery.replaceAll( "=", "" );
     String outExpect = "http://host:0/root/path?_=" + encQuery;
     String outActual = outTemplate.getValue().toString();
     assertThat( outActual, is( outExpect ) );
   }
-
 }

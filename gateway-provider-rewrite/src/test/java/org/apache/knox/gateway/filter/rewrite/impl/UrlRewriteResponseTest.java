@@ -22,9 +22,8 @@ import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteProcessor;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteServletContextListener;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteServletFilter;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.activation.MimeTypeParseException;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -43,11 +42,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
-public class UrlRewriteResponseTest {
-
+class UrlRewriteResponseTest {
   @Test
-  public void testResolve() throws Exception {
-
+  void testResolve() {
     UrlRewriteProcessor rewriter = EasyMock.createNiceMock( UrlRewriteProcessor.class );
 
     ServletContext context = EasyMock.createNiceMock( ServletContext.class );
@@ -72,8 +69,7 @@ public class UrlRewriteResponseTest {
   }
 
   @Test
-  public void testResolveGatewayParams() throws Exception {
-
+  void testResolveGatewayParams() {
     UrlRewriteProcessor rewriter = EasyMock.createNiceMock( UrlRewriteProcessor.class );
 
     ServletContext context = EasyMock.createNiceMock( ServletContext.class );
@@ -94,29 +90,29 @@ public class UrlRewriteResponseTest {
     UrlRewriteResponse rewriteResponse = new UrlRewriteResponse( config, request, response );
 
     List<String> url = rewriteResponse.resolve( "gateway.url" );
-    assertThat( url, hasItems( new String[]{ "mock-scheme://mock-host:42/mock-path" } ) );
+    assertThat( url, hasItems("mock-scheme://mock-host:42/mock-path") );
 
     List<String> scheme = rewriteResponse.resolve( "gateway.scheme" );
-    assertThat( scheme, hasItems( new String[]{ "mock-scheme" } ) );
+    assertThat( scheme, hasItems("mock-scheme") );
 
     List<String> host = rewriteResponse.resolve( "gateway.host" );
-    assertThat( host, hasItems( new String[]{ "mock-host" } ) );
+    assertThat( host, hasItems("mock-host") );
 
     List<String> port = rewriteResponse.resolve( "gateway.port" );
-    assertThat( port, hasItems( new String[]{ "42" } ) );
+    assertThat( port, hasItems("42") );
 
     List<String> addr = rewriteResponse.resolve( "gateway.addr" );
-    assertThat( addr, hasItems( new String[]{ "mock-host:42" } ) );
+    assertThat( addr, hasItems("mock-host:42") );
 
     List<String> address = rewriteResponse.resolve( "gateway.addr" );
-    assertThat( address, hasItems( new String[]{ "mock-host:42" } ) );
+    assertThat( address, hasItems("mock-host:42") );
 
     List<String> path = rewriteResponse.resolve( "gateway.path" );
-    assertThat( path, hasItems( new String[]{ "/mock-path" } ) );
+    assertThat( path, hasItems("/mock-path") );
   }
 
   @Test
-  public void testStreamResponse() throws IOException, MimeTypeParseException {
+  void testStreamResponse() throws IOException {
     UrlRewriteProcessor rewriter = EasyMock.createNiceMock( UrlRewriteProcessor.class );
     EasyMock.expect( rewriter.getConfig() ).andReturn( null ).anyTimes();
 

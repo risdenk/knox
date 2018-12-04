@@ -20,7 +20,7 @@ package org.apache.knox.gateway.services.registry;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.services.registry.impl.DefaultServiceDefinitionRegistry;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URL;
@@ -28,10 +28,9 @@ import java.net.URL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class DefaultServiceDefinitionRegistryTest {
-
+class DefaultServiceDefinitionRegistryTest {
   @Test
-  public void matchSimplePattern() throws Exception {
+  void matchSimplePattern() throws Exception {
     DefaultServiceDefinitionRegistry registry = new DefaultServiceDefinitionRegistry();
     GatewayConfig config = EasyMock.createNiceMock(GatewayConfig.class);
     URL url = ClassLoader.getSystemResource("services");

@@ -16,20 +16,18 @@
  */
 package org.apache.knox.gateway.topology.discovery.ambari;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
-
+class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
   @Override
   String getTargetService() {
     return "YARNUI";
   }
-
 
   @Override
   ServiceURLCreator getServiceURLCreator(AmbariCluster cluster) {
@@ -38,9 +36,8 @@ public class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
     return creator;
   }
 
-
   @Test
-  public void testCreateHttpURLs() throws Exception {
+  void testCreateHttpURLs() {
     final String expectedAddress = "test.host.unsecure:8088";
     String url = doTestCreateSingleURL("HTTP_ONLY", expectedAddress, "test.host.secure:8088");
     assertEquals(ResourceManagerURLCreatorBase.SCHEME_HTTP + "://" + expectedAddress, url);
@@ -48,7 +45,7 @@ public class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
 
 
   @Test
-  public void testCreateHAHttpURLs() throws Exception {
+  void testCreateHAHttpURLs() {
     final String activeHttpAddress = "test.host.unsecure.active:8088";
     final String stdbyHttpAddress  = "test.host.unsecure.stdby:8088";
     List<String> urls = doTestCreateHAURLs("HTTP_ONLY",
@@ -60,9 +57,8 @@ public class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
     assertTrue(urls.contains(ResourceManagerURLCreatorBase.SCHEME_HTTP + "://" + stdbyHttpAddress));
   }
 
-
   @Test
-  public void testCreateHttpsURLs() throws Exception {
+  void testCreateHttpsURLs() {
     final String expectedAddress = "test.host.secure:8088";
     String url = doTestCreateSingleURL("HTTPS_ONLY", "test.host.unsecure:8088", expectedAddress);
     assertEquals(ResourceManagerURLCreatorBase.SCHEME_HTTPS + "://" + expectedAddress, url);
@@ -70,7 +66,7 @@ public class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
 
 
   @Test
-  public void testCreateHAHttpsURLs() throws Exception {
+  void testCreateHAHttpsURLs() {
     final String activeHttpsAddress = "test.host.secure.active:8088";
     final String stdbyHttpsAddress  = "test.host.secure.stdby:8088";
     List<String> urls = doTestCreateHAURLs("HTTPS_ONLY",
@@ -81,6 +77,4 @@ public class YarnUIURLCreatorTest extends RMURLCreatorTestBase {
     assertTrue(urls.contains(ResourceManagerURLCreatorBase.SCHEME_HTTPS + "://" + activeHttpsAddress));
     assertTrue(urls.contains(ResourceManagerURLCreatorBase.SCHEME_HTTPS + "://" + stdbyHttpsAddress));
   }
-
-
 }

@@ -30,8 +30,7 @@ import org.apache.knox.gateway.util.urltemplate.Template;
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteStepStatus;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
@@ -40,16 +39,15 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecureQueryEncryptDecryptProcessorTest {
-
+class SecureQueryEncryptDecryptProcessorTest {
   @Test
-  public void testEncryptDecrypt() throws Exception {
+  void testEncryptDecrypt() throws Exception {
     Query query;
     Template origTemplate = Parser.parseLiteral( "http://host:0/path/file?query-param-name=query-param-value" );
 
     // Test encryption.  Results are left in encTemplate
-
     AliasService as = EasyMock.createNiceMock( AliasService.class );
     String secret = "sdkjfhsdkjfhsdfs";
     EasyMock.expect( as.getPasswordFromAliasForCluster("test-cluster-name", "encryptQueryString")).andReturn( secret.toCharArray() ).anyTimes();
@@ -111,12 +109,11 @@ public class SecureQueryEncryptDecryptProcessorTest {
   }
 
   @Test
-  public void testEncryptBadDecrypt() throws Exception {
+  void testEncryptBadDecrypt() throws Exception {
     Query query;
     Template origTemplate = Parser.parseLiteral( "http://host:0/path/file?query-param-name=query-param-value" );
 
     // Test encryption.  Results are left in encTemplate
-
     AliasService as = EasyMock.createNiceMock( AliasService.class );
     String secret = "sdkjfhsdkjfhsdfs";
     EasyMock.expect( as.getPasswordFromAliasForCluster("test-cluster-name", "encryptQueryString")).andReturn( secret.toCharArray() ).anyTimes();
@@ -172,8 +169,6 @@ public class SecureQueryEncryptDecryptProcessorTest {
     decProcessor.initialize( decEnvironment, descriptor1 );
     UrlRewriteStepStatus status = decProcessor.process( decContext );
 
-    Assert.assertTrue((status == UrlRewriteStepStatus.FAILURE));
+    assertTrue((status == UrlRewriteStepStatus.FAILURE));
   }
-
-
 }

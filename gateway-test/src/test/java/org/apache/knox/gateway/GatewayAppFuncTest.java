@@ -33,10 +33,10 @@ import org.apache.knox.gateway.services.topology.TopologyService;
 import org.apache.knox.test.TestUtils;
 import org.apache.knox.test.mock.MockServer;
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ import static org.xmlmatchers.transform.XmlConverters.the;
 import static org.xmlmatchers.xpath.HasXPath.hasXPath;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class GatewayAppFuncTest {
+class GatewayAppFuncTest {
   private static final Logger LOG = LoggerFactory.getLogger( GatewayAppFuncTest.class );
   private static final Class<?> DAT = GatewayAppFuncTest.class;
 
@@ -69,16 +69,16 @@ public class GatewayAppFuncTest {
   private static MockServer mockWebHdfs;
   private static GatewayTestDriver driver = new GatewayTestDriver();
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
     LOG_ENTER();
     driver.setupLdap(0);
     setupGateway();
     LOG_EXIT();
   }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
+  @AfterAll
+  static void tearDownAfterClass() throws Exception {
     LOG_ENTER();
     gateway.stop();
     driver.cleanup();
@@ -86,15 +86,15 @@ public class GatewayAppFuncTest {
     LOG_EXIT();
   }
 
-  @After
-  public void cleanupTest() throws Exception {
+  @AfterEach
+  void cleanupTest() throws Exception {
     FileUtils.cleanDirectory( new File( config.getGatewayTopologyDir() ) );
     // Test run should not fail if deleting deployment files is not successful.
     // Deletion has been already done by TopologyService.
     FileUtils.deleteQuietly( new File( config.getGatewayDeploymentDir() ) );
   }
 
-  public static void setupGateway() throws Exception {
+  private static void setupGateway() throws Exception {
     File targetDir = new File( System.getProperty( "user.dir" ), "target" );
     File gatewayDir = new File( targetDir, "gateway-home-" + UUID.randomUUID() );
     gatewayDir.mkdirs();
@@ -122,11 +122,11 @@ public class GatewayAppFuncTest {
     startGatewayServer();
   }
 
-  public static void setupMockServers() throws Exception {
+  static void setupMockServers() throws Exception {
     mockWebHdfs = new MockServer( "WEBHDFS", true );
   }
 
-  public static void startGatewayServer() throws Exception {
+  static void startGatewayServer() throws Exception {
     services = new DefaultGatewayServices();
     Map<String,String> options = new HashMap<>();
     options.put( "persist-master", "false" );
@@ -152,8 +152,8 @@ public class GatewayAppFuncTest {
     params.put( "WEBHDFS_URL", "http://localhost:" + mockWebHdfs.getPort() );
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testSimpleStaticHelloAppDeployUndeploy() throws Exception {
+  @Test
+  void testSimpleStaticHelloAppDeployUndeploy() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-static-hello-topology.xml", params );
@@ -209,8 +209,8 @@ public class GatewayAppFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testSimpleDynamicAppDeployUndeploy() throws Exception {
+  @Test
+  void testSimpleDynamicAppDeployUndeploy() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-dynamic-app-topology.xml", params );
@@ -244,8 +244,8 @@ public class GatewayAppFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.MEDIUM_TIMEOUT )
-  public void testNakedAppDeploy() throws Exception {
+  @Test
+  void testNakedAppDeploy() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-naked-app-topology.xml", params );
@@ -266,7 +266,7 @@ public class GatewayAppFuncTest {
   }
 
   @Test
-  public void testDefaultAppName() throws Exception {
+  void testDefaultAppName() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-default-app-name-topology.xml", params );
@@ -304,7 +304,7 @@ public class GatewayAppFuncTest {
   }
 
   @Test
-  public void testMultiApps() throws Exception {
+  void testMultiApps() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-multi-apps-topology.xml", params );
@@ -382,8 +382,8 @@ public class GatewayAppFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testServicesAndApplications() throws Exception {
+  @Test
+  void testServicesAndApplications() throws Exception {
     LOG_ENTER();
 
     String topoStr = TestUtils.merge( DAT, "test-svcs-and-apps-topology.xml", params );
@@ -462,7 +462,7 @@ public class GatewayAppFuncTest {
   }
 
   @Test
-  public void testDeploymentCleanup() throws Exception {
+  void testDeploymentCleanup() throws Exception {
     LOG_ENTER();
 
     String username = "guest";
@@ -536,8 +536,8 @@ public class GatewayAppFuncTest {
     LOG_EXIT();
   }
 
-  @Test( timeout = TestUtils.LONG_TIMEOUT )
-  public void testDefaultTopology() throws Exception {
+  @Test
+  void testDefaultTopology() throws Exception {
     LOG_ENTER();
 
     try {

@@ -18,19 +18,18 @@ package org.apache.knox.gateway.topology.discovery.ambari;
 
 import org.apache.knox.gateway.topology.discovery.ServiceDiscovery;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AmbariClusterTest {
-
+class AmbariClusterTest {
   @Test
-  public void testHiveZooKeeperConfiguration() {
+  void testHiveZooKeeperConfiguration() {
 
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
@@ -49,8 +48,7 @@ public class AmbariClusterTest {
   }
 
   @Test
-  public void testWebHBaseZooKeeperConfiguration() {
-
+  void testWebHBaseZooKeeperConfiguration() {
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
     final String namespace = "hbase";
@@ -67,8 +65,7 @@ public class AmbariClusterTest {
   }
 
   @Test
-  public void testKafkaZooKeeperConfiguration() {
-
+  void testKafkaZooKeeperConfiguration() {
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
 
@@ -83,8 +80,7 @@ public class AmbariClusterTest {
   }
 
   @Test
-  public void testWebHDFSZooKeeperConfiguration() {
-
+  void testWebHDFSZooKeeperConfiguration() {
     final boolean isEnabled = true;
     final String ensemble = "host3:2181,host2:2181,host1:2181";
 
@@ -99,8 +95,7 @@ public class AmbariClusterTest {
   }
 
   @Test
-  public void testOozieZooKeeperConfiguration() {
-
+  void testOozieZooKeeperConfiguration() {
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
     final String namespace = "hiveserver2";
@@ -117,8 +112,7 @@ public class AmbariClusterTest {
   }
 
   @Test
-  public void testHBaseZooKeeperConfiguration() {
-
+  void testHBaseZooKeeperConfiguration() {
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
     final String namespace = "/hbase-secure";
@@ -140,8 +134,7 @@ public class AmbariClusterTest {
    * This test verifies that the default property is used when the primary property value is undefined.
    */
   @Test
-  public void testAtlasZooKeeperEnsemblePropsConfigurationSecondary() {
-
+  void testAtlasZooKeeperEnsemblePropsConfigurationSecondary() {
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
     //final String ensemblePropPrimary = "atlas.server.ha.zookeeper.connect";
@@ -167,8 +160,7 @@ public class AmbariClusterTest {
    * This test verifies that the primary property value is used when it's defined.
    */
   @Test
-  public void testAtlasZooKeeperEnsemblePropsConfigurationPrimary() {
-
+  void testAtlasZooKeeperEnsemblePropsConfigurationPrimary() {
     final boolean isEnabled = true;
     final String ensemble = "host1:2181,host2:2181,host3:2181";
     final String ensemblePropPrimary = "atlas.server.ha.zookeeper.connect";

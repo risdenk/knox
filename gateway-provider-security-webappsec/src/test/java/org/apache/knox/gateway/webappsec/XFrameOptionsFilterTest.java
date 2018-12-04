@@ -17,9 +17,10 @@
  */
 package org.apache.knox.gateway.webappsec;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -34,17 +35,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.knox.gateway.webappsec.filter.XFrameOptionsFilter;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class XFrameOptionsFilterTest {
+class XFrameOptionsFilterTest {
   private static final String X_FRAME_OPTIONS = "X-Frame-Options";
-  String options;
-  Collection<String> headerNames;
-  Collection<String> headers;
+  private String options;
+  private Collection<String> headers;
 
   @Test
-  public void testDefaultOptionsValue() throws Exception {
+  void testDefaultOptionsValue() throws Exception {
     try {
       XFrameOptionsFilter filter = new XFrameOptionsFilter();
       Properties props = new Properties();
@@ -60,19 +59,19 @@ public class XFrameOptionsFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.",
-          chain.doFilterCalled );
-      Assert.assertEquals("Options value incorrect should be DENY but is: "
-                              + options, "DENY", options);
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals("DENY", options,
+          "Options value incorrect should be DENY but is: " + options);
 
-      Assert.assertEquals("X-Frame-Options count not equal to 1.", 1, headers.size());
+      assertEquals(1, headers.size(),
+          "X-Frame-Options count not equal to 1.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
 
   @Test
-  public void testConfiguredOptionsValue() throws Exception {
+  void testConfiguredOptionsValue() throws Exception {
     try {
       XFrameOptionsFilter filter = new XFrameOptionsFilter();
       Properties props = new Properties();
@@ -89,45 +88,15 @@ public class XFrameOptionsFilterTest {
 
       TestFilterChain chain = new TestFilterChain();
       filter.doFilter(request, response, chain);
-      Assert.assertTrue("doFilterCalled should not be false.",
-          chain.doFilterCalled );
-      Assert.assertEquals("Options value incorrect should be SAMEORIGIN but is: "
-                              + options, "SAMEORIGIN", options);
+      assertTrue(chain.doFilterCalled, "doFilterCalled should not be false.");
+      assertEquals("SAMEORIGIN", options,
+          "Options value incorrect should be SAMEORIGIN but is: " + options);
 
-      Assert.assertEquals("X-Frame-Options count not equal to 1.", 1, headers.size());
+      assertEquals(1, headers.size(), "X-Frame-Options count not equal to 1.");
     } catch (ServletException se) {
       fail("Should NOT have thrown a ServletException.");
     }
   }
-
-//  @Test
-//  public void testExistingXFrameOptionHeader() throws Exception {
-//    try {
-//      XFrameOptionsFilter filter = new XFrameOptionsFilter();
-//      Properties props = new Properties();
-//      props.put("xframe.options.enabled", "true");
-//      props.put("xframe.options", "SAMEORIGIN");
-//      filter.init(new TestFilterConfig(props));
-//
-//      HttpServletRequest request = EasyMock.createNiceMock(
-//          HttpServletRequest.class);
-//      HttpServletResponse response = EasyMock.createNiceMock(
-//          HttpServletResponse.class);
-//      EasyMock.replay(request);
-//      EasyMock.replay(response);
-//
-//      TestFilterChain chain = new TestFilterChain();
-//      filter.doFilter(request, response, chain);
-//      Assert.assertTrue("doFilterCalled should not be false.",
-//          chain.doFilterCalled );
-//      Assert.assertTrue("Options value incorrect should be SAMEORIGIN but is: "
-//          + options, "SAMEORIGIN".equals(options));
-//
-//      Assert.assertTrue("X-Frame-Options count not equal to 1.", headers.size() == 1);
-//    } catch (ServletException se) {
-//      fail("Should NOT have thrown a ServletException.");
-//    }
-//  }
 
   class TestFilterConfig implements FilterConfig {
     Properties props;
@@ -161,11 +130,9 @@ public class XFrameOptionsFilterTest {
     boolean doFilterCalled;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response)
-        throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response) {
       doFilterCalled = true;
       options = ((HttpServletResponse)response).getHeader(X_FRAME_OPTIONS);
-      headerNames = ((HttpServletResponse)response).getHeaderNames();
       headers = ((HttpServletResponse)response).getHeaders(X_FRAME_OPTIONS);
     }
   }

@@ -17,8 +17,6 @@
  */
 package org.apache.knox.gateway;
 
-import org.apache.knox.test.category.ManualTests;
-import org.apache.knox.test.category.SlowTests;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -27,24 +25,23 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@Category( { ManualTests.class, SlowTests.class } )
-public class TempletonDemo {
-
+@Disabled
+class TempletonDemo {
   @Test
-  public void demoDirect() throws IOException {
+  void demoDirect() throws IOException {
     demo( "http://vm:50111/templeton/v1/mapreduce/jar" );
   }
 
   @Test
-  public void demoGateway() throws IOException {
+  void demoGateway() throws IOException {
     demo( "http://localhost:8888/gateway/cluster/templeton/v1/mapreduce/jar" );
   }
 

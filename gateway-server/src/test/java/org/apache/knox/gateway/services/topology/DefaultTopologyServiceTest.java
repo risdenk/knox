@@ -31,7 +31,7 @@ import org.apache.knox.gateway.topology.Topology;
 import org.apache.knox.gateway.topology.TopologyEvent;
 import org.apache.knox.gateway.topology.TopologyListener;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,13 +53,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-public class DefaultTopologyServiceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class DefaultTopologyServiceTest {
   private File createDir() throws IOException {
     return TestUtils.createTempDir(this.getClass().getSimpleName() + "-");
   }
@@ -74,16 +75,15 @@ public class DefaultTopologyServiceTest {
       assertNotNull(input);
       IOUtils.copy(input, output);
     }
-    file.setLastModified(timestamp);
-    assertTrue("Failed to create test file " + file.getAbsolutePath(), file.exists());
-    assertTrue("Failed to populate test file " + file.getAbsolutePath(), file.length() > 0);
+    assertTrue(file.setLastModified(timestamp));
+    assertTrue(file.exists(), "Failed to create test file " + file.getAbsolutePath());
+    assertTrue(file.length() > 0, "Failed to populate test file " + file.getAbsolutePath());
 
     return file;
   }
 
   @Test
-  public void testGetTopologies() throws Exception {
-
+  void testGetTopologies() throws Exception {
     File dir = createDir();
     File topologyDir = new File(dir, "topologies");
 
@@ -185,8 +185,7 @@ public class DefaultTopologyServiceTest {
    *        org.apache.knox.gateway.topology.discovery.test.extension.DummyServiceDiscovery
    */
   @Test
-  public void testSimpleDescriptorsTopologyGeneration() throws Exception {
-
+  void testSimpleDescriptorsTopologyGeneration() throws Exception {
     File dir = createDir();
     File topologyDir = new File(dir, "topologies");
     topologyDir.mkdirs();
@@ -245,7 +244,8 @@ public class DefaultTopologyServiceTest {
         Topology topology = iterator.next();
         assertThat("four", is(topology.getName()));
         int serviceCount = topology.getServices().size();
-        assertEquals("Expected the same number of services as are declared in the simple dscriptor.", 10, serviceCount);
+        assertEquals(10, serviceCount,
+            "Expected the same number of services as are declared in the simple dscriptor.");
 
         // Overwrite the simple descriptor with a different set of services, and check that the changes are
         // propagated to the associated topology
@@ -284,8 +284,8 @@ public class DefaultTopologyServiceTest {
         assertTrue(topologyFile.exists());
         topologyFile.delete();
         provider.reloadTopologies();
-        assertTrue("Simple descriptor should NOT have been deleted because the associated topology was.",
-                    simpleDesc.exists());
+        assertTrue(simpleDesc.exists(),
+            "Simple descriptor should NOT have been deleted because the associated topology was.");
 
       } finally {
         provCfgFile.delete();
@@ -304,7 +304,7 @@ public class DefaultTopologyServiceTest {
    *        org.apache.knox.gateway.topology.discovery.test.extension.DummyServiceDiscovery
    */
   @Test
-  public void testTopologiesUpdateFromProviderConfigChange() throws Exception {
+  void testTopologiesUpdateFromProviderConfigChange() throws Exception {
     File dir = createDir();
     File topologyDir = new File(dir, "topologies");
     topologyDir.mkdirs();
@@ -355,8 +355,8 @@ public class DefaultTopologyServiceTest {
       assertThat(topologies.size(), is(1));
       Iterator<Topology> iterator = topologies.iterator();
       Topology topology = iterator.next();
-      assertFalse("The Shiro provider is disabled in provider-config-one.xml",
-                  topology.getProvider("authentication", "ShiroProvider").isEnabled());
+      assertFalse(topology.getProvider("authentication", "ShiroProvider").isEnabled(),
+          "The Shiro provider is disabled in provider-config-one.xml");
 
       // Overwrite the referenced provider configuration with a different ShiroProvider config, and check that the
       // changes are propagated to the associated topology
@@ -373,8 +373,8 @@ public class DefaultTopologyServiceTest {
       topologies = ts.getTopologies();
       assertFalse(topologies.isEmpty());
       topology = topologies.iterator().next();
-      assertTrue("The Shiro provider is enabled in ambari-cluster-policy.xml",
-              topology.getProvider("authentication", "ShiroProvider").isEnabled());
+      assertTrue(topology.getProvider("authentication", "ShiroProvider").isEnabled(),
+          "The Shiro provider is enabled in ambari-cluster-policy.xml");
 
       // Delete the provider configuration, and make sure that the associated topology file is unaffected.
       // The topology file should not be affected because the simple descriptor handling will fail to resolve the
@@ -384,8 +384,8 @@ public class DefaultTopologyServiceTest {
       ts.reloadTopologies();
       topologies = ts.getTopologies();
       assertFalse(topologies.isEmpty());
-      assertTrue("The Shiro provider is enabled in ambari-cluster-policy.xml",
-              topology.getProvider("authentication", "ShiroProvider").isEnabled());
+      assertTrue(topology.getProvider("authentication", "ShiroProvider").isEnabled(),
+          "The Shiro provider is enabled in ambari-cluster-policy.xml");
 
     } finally {
       FileUtils.deleteQuietly(dir);
@@ -396,7 +396,7 @@ public class DefaultTopologyServiceTest {
    * KNOX-1039
    */
   @Test
-  public void testConfigurationCRUDAPI() throws Exception {
+  void testConfigurationCRUDAPI() throws Exception {
     File dir = createDir();
     File topologyDir = new File(dir, "topologies");
     topologyDir.mkdirs();
@@ -479,8 +479,8 @@ public class DefaultTopologyServiceTest {
       dm.onFileChange(simpleDesc);
 
       // Attempt to delete the referenced provConfOne
-      assertFalse("Should not be able to delete a provider configuration that is referenced by one or more descriptors",
-                  ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfOne)));
+      assertFalse(ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfOne)),
+          "Should not be able to delete a provider configuration that is referenced by one or more descriptors");
 
       // Overwrite the simple descriptor with content that changes the provider config reference to provConfTwo
       isDeployed =
@@ -497,8 +497,8 @@ public class DefaultTopologyServiceTest {
       dm.onFileChange(simpleDesc);
 
       // Attempt to delete the referenced provConfOne
-      assertTrue("Should be able to delete the provider configuration, now that it's not referenced by any descriptors",
-                 ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfOne)));
+      assertTrue(ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfOne)),
+          "Should be able to delete the provider configuration, now that it's not referenced by any descriptors");
 
       // Re-validate the provider configurations known by the topology service
       providerConfigurations = ts.getProviderConfigurations();
@@ -508,8 +508,8 @@ public class DefaultTopologyServiceTest {
       assertTrue(providerConfigurations.contains(provConfTwoFile));
 
       // Attempt to delete the referenced provConfTwo
-      assertFalse("Should not be able to delete a provider configuration that is referenced by one or more descriptors",
-                  ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfTwo)));
+      assertFalse(ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfTwo)),
+          "Should not be able to delete a provider configuration that is referenced by one or more descriptors");
 
       // Delete the referencing simple descriptor
       assertTrue(ts.deleteDescriptor(FilenameUtils.getBaseName(simpleDescName)));
@@ -524,8 +524,8 @@ public class DefaultTopologyServiceTest {
       dm.onFileDelete(simpleDesc);
 
       // Attempt to delete the referenced provConfTwo
-      assertTrue("Should be able to delete the provider configuration, now that it's not referenced by any descriptors",
-                 ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfTwo)));
+      assertTrue(ts.deleteProviderConfiguration(FilenameUtils.getBaseName(provConfTwo)),
+          "Should be able to delete the provider configuration, now that it's not referenced by any descriptors");
 
       // Re-validate the provider configurations known by the topology service
       providerConfigurations = ts.getProviderConfigurations();
@@ -538,8 +538,7 @@ public class DefaultTopologyServiceTest {
   }
 
   @Test
-  public void testProviderParamsOrderIsPreserved() {
-
+  void testProviderParamsOrderIsPreserved() {
     Provider provider = new Provider();
     String[] names = {"ldapRealm=",
         "ldapContextFactory",

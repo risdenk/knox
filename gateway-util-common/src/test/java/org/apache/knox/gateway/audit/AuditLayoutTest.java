@@ -30,9 +30,9 @@ import org.apache.knox.test.log.CollectAppender;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.LoggingEvent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -70,13 +70,13 @@ public class AuditLayoutTest {
     layout.activateOptions();
   }
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     tearDown();
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     CollectAppender.queue.clear();
     auditService.detachContext();
     correlationService.detachContext();
@@ -94,7 +94,7 @@ public class AuditLayoutTest {
   }
 
   @Test
-  public void testFullyFilledAuditEvent() {
+  void testFullyFilledAuditEvent() {
     AuditContext auditContext = auditService.createContext();
     auditContext.setProxyUsername( PROXYUSERNAME );
     auditContext.setSystemUsername( SYSTEMUSERNAME );
@@ -124,7 +124,7 @@ public class AuditLayoutTest {
   }
 
   @Test
-  public void testAuditEventWithoutContexts() {
+  void testAuditEventWithoutContexts() {
     auditor.audit( ACTION, RESOURCE_NAME, RESOURCE_TYPE, OUTCOME, MESSAGE );
     assertThat( CollectAppender.queue.size(), is( 1 ) );
     LoggingEvent event = CollectAppender.queue.iterator().next();
@@ -140,7 +140,7 @@ public class AuditLayoutTest {
   }
 
   @Test
-  public void testAuditEventWithoutMessage() {
+  void testAuditEventWithoutMessage() {
     auditor.audit( ACTION, RESOURCE_NAME, RESOURCE_TYPE, OUTCOME );
     assertThat( CollectAppender.queue.size(), is( 1 ) );
     LoggingEvent event = CollectAppender.queue.iterator().next();

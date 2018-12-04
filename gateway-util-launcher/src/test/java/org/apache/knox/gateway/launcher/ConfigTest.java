@@ -17,7 +17,7 @@
  */
 package org.apache.knox.gateway.launcher;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -26,12 +26,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ConfigTest {
-
+class ConfigTest {
   private static final String NEWLINE = System.getProperty( "line.separator" );
 
   @Test
-  public void testLoad() throws Exception {
+  void testLoad() throws Exception {
     Config c;
     String s;
 
@@ -59,7 +58,7 @@ public class ConfigTest {
   }
 
   @Test
-  public void testSave() throws Exception {
+  void testSave() {
     Config c;
     StringWriter w;
 
@@ -86,7 +85,7 @@ public class ConfigTest {
   }
 
   @Test
-  public void testSetGet() throws Exception {
+  void testSetGet() {
     Config c;
 
     c = new Config();
@@ -112,5 +111,4 @@ public class ConfigTest {
     assertThat( c.get( "section1", "name" ), is( "value2" ) );
     assertThat( c.get( "section2", "name" ), is( "value1" ) );
   }
-
 }

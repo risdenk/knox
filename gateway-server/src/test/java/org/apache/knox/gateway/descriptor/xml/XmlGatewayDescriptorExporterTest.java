@@ -21,7 +21,7 @@ import org.apache.knox.gateway.descriptor.GatewayDescriptor;
 import org.apache.knox.gateway.descriptor.GatewayDescriptorFactory;
 import org.apache.knox.gateway.util.XmlUtils;
 import org.apache.knox.test.Console;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -36,18 +36,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.xml.HasXPath.hasXPath;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class XmlGatewayDescriptorExporterTest {
-
+class XmlGatewayDescriptorExporterTest {
   @Test
-  public void testFormat() {
+  void testFormat() {
     XmlGatewayDescriptorExporter exporter = new XmlGatewayDescriptorExporter();
     assertThat( exporter.getFormat(), is( "xml" ) );
   }
 
   @Test
-  public void testXmlGatewayDescriptorStore() throws IOException, SAXException, ParserConfigurationException {
+  void testXmlGatewayDescriptorStore() throws IOException, SAXException, ParserConfigurationException {
     GatewayDescriptor descriptor = GatewayDescriptorFactory.create()
         .addResource()
         .pattern( "resource1-source" )
@@ -89,8 +88,7 @@ public class XmlGatewayDescriptorExporterTest {
   }
 
   @Test
-  public void testXmlGatewayDescriptorStoreMissingValue() throws IOException, SAXException, ParserConfigurationException {
-
+  void testXmlGatewayDescriptorStoreMissingValue() throws IOException, SAXException, ParserConfigurationException {
     GatewayDescriptor descriptor = GatewayDescriptorFactory.create()
         .addResource().addFilter().param().up().up().up();
 
@@ -105,7 +103,7 @@ public class XmlGatewayDescriptorExporterTest {
   }
 
   @Test
-  public void testXmlGatewayDescriptorStoreFailure() throws IOException {
+  void testXmlGatewayDescriptorStoreFailure() {
     GatewayDescriptor descriptor = GatewayDescriptorFactory.create()
         .addResource().addFilter().param().up().up().up();
 
@@ -119,11 +117,9 @@ public class XmlGatewayDescriptorExporterTest {
     } finally {
       console.release();
     }
-
   }
 
   private static class BrokenWriter extends Writer {
-
     @Override
     public void write( char[] cbuf, int off, int len ) throws IOException {
       throw new IOException( "BROKEN" );
@@ -138,7 +134,5 @@ public class XmlGatewayDescriptorExporterTest {
     public void close() throws IOException {
       throw new IOException( "BROKEN" );
     }
-
   }
-
 }

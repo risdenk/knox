@@ -17,11 +17,8 @@
  */
 package org.apache.knox.gateway.util.urltemplate;
 
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
 import org.easymock.EasyMock;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -43,10 +40,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class RewriterTest {
+class RewriterTest {
 
 //  @Ignore( "Not implemented yet." )
 //  @Test
@@ -101,7 +97,7 @@ public class RewriterTest {
 //  }
 
   @Test
-  public void testServiceRegistryHostmapUserCase() throws Exception {
+  void testServiceRegistryHostmapUserCase() throws Exception {
     Resolver resolver = EasyMock.createNiceMock( Resolver.class );
     EasyMock.expect( resolver.resolve( "internal-host" ) ).andReturn(Collections.singletonList("internal-host")).anyTimes();
 
@@ -120,7 +116,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testBasicRewrite() throws Exception {
+  void testBasicRewrite() throws Exception {
     URI inputUri, outputUri;
     Template inputTemplate, outputTemplate;
     MockParams resolver = new MockParams();
@@ -145,7 +141,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testQueryExtraRewrite() throws Exception {
+  void testQueryExtraRewrite() throws Exception {
     URI inputUri, outputUri;
     Template inputTemplate, outputTemplate;
     MockParams params = new MockParams();
@@ -165,7 +161,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testRewriteUrlWithHttpServletRequestAndFilterConfig() throws Exception {
+  void testRewriteUrlWithHttpServletRequestAndFilterConfig() throws Exception {
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     EasyMock.expect( request.getParameter( "expect-queryParam-name" ) ).andReturn( "expect-queryParam-value" ).anyTimes();
     EasyMock.expect( request.getParameterValues( "expect-queryParam-name" ) ).andReturn( new String[]{"expect-queryParam-value"} ).anyTimes();
@@ -277,7 +273,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testRewriteNameNodeLocationResponseHeader() throws URISyntaxException {
+  void testRewriteNameNodeLocationResponseHeader() throws URISyntaxException {
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     EasyMock.replay( request );
 
@@ -306,7 +302,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testRewriteDataNodeLocationResponseHeader() throws URISyntaxException {
+  void testRewriteDataNodeLocationResponseHeader() throws URISyntaxException {
     HttpServletRequest request = EasyMock.createNiceMock( HttpServletRequest.class );
     EasyMock.replay( request );
 
@@ -333,7 +329,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testRewriteExcludesQueryDelimWhenInputHasNoQueryParams() throws Exception {
+  void testRewriteExcludesQueryDelimWhenInputHasNoQueryParams() throws Exception {
     Template inputTemplate, outputTemplate;
     URI actualInput, actualOutput, expectOutput;
 
@@ -349,7 +345,7 @@ public class RewriterTest {
   }
 
   @Test
-  public void testRewriteHonorsEmptyParameters() throws Exception {
+  void testRewriteHonorsEmptyParameters() throws Exception {
     Template inputTemplate, outputTemplate;
     URI actualInput, actualOutput;
 
@@ -362,7 +358,6 @@ public class RewriterTest {
     Map<String, String> actualInputParameters = this.getParameters( actualInput.toURL());
     Map<String, String> actualOutputParameters = this.getParameters( actualOutput.toURL());
     assertEquals(actualInputParameters, actualOutputParameters);
-
   }
 
   private Map<String, String> getParameters(URL url) throws UnsupportedEncodingException {
@@ -378,7 +373,6 @@ public class RewriterTest {
     }
 
   private class TestResolver implements Params {
-
     private FilterConfig config;
     private HttpServletRequest request;
 
@@ -394,7 +388,6 @@ public class RewriterTest {
 
     // Picks the values from either the expect or the config in that order.
     @Override
-    @SuppressWarnings( "unchecked" )
     public List<String> resolve( String name ) {
       List<String> values = null;
 
@@ -417,7 +410,5 @@ public class RewriterTest {
 
       return values;
     }
-
   }
-
 }

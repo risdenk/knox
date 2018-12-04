@@ -23,26 +23,29 @@ import org.apache.knox.gateway.config.impl.GatewayConfigImpl;
 import org.apache.knox.gateway.services.metrics.InstrumentationProvider;
 import org.apache.knox.gateway.services.metrics.MetricsReporter;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
-public class DefaultMetricsServiceTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+class DefaultMetricsServiceTest {
   @Test
-  public void lifecycle() throws Exception {
+  void lifecycle() throws Exception {
     DefaultMetricsService service = new DefaultMetricsService();
     service.init(new GatewayConfigImpl(), null);
-    Assert.assertNotNull(service.getContext());
-    Assert.assertNotNull(service.getMetricRegistry());
-    Assert.assertNotNull(service.getMetricsReporters());
-    Assert.assertNotNull(service.getInstrumentationProviders());
+    assertNotNull(service.getContext());
+    assertNotNull(service.getMetricRegistry());
+    assertNotNull(service.getMetricsReporters());
+    assertNotNull(service.getInstrumentationProviders());
     service.start();
-    Assert.assertNotNull(service.getContext().getMetricsService());
+    assertNotNull(service.getContext().getMetricsService());
     MetricRegistry metricRegistry = (MetricRegistry) service.getContext().getProperty(DefaultMetricsService.METRICS_REGISTRY);
-    Assert.assertNotNull(metricRegistry);
+    assertNotNull(metricRegistry);
     service.stop();
     service.getMetricRegistry().removeMatching(MetricFilter.ALL);
   }
@@ -52,8 +55,8 @@ public class DefaultMetricsServiceTest {
     DefaultMetricsService service = new DefaultMetricsService();
     service.init(new GatewayConfigImpl(), null);
     Map<Class<?>, InstrumentationProvider> map = service.getInstrumentationProviders();
-    Assert.assertTrue(map.entrySet().isEmpty());
-    Assert.assertNull(service.getInstrumented(HttpClientBuilder.class));
+    assertTrue(map.entrySet().isEmpty());
+    assertNull(service.getInstrumented(HttpClientBuilder.class));
     service.getMetricRegistry().removeMatching(MetricFilter.ALL);
   }
 
@@ -64,8 +67,8 @@ public class DefaultMetricsServiceTest {
     config.set(GatewayConfigImpl.METRICS_ENABLED, "true");
     service.init(config, null);
     Map<Class<?>, InstrumentationProvider> map = service.getInstrumentationProviders();
-    Assert.assertTrue(map.entrySet().size() >= 2);
-    Assert.assertNotNull(service.getInstrumented(HttpClientBuilder.class));
+    assertTrue(map.entrySet().size() >= 2);
+    assertNotNull(service.getInstrumented(HttpClientBuilder.class));
     service.getMetricRegistry().removeMatching(MetricFilter.ALL);
   }
 
@@ -77,9 +80,9 @@ public class DefaultMetricsServiceTest {
     config.set(GatewayConfigImpl.JMX_METRICS_REPORTING_ENABLED, "false");
     service.init(config, null);
     List<MetricsReporter> reporters = service.getMetricsReporters();
-    Assert.assertTrue(reporters.size() >= 2);
+    assertTrue(reporters.size() >= 2);
     for (MetricsReporter reporter : reporters) {
-      Assert.assertFalse(reporter.isEnabled());
+      assertFalse(reporter.isEnabled());
     }
     service.getMetricRegistry().removeMatching(MetricFilter.ALL);
     config.set(GatewayConfigImpl.JMX_METRICS_REPORTING_ENABLED, "true");
@@ -87,7 +90,7 @@ public class DefaultMetricsServiceTest {
     service.init(config, null);
     reporters = service.getMetricsReporters();
     for (MetricsReporter reporter : reporters) {
-      Assert.assertTrue(reporter.isEnabled());
+      assertTrue(reporter.isEnabled());
     }
     service.start();
     service.stop();

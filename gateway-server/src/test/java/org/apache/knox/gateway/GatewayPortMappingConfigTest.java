@@ -22,11 +22,10 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -35,14 +34,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
 /**
  * Test the Gateway Topology Port Mapping config
  *
  */
-public class GatewayPortMappingConfigTest {
-
+class GatewayPortMappingConfigTest {
   /**
    * Mock gateway config
    */
@@ -56,16 +55,8 @@ public class GatewayPortMappingConfigTest {
 
   private static Server gatewayServer;
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
-
-  public GatewayPortMappingConfigTest() {
-    super();
-  }
-
-  @BeforeClass
-  public static void init() throws Exception {
-
+  @BeforeAll
+  static void init() throws Exception {
     Map<String, Integer> topologyPortMapping = new ConcurrentHashMap<>();
 
     // get unique ports
@@ -92,8 +83,8 @@ public class GatewayPortMappingConfigTest {
     startGatewayServer();
   }
 
-  @AfterClass
-  public static void stopServers() {
+  @AfterAll
+  static void stopServers() {
     try {
       gatewayServer.stop();
     } catch (final Exception e) {
@@ -108,8 +99,7 @@ public class GatewayPortMappingConfigTest {
    * @param max max port to check
    * @return Port that is available.
    */
-  public static int getAvailablePort(final int min, final int max) {
-
+  static int getAvailablePort(final int min, final int max) {
     for (int i = min; i <= max; i++) {
 
       if (!GatewayServer.isPortInUse(i)) {
@@ -124,7 +114,7 @@ public class GatewayPortMappingConfigTest {
    * This method simply tests the configs
    */
   @Test
-  public void testGatewayConfig() {
+  void testGatewayConfig() {
     assertThat(gatewayConfig.getGatewayPortMappings().get("eerie"),
         greaterThan(-1));
     assertThat(gatewayConfig.getGatewayPortMappings().get("ontario"),
@@ -137,14 +127,8 @@ public class GatewayPortMappingConfigTest {
    * Test case where topologies "eerie" and "huron" use same ports.
    */
   @Test
-  public void testCheckPortConflict()
-      throws IOException, NoSuchFieldException, IllegalAccessException {
+  void testCheckPortConflict() throws NoSuchFieldException, IllegalAccessException {
     /* Check port conflict with default port */
-    exception.expect(IOException.class);
-    exception.expectMessage(String.format(Locale.ROOT,
-        " Port %d used by topology %s is used by other topology, ports for topologies (if defined) have to be unique. ",
-        huronPort, "eerie"));
-
     GatewayServer gatewayServer = new GatewayServer(gatewayConfig);
 
     Server mockedJetty = EasyMock.createNiceMock(Server.class);
@@ -163,7 +147,11 @@ public class GatewayPortMappingConfigTest {
     field.setAccessible(true);
     field.set(gatewayServer, mockedJetty);
 
-    gatewayServer.checkPortConflict(huronPort, "eerie", gatewayConfig);
+    IOException exception = Assertions.assertThrows(IOException.class,
+        () -> gatewayServer.checkPortConflict(huronPort, "eerie", gatewayConfig));
+    assertThat(exception.getMessage(), equalTo(String.format(Locale.ROOT,
+        " Port %d used by topology %s is used by other topology, ports for topologies (if defined) have to be unique. ",
+        huronPort, "eerie")));
   }
 
   /*
@@ -171,14 +159,12 @@ public class GatewayPortMappingConfigTest {
    * another gateway.
    */
   @Test
-  public void testDefaultPortInUse() throws IOException {
-
-    exception.expect(IOException.class);
-    exception
-        .expectMessage(String.format(Locale.ROOT, "Port %d already in use.", defaultPort));
-
+  void testDefaultPortInUse() {
     final GatewayServer gatewayServer = new GatewayServer(gatewayConfig);
-    gatewayServer.checkPortConflict(defaultPort, null, gatewayConfig);
+    IOException exception = Assertions.assertThrows(IOException.class,
+        () -> gatewayServer.checkPortConflict(defaultPort, null, gatewayConfig));
+    assertThat(exception.getMessage(),
+        equalTo(String.format(Locale.ROOT, "Port %d already in use.", defaultPort)));
   }
 
   private static void startGatewayServer() throws Exception {
@@ -199,7 +185,5 @@ public class GatewayPortMappingConfigTest {
 
     // Start Server
     gatewayServer.start();
-
   }
-
 }

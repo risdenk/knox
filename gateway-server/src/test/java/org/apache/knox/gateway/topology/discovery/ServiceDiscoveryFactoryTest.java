@@ -18,59 +18,53 @@ package org.apache.knox.gateway.topology.discovery;
 
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.impl.DefaultAliasService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-public class ServiceDiscoveryFactoryTest {
-
+class ServiceDiscoveryFactoryTest {
     @Test
-    public void testGetDummyImpl() throws Exception {
+    void testGetDummyImpl() {
         String TYPE = "DUMMY";
         ServiceDiscovery sd = ServiceDiscoveryFactory.get(TYPE);
-        assertNotNull("Expected to get a ServiceDiscovery object.", sd);
-        assertEquals("Unexpected ServiceDiscovery type.", TYPE, sd.getType());
+        assertNotNull(sd, "Expected to get a ServiceDiscovery object.");
+        assertEquals(TYPE, sd.getType(), "Unexpected ServiceDiscovery type.");
     }
 
-
     @Test
-    public void testGetDummyImplWithMismatchedCase() throws Exception {
+    void testGetDummyImplWithMismatchedCase() {
         String TYPE = "dUmmY";
         ServiceDiscovery sd = ServiceDiscoveryFactory.get(TYPE);
-        assertNotNull("Expected to get a ServiceDiscovery object.", sd);
-        assertEquals("Unexpected ServiceDiscovery type.", TYPE.toUpperCase(Locale.ROOT), sd.getType());
+        assertNotNull(sd, "Expected to get a ServiceDiscovery object.");
+        assertEquals(TYPE.toUpperCase(Locale.ROOT), sd.getType(), "Unexpected ServiceDiscovery type.");
     }
 
-
     @Test
-    public void testGetInvalidImpl() throws Exception {
+    void testGetInvalidImpl() {
         String TYPE = "InValID";
         ServiceDiscovery sd = ServiceDiscoveryFactory.get(TYPE);
-        assertNull("Unexpected ServiceDiscovery object.", sd);
+        assertNull(sd, "Unexpected ServiceDiscovery object.");
     }
 
-
     @Test
-    public void testGetImplWithMismatchedType() throws Exception {
+    void testGetImplWithMismatchedType() {
         String TYPE = "DeclaredType";
         ServiceDiscovery sd = ServiceDiscoveryFactory.get(TYPE);
-        assertNull("Unexpected ServiceDiscovery object.", sd);
+        assertNull(sd, "Unexpected ServiceDiscovery object.");
     }
 
-
     @Test
-    public void testGetPropertiesFileImplWithAliasServiceInjection() throws Exception {
+    void testGetPropertiesFileImplWithAliasServiceInjection() throws Exception {
         String TYPE = "PROPERTIES_FILE";
         ServiceDiscovery sd = ServiceDiscoveryFactory.get(TYPE, new DefaultAliasService());
-        assertNotNull("Expected to get a ServiceDiscovery object.", sd);
-        assertEquals("Unexpected ServiceDiscovery type.", TYPE, sd.getType());
+        assertNotNull(sd, "Expected to get a ServiceDiscovery object.");
+        assertEquals(TYPE, sd.getType(), "Unexpected ServiceDiscovery type.");
 
         // Verify that the AliasService was injected as expected
         Field aliasServiceField = sd.getClass().getDeclaredField("aliasService");
@@ -79,6 +73,4 @@ public class ServiceDiscoveryFactoryTest {
         assertNotNull(fieldValue);
         assertTrue(AliasService.class.isAssignableFrom(fieldValue.getClass()));
     }
-
-
 }

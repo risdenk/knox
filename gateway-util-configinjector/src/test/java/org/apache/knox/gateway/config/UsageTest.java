@@ -17,20 +17,20 @@
  */
 package org.apache.knox.gateway.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class UsageTest {
-
+class UsageTest {
   class Target {
+    @SuppressWarnings("unused")
     @Configure
     private String user;
   }
 
   @Test
-  public void usage() {
+  void usage() {
     Target target = new Target();
     ConfigurationInjectorBuilder.configuration()
         .target( target )
@@ -39,5 +39,4 @@ public class UsageTest {
         .inject();
     assertThat( target.user, is(System.getProperty("user.name")));
   }
-
 }

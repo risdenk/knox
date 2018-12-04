@@ -28,8 +28,8 @@ import org.apache.knox.gateway.services.config.client.RemoteConfigurationRegistr
 import org.apache.knox.gateway.services.security.AliasService;
 import org.apache.knox.gateway.services.security.MasterService;
 import org.apache.knox.test.TestUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,28 +46,24 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author larry
- *
- */
-public class KnoxCLITest {
+class KnoxCLITest {
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     System.setOut(new PrintStream(outContent, false, StandardCharsets.UTF_8.name()));
     System.setErr(new PrintStream(errContent, false, StandardCharsets.UTF_8.name()));
   }
 
   @Test
-  public void testRemoteConfigurationRegistryClientService() throws Exception {
+  void testRemoteConfigurationRegistryClientService() throws Exception {
     outContent.reset();
 
     KnoxCLI cli = new KnoxCLI();
@@ -89,7 +85,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testListRemoteConfigurationRegistryClients() throws Exception {
+  void testListRemoteConfigurationRegistryClients() throws Exception {
     outContent.reset();
 
     KnoxCLI cli = new KnoxCLI();
@@ -101,7 +97,8 @@ public class KnoxCLITest {
     // Test with no registry clients configured
     int rc = cli.run(args);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).isEmpty());
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).isEmpty(),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     // Test with a single client configured
     // Configure a client for the test local filesystem registry implementation
@@ -110,7 +107,8 @@ public class KnoxCLITest {
     outContent.reset();
     rc = cli.run(args);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("test_client"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("test_client"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     // Configure another client for the test local filesystem registry implementation
     config.set("gateway.remote.config.registry.another_client", "type=LocalFileSystem;address=/test2");
@@ -118,14 +116,15 @@ public class KnoxCLITest {
     outContent.reset();
     rc = cli.run(args);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("test_client"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("another_client"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("test_client"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("another_client"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
   }
 
   @Test
-  public void testRemoteConfigurationRegistryGetACLs() throws Exception {
+  void testRemoteConfigurationRegistryGetACLs() throws Exception {
     outContent.reset();
-
 
     final File testRoot = TestUtils.createTempDir(this.getClass().getName());
     try {
@@ -159,15 +158,14 @@ public class KnoxCLITest {
       // Validate the result
       assertEquals(0, rc);
       String result = outContent.toString(StandardCharsets.UTF_8.name());
-      assertEquals(result, 3, result.split("\n").length);
+      assertEquals(3, result.split("\n").length, result);
     } finally {
       FileUtils.forceDelete(testRoot);
     }
   }
 
-
   @Test
-  public void testRemoteConfigurationRegistryUploadProviderConfig() throws Exception {
+  void testRemoteConfigurationRegistryUploadProviderConfig() throws Exception {
     outContent.reset();
 
     final String providerConfigName = "my-provider-config.xml";
@@ -211,9 +209,8 @@ public class KnoxCLITest {
     }
   }
 
-
   @Test
-  public void testRemoteConfigurationRegistryUploadProviderConfigWithDestinationOverride() throws Exception {
+  void testRemoteConfigurationRegistryUploadProviderConfigWithDestinationOverride() throws Exception {
     outContent.reset();
 
     final String providerConfigName = "my-provider-config.xml";
@@ -252,9 +249,8 @@ public class KnoxCLITest {
     }
   }
 
-
   @Test
-  public void testRemoteConfigurationRegistryUploadDescriptor() throws Exception {
+  void testRemoteConfigurationRegistryUploadDescriptor() throws Exception {
     outContent.reset();
 
     final String descriptorName = "my-topology.json";
@@ -299,7 +295,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testRemoteConfigurationRegistryUploadDescriptorWithDestinationOverride() throws Exception {
+  void testRemoteConfigurationRegistryUploadDescriptorWithDestinationOverride() throws Exception {
     outContent.reset();
 
     final String descriptorName = "my-topology.json";
@@ -339,7 +335,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testRemoteConfigurationRegistryDeleteProviderConfig() throws Exception {
+  void testRemoteConfigurationRegistryDeleteProviderConfig() throws Exception {
     outContent.reset();
 
     // Create a provider config
@@ -392,7 +388,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testRemoteConfigurationRegistryDeleteDescriptor() throws Exception {
+  void testRemoteConfigurationRegistryDeleteDescriptor() throws Exception {
     outContent.reset();
 
     final String descriptorName = "my-topology.json";
@@ -443,7 +439,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testSuccessfulAliasLifecycle() throws Exception {
+  void testSuccessfulAliasLifecycle() throws Exception {
     outContent.reset();
     String[] args1 = {"create-alias", "alias1", "--value", "testvalue1", "--master", "master"};
     int rc;
@@ -451,32 +447,36 @@ public class KnoxCLITest {
     cli.setConf(new GatewayConfigImpl());
     rc = cli.run(args1);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1 has been successfully " +
-        "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args2 = {"list-alias", "--master",
         "master"};
     rc = cli.run(args2);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args4 = {"delete-alias", "alias1", "--master",
       "master"};
     rc = cli.run(args4);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1 has been successfully " +
-        "deleted."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully deleted."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     rc = cli.run(args2);
     assertEquals(0, rc);
-    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"));
+    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
   }
 
   @Test
-  public void testListAndDeleteOfAliasForInvalidClusterName() throws Exception {
+  void testListAndDeleteOfAliasForInvalidClusterName() throws Exception {
     outContent.reset();
     String[] args1 =
         { "create-alias", "alias1", "--cluster", "cluster1", "--value", "testvalue1", "--master",
@@ -486,28 +486,31 @@ public class KnoxCLITest {
     cli.setConf(new GatewayConfigImpl());
     rc = cli.run(args1);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains(
-      "alias1 has been successfully " + "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args2 = { "list-alias", "--cluster", "Invalidcluster1", "--master", "master" };
     rc = cli.run(args2);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()),
-      outContent.toString(StandardCharsets.UTF_8.name()).contains("Invalid cluster name provided: Invalidcluster1"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Invalid cluster name provided: Invalidcluster1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args4 =
         { "delete-alias", "alias1", "--cluster", "Invalidcluster1", "--master", "master" };
     rc = cli.run(args4);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()),
-      outContent.toString(StandardCharsets.UTF_8.name()).contains("Invalid cluster name provided: Invalidcluster1"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Invalid cluster name provided: Invalidcluster1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
   }
 
   @Test
-  public void testDeleteOfNonExistAliasFromUserDefinedCluster() throws Exception {
+  void testDeleteOfNonExistAliasFromUserDefinedCluster() throws Exception {
     KnoxCLI cli = new KnoxCLI();
     cli.setConf(new GatewayConfigImpl());
     try {
@@ -532,7 +535,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testDeleteOfNonExistAliasFromDefaultCluster() throws Exception {
+  void testDeleteOfNonExistAliasFromDefaultCluster() throws Exception {
     KnoxCLI cli = new KnoxCLI();
     cli.setConf(new GatewayConfigImpl());
     try {
@@ -546,7 +549,8 @@ public class KnoxCLITest {
       String[] args2 = { "delete-alias", "alias2", "--master", "master" };
       rc = cli.run(args2);
       assertEquals(0, rc);
-      assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("No such alias exists in the cluster."));
+      assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                     .contains("No such alias exists in the cluster."));
     } finally {
       outContent.reset();
       String[] args1 = { "delete-alias", "alias1", "--master", "master" };
@@ -555,7 +559,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testForInvalidArgument() throws Exception {
+  void testForInvalidArgument() throws Exception {
     outContent.reset();
     String[] args1 = { "--value", "testvalue1", "--master", "master" };
     KnoxCLI cli = new KnoxCLI();
@@ -566,7 +570,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testListAndDeleteOfAliasForValidClusterName() throws Exception {
+  void testListAndDeleteOfAliasForValidClusterName() throws Exception {
     outContent.reset();
     String[] args1 =
         { "create-alias", "alias1", "--cluster", "cluster1", "--value", "testvalue1", "--master",
@@ -576,32 +580,36 @@ public class KnoxCLITest {
     cli.setConf(new GatewayConfigImpl());
     rc = cli.run(args1);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains(
-      "alias1 has been successfully " + "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args2 = { "list-alias", "--cluster", "cluster1", "--master", "master" };
     rc = cli.run(args2);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args4 =
         { "delete-alias", "alias1", "--cluster", "cluster1", "--master", "master" };
     rc = cli.run(args4);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains(
-      "alias1 has been successfully " + "deleted."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully deleted."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     rc = cli.run(args2);
     assertEquals(0, rc);
-    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"));
+    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
   }
 
   @Test
-  public void testGatewayAndClusterStores() throws Exception {
+  void testGatewayAndClusterStores() throws Exception {
     GatewayConfigImpl config = new GatewayConfigImpl();
     FileUtils.deleteQuietly( new File( config.getGatewaySecurityDir() ) );
 
@@ -612,8 +620,9 @@ public class KnoxCLITest {
     cli.setConf( config );
     rc = cli.run(gwCreateArgs);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1 has been successfully " +
-        "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     AliasService as = cli.getGatewayServices().getService(ServiceType.ALIAS_SERVICE);
 
@@ -624,16 +633,19 @@ public class KnoxCLITest {
     cli.setConf( config );
     rc = cli.run(clusterCreateArgs);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias2 has been successfully " +
-        "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias2 has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args2 = {"list-alias", "--master", "master"};
     cli = new KnoxCLI();
     rc = cli.run(args2);
     assertEquals(0, rc);
-    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias2"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"));
+    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias2"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     char[] passwordChars = as.getPasswordFromAliasForCluster("test", "alias2");
     assertNotNull(passwordChars);
@@ -644,24 +656,28 @@ public class KnoxCLITest {
     cli = new KnoxCLI();
     rc = cli.run(args1);
     assertEquals(0, rc);
-    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias2"));
+    assertFalse(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("alias2"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args4 = {"delete-alias", "alias1", "--master", "master"};
     cli = new KnoxCLI();
     rc = cli.run(args4);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias1 has been successfully " +
-        "deleted."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias1 has been successfully deleted."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] args5 = {"delete-alias", "alias2", "--cluster", "test", "--master", "master"};
     cli = new KnoxCLI();
     rc = cli.run(args5);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("alias2 has been successfully " +
-        "deleted."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("alias2 has been successfully deleted."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
   }
 
   private void createTestMaster() throws Exception {
@@ -677,7 +693,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testCreateSelfSignedCert() throws Exception {
+  void testCreateSelfSignedCert() throws Exception {
     GatewayConfigImpl config = new GatewayConfigImpl();
     FileUtils.deleteQuietly( new File( config.getGatewaySecurityDir() ) );
     createTestMaster();
@@ -688,12 +704,13 @@ public class KnoxCLITest {
     int rc;
     rc = cli.run(gwCreateArgs);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity has been successfully " +
-        "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("gateway-identity has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
   }
 
   @Test
-  public void testExportCert() throws Exception {
+  void testExportCert() throws Exception {
     GatewayConfigImpl config = new GatewayConfigImpl();
     FileUtils.deleteQuietly( new File( config.getGatewaySecurityDir() ) );
     createTestMaster();
@@ -704,63 +721,87 @@ public class KnoxCLITest {
     int rc;
     rc = cli.run(gwCreateArgs);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity has been successfully " +
-        "created."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("gateway-identity has been successfully created."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] gwCreateArgs2 = {"export-cert", "--type", "PEM"};
     rc = cli.run(gwCreateArgs2);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Certificate gateway-identity has been successfully exported to"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity.pem"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Certificate gateway-identity has been successfully exported to"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity.pem"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     // case insensitive
     outContent.reset();
     String[] gwCreateArgs2_6 = {"export-cert", "--type", "pem"};
     rc = cli.run(gwCreateArgs2_6);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Certificate gateway-identity has been successfully exported to"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity.pem"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Certificate gateway-identity has been successfully exported to"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity.pem"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] gwCreateArgs2_5 = {"export-cert"};
     rc = cli.run(gwCreateArgs2_5);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Certificate gateway-identity has been successfully exported to"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity.pem"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Certificate gateway-identity has been successfully exported to"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-identity.pem"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] gwCreateArgs3 = {"export-cert", "--type", "JKS"};
     rc = cli.run(gwCreateArgs3);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Certificate gateway-identity has been successfully exported to"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-client-trust.jks"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Certificate gateway-identity has been successfully exported to"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("gateway-client-trust.jks"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     // pkcs12
     outContent.reset();
     String[] gwCreateArgs2_7 = {"export-cert", "--type", "pkcs12"};
     rc = cli.run(gwCreateArgs2_7);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Certificate gateway-identity has been successfully exported to"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-client-trust.pkcs12"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Certificate gateway-identity has been successfully exported to"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("gateway-client-trust.pkcs12"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     // jceks
     outContent.reset();
     String[] gwCreateArgs2_8 = {"export-cert", "--type", "jceks"};
     rc = cli.run(gwCreateArgs2_8);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Certificate gateway-identity has been successfully exported to"));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("gateway-client-trust.jceks"));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Certificate gateway-identity has been successfully exported to"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("gateway-client-trust.jceks"),
+        outContent.toString(StandardCharsets.UTF_8.name()));
 
     outContent.reset();
     String[] gwCreateArgs4 = {"export-cert", "--type", "invalid"};
     rc = cli.run(gwCreateArgs4);
     assertEquals(0, rc);
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Invalid type for export file provided."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Invalid type for export file provided."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
   }
 
   @Test
-  public void testCreateMaster() throws Exception {
+  void testCreateMaster() throws Exception {
     GatewayConfigImpl config = new GatewayConfigImpl();
     FileUtils.deleteQuietly( new File( config.getGatewaySecurityDir() ) );
     outContent.reset();
@@ -771,13 +812,14 @@ public class KnoxCLITest {
     rc = cli.run(args);
     assertEquals(0, rc);
     MasterService ms = cli.getGatewayServices().getService(ServiceType.MASTER_SERVICE);
-    // assertTrue(ms.getClass().getName(), ms.getClass().getName().equals("kjdfhgjkhfdgjkh"));
     assertEquals(new String(ms.getMasterSecret()), "master", new String(ms.getMasterSecret()));
-    assertTrue(outContent.toString(StandardCharsets.UTF_8.name()), outContent.toString(StandardCharsets.UTF_8.name()).contains("Master secret has been persisted to disk."));
+    assertTrue(outContent.toString(StandardCharsets.UTF_8.name())
+                   .contains("Master secret has been persisted to disk."),
+        outContent.toString(StandardCharsets.UTF_8.name()));
   }
 
   @Test
-  public void testCreateMasterGenerate() throws Exception {
+  void testCreateMasterGenerate() throws Exception {
     String[] args = {"create-master", "--generate" };
     int rc;
     GatewayConfigImpl config = new GatewayConfigImpl();
@@ -819,7 +861,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testCreateMasterForce() throws Exception {
+  void testCreateMasterForce() throws Exception {
     GatewayConfigImpl config = new GatewayConfigImpl();
     File masterFile = new File( config.getGatewaySecurityDir(), "master" );
 
@@ -859,8 +901,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testListTopology() throws Exception {
-
+  void testListTopology() throws Exception {
     GatewayConfigMock config = new GatewayConfigMock();
     URL topoURL = ClassLoader.getSystemResource("conf-demo/conf/topologies/admin.xml");
     config.setConfDir( new File(topoURL.getFile()).getParentFile().getParent() );
@@ -876,7 +917,7 @@ public class KnoxCLITest {
 
   private class GatewayConfigMock extends GatewayConfigImpl{
     private String confDir;
-    public void setConfDir(String location) {
+    void setConfDir(String location) {
       confDir = location;
     }
 
@@ -890,7 +931,6 @@ public class KnoxCLITest {
     return XMLDoc.newDocument(true)
         .addRoot( "topology" )
         .addTag( "gateway" )
-
         .addTag( "provider" )
         .addTag( "role" ).addText( "authentication" )
         .addTag( "name" ).addText( "ShiroProvider" )
@@ -925,7 +965,6 @@ public class KnoxCLITest {
     return XMLDoc.newDocument( true )
         .addRoot( "topology" )
         .addTag( "gateway" )
-
         .addTag( "provider" )
         .addTag( "role" ).addText( "authentication" )
         .addTag( "name" ).addText( "ShiroProvider" )
@@ -958,7 +997,6 @@ public class KnoxCLITest {
 
   private File writeTestTopology( String name, XMLTag xml ) throws IOException {
     // Create the test topology.
-
     GatewayConfigMock config = new GatewayConfigMock();
     URL topoURL = ClassLoader.getSystemResource("conf-demo/conf/topologies/admin.xml");
     config.setConfDir( new File(topoURL.getFile()).getParentFile().getParent() );
@@ -973,8 +1011,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testValidateTopology() throws Exception {
-
+  void testValidateTopology() throws Exception {
     GatewayConfigMock config = new GatewayConfigMock();
     URL topoURL = ClassLoader.getSystemResource("conf-demo/conf/topologies/admin.xml");
     config.setConfDir( new File(topoURL.getFile()).getParentFile().getParent() );
@@ -1011,8 +1048,7 @@ public class KnoxCLITest {
   }
 
   @Test
-  public void testValidateTopologyOutput() throws Exception {
-
+  void testValidateTopologyOutput() throws Exception {
     File bad = writeTestTopology( "test-cluster-bad", createBadTopology() );
     assertNotNull(bad);
     File good = writeTestTopology( "test-cluster-good", createGoodTopology() );
@@ -1043,8 +1079,6 @@ public class KnoxCLITest {
     assertThat(outContent.toString(StandardCharsets.UTF_8.name()), containsString(config.getGatewayTopologyDir()));
     assertThat(outContent.toString(StandardCharsets.UTF_8.name()), containsString("success"));
     assertThat(outContent.toString(StandardCharsets.UTF_8.name()), containsString("test-cluster-good"));
-
-
   }
 
   private static final String testDescriptorContentJSON = "{\n" +

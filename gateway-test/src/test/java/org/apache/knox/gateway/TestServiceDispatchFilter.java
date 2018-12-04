@@ -20,7 +20,6 @@ package org.apache.knox.gateway;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
@@ -28,11 +27,11 @@ import java.io.IOException;
 public class TestServiceDispatchFilter implements Filter {
 
   @Override
-  public void init( FilterConfig filterConfig ) throws ServletException {
+  public void init( FilterConfig filterConfig ) {
   }
 
   @Override
-  public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException {
+  public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException {
     response.setContentType( "text/plain" );
     response.getWriter().write( "test-service-response" );
   }
@@ -40,5 +39,4 @@ public class TestServiceDispatchFilter implements Filter {
   @Override
   public void destroy() {
   }
-
 }

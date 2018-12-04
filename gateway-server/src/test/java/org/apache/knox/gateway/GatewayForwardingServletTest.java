@@ -28,11 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class GatewayForwardingServletTest {
+class GatewayForwardingServletTest {
   @Test
-  public void testRedirectDefaults() throws ServletException, IOException {
+  void testRedirectDefaults() throws ServletException, IOException {
     IMocksControl mockControl = EasyMock.createControl();
     ServletConfig config = mockControl.createMock(ServletConfig.class);
     ServletContext context = mockControl.createMock(ServletContext.class);

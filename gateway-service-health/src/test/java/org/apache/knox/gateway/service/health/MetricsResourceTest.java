@@ -17,16 +17,17 @@
  */
 package org.apache.knox.gateway.service.health;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
-public class MetricsResourceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class MetricsResourceTest {
   @Test
-  public void testPingContent() {
+  void testPingContent() {
     MetricsResource mr = new MetricsResource();
-    Assert.assertEquals(mr.parseTimeUnit("MINUTE", TimeUnit.SECONDS), TimeUnit.SECONDS);
-    Assert.assertEquals(mr.parseTimeUnit("MINUTES", TimeUnit.SECONDS), TimeUnit.MINUTES);
+    assertEquals(mr.parseTimeUnit("MINUTE", TimeUnit.SECONDS), TimeUnit.SECONDS);
+    assertEquals(mr.parseTimeUnit("MINUTES", TimeUnit.SECONDS), TimeUnit.MINUTES);
   }
 }

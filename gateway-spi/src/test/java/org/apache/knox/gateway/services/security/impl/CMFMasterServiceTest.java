@@ -20,27 +20,23 @@ package org.apache.knox.gateway.services.security.impl;
 import java.io.File;
 
 import org.apache.knox.gateway.services.ServiceLifecycleException;
-import org.apache.knox.test.category.FastTests;
-import org.apache.knox.test.category.UnitTests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category( { UnitTests.class, FastTests.class } )
-public class CMFMasterServiceTest {
-  TestCMFMasterService ms;
+class CMFMasterServiceTest {
+  private MockCMFMasterService ms;
 
-  @Before
-  public void setUp() {
-    ms = new TestCMFMasterService("ambari");
+  @BeforeEach
+  void setUp() {
+    ms = new MockCMFMasterService("ambari");
   }
 
   @Test
-  public void testMasterService() {
+  void testMasterService() {
     try {
       ms.setupMasterSecret(".", true);
       assertEquals("testmastersecret", new String(ms.getMasterSecret()));
@@ -48,8 +44,7 @@ public class CMFMasterServiceTest {
       assertTrue(file.exists());
       assertTrue(file.delete());
     } catch (ServiceLifecycleException e) {
-      e.printStackTrace();
-      fail();
+      fail(e);
     }
   }
 }

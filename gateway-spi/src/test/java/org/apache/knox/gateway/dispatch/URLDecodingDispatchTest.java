@@ -16,9 +16,8 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import org.apache.knox.test.TestUtils;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -31,24 +30,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @since 1.1.0
  */
-public class URLDecodingDispatchTest {
-  HttpServletRequest request;
-  Dispatch dispatch = new URLDecodingDispatch();
-
-  public URLDecodingDispatchTest() {
-    super();
-  }
+class URLDecodingDispatchTest {
+  private final Dispatch dispatch = new URLDecodingDispatch();
 
   /*
    * Test whether the encoded url is decoded properly.
    */
-  @Test(timeout = TestUtils.MEDIUM_TIMEOUT)
-  public void testGetDispatchUrl() throws Exception {
-
+  @Test
+  void testGetDispatchUrl() {
     final String path = "https://localhost:8443/gateway/sandbox/datanode/datanode.html?host=http%3A%2F%2Flocalhost%3A9864";
     URI uri;
 
-    request = EasyMock.createNiceMock(HttpServletRequest.class);
+    HttpServletRequest request = EasyMock.createNiceMock(HttpServletRequest.class);
     EasyMock.expect(request.getRequestURI()).andReturn(path).anyTimes();
     EasyMock.expect(request.getRequestURL()).andReturn(new StringBuffer(path))
         .anyTimes();

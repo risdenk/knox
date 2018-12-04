@@ -25,17 +25,16 @@ import javax.servlet.ServletContext;
 import org.apache.knox.gateway.security.GroupPrincipal;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
 
-public class SwitchCaseIdentityAssertionFilterTest {
-
+class SwitchCaseIdentityAssertionFilterTest {
   @Test
-  public void testDefaultConfig() throws Exception {
+  void testDefaultConfig() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect(config.getInitParameter("principal.mapping") ).andReturn( "" ).anyTimes();
     ServletContext context = EasyMock.createNiceMock(ServletContext.class);
@@ -56,11 +55,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "member@us.apache.org" ) );
     assertThat( groups, is( arrayContainingInAnyOrder( "admin", "users" ) ) );
-
   }
 
   @Test
-  public void testUpperPrincipalAndGroups() throws Exception {
+  void testUpperPrincipalAndGroups() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "Upper" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( "Upper" ).anyTimes();
@@ -83,11 +81,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "MEMBER@US.APACHE.ORG" ) );
     assertThat( groups, is( arrayContainingInAnyOrder( "ADMIN", "USERS" ) ) );
-
   }
 
   @Test
-  public void testLowerPrincipalAndGroups() throws Exception {
+  void testLowerPrincipalAndGroups() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "lower" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( "LOWER" ).anyTimes();
@@ -109,11 +106,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "member@us.apache.org" ) );
     assertThat( groups, is( arrayContainingInAnyOrder( "admin", "users" ) ) );
-
   }
 
   @Test
-  public void testNonePrincipalAndGroups() throws Exception {
+  void testNonePrincipalAndGroups() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "none" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( "NONE" ).anyTimes();
@@ -133,11 +129,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "Member@us.apache.org" ) );
     assertThat( groups, is( nullValue() ) );
-
   }
 
   @Test
-  public void testDefaultGroupsConfFromUsers() throws Exception {
+  void testDefaultGroupsConfFromUsers() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "UPPER" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( null ).anyTimes();
@@ -159,11 +154,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "MEMBER@US.APACHE.ORG" ) );
     assertThat( groups, is( arrayContainingInAnyOrder( "ADMIN", "USERS" ) ) );
-
   }
 
   @Test
-  public void testDefaultGroupsConfOverride() throws Exception {
+  void testDefaultGroupsConfOverride() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "UPPER" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( "none" ).anyTimes();
@@ -185,11 +179,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "MEMBER@US.APACHE.ORG" ) );
     assertThat( groups, is( nullValue() ) );
-
   }
 
   @Test
-  public void testNone() throws Exception {
+  void testNone() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "none" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( "none" ).anyTimes();
@@ -211,11 +204,10 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "Member@us.apache.org" ) );
     assertThat( groups, is( nullValue() ) );
-
   }
 
   @Test
-  public void testNoGroups() throws Exception {
+  void testNoGroups() throws Exception {
     FilterConfig config = EasyMock.createNiceMock( FilterConfig.class );
     EasyMock.expect( config.getInitParameter( "principal.case" ) ).andReturn( "upper" ).anyTimes();
     EasyMock.expect( config.getInitParameter( "group.principal.case" ) ).andReturn( "upper" ).anyTimes();
@@ -236,7 +228,5 @@ public class SwitchCaseIdentityAssertionFilterTest {
     String[] groups = filter.mapGroupPrincipals(actual, subject);
     assertThat( actual, is( "MEMBER@US.APACHE.ORG" ) );
     assertThat( groups, is( nullValue() ) );
-
   }
-
 }

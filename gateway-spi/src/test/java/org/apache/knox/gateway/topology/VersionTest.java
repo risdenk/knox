@@ -17,14 +17,13 @@
  */
 package org.apache.knox.gateway.topology;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VersionTest {
-
+class VersionTest {
   @Test
-  public void testDefaultVersion() {
+  void testDefaultVersion() {
     Version version = new Version();
     assertEquals(0, version.getMajor());
     assertEquals(0, version.getMinor());
@@ -33,7 +32,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testVersion() {
+  void testVersion() {
     Version version = new Version("1.2.3");
     assertEquals(1, version.getMajor());
     assertEquals(2, version.getMinor());

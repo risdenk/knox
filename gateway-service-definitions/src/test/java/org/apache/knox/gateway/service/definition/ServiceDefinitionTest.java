@@ -17,20 +17,19 @@
  */
 package org.apache.knox.gateway.service.definition;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.net.URL;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ServiceDefinitionTest {
-
+class ServiceDefinitionTest {
   @Test
-  public void testUnmarshalling() throws Exception {
+  void testUnmarshalling() throws Exception {
     JAXBContext context = JAXBContext.newInstance(ServiceDefinition.class);
     Unmarshaller unmarshaller = context.createUnmarshaller();
     URL url = ClassLoader.getSystemResource("services/foo/1.0.0/service.xml");
@@ -64,7 +63,7 @@ public class ServiceDefinitionTest {
   }
 
   @Test
-  public void testUnmarshallingCommonServices() throws Exception {
+  void testUnmarshallingCommonServices() throws Exception {
     JAXBContext context = JAXBContext.newInstance(ServiceDefinition.class);
     Unmarshaller unmarshaller = context.createUnmarshaller();
     URL url = ClassLoader.getSystemResource("services/yarn-rm/2.5.0/service.xml");
@@ -86,5 +85,4 @@ public class ServiceDefinitionTest {
     assertEquals("org.apache.knox.gateway.hdfs.dispatch.HdfsHttpClientDispatch", definition.getDispatch().getClassName());
     assertEquals("org.apache.knox.gateway.hdfs.dispatch.WebHdfsHaDispatch", definition.getDispatch().getHaClassName());
   }
-
 }
