@@ -31,10 +31,6 @@ import org.junit.experimental.categories.Category;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -240,35 +236,5 @@ public class IdentityAssertionHttpServletRequestWrapperTest {
     assertThat( output, containsString( "user.name=output-user" ) );
     assertThat( output, containsString( "paramWithNullValue" ) );
     assertThat( output, containsString( "param2=abc" ) );
-  }
-
-  @Test
-  public void testUrlEncode() {
-    String s;
-    HashMap<String,List<String>> m;
-
-    m = new HashMap<>();
-    m.put( "null-values", null );
-    s = IdentityAsserterHttpServletRequestWrapper.urlEncode( m, StandardCharsets.UTF_8.name() );
-    assertThat( s, is( "null-values" ) );
-
-    m = new HashMap<>();
-    m.put( "no-values", new ArrayList<>(0) );
-    s = IdentityAsserterHttpServletRequestWrapper.urlEncode( m, StandardCharsets.UTF_8.name() );
-    assertThat( s, is( "no-values" ) );
-
-    m = new HashMap<>();
-    List<String> lst = new ArrayList<>();
-    lst.add("value1");
-    m.put( "one-value", lst);
-    s = IdentityAsserterHttpServletRequestWrapper.urlEncode( m, StandardCharsets.UTF_8.name() );
-    assertThat( s, is( "one-value=value1" ) );
-
-    m = new HashMap<>();
-    String[] a = {"value1", "value2"};
-    lst = new ArrayList<>(Arrays.asList(a));
-    m.put( "two-values", lst);
-    s = IdentityAsserterHttpServletRequestWrapper.urlEncode( m, StandardCharsets.UTF_8.name() );
-    assertThat( s, is( "two-values=value1&two-values=value2" ) );
   }
 }

@@ -18,12 +18,15 @@
 package org.apache.knox.gateway.identityasserter.common.filter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.knox.gateway.SpiGatewayMessages;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.i18n.messages.MessagesFactory;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
 import org.apache.knox.gateway.servlet.SynchronousServletInputStreamAdapter;
-import org.apache.knox.gateway.util.HttpUtils;
+import org.eclipse.jetty.http.HttpMethod;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -31,27 +34,24 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Map;
 
 public class IdentityAsserterHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-private static SpiGatewayMessages log = MessagesFactory.get( SpiGatewayMessages.class );
-
+  private static final SpiGatewayMessages LOG = MessagesFactory.get( SpiGatewayMessages.class );
   private static final String PRINCIPAL_PARAM = "user.name";
   private static final String DOAS_PRINCIPAL_PARAM = "doAs";
 
-  private String username;
+  private final String username;
 
   public IdentityAsserterHttpServletRequestWrapper( HttpServletRequest request, String principal ) {
     super(request);
@@ -73,112 +73,74 @@ private static SpiGatewayMessages log = MessagesFactory.get( SpiGatewayMessages.
 
   @Override
   public Map<String, String[]> getParameterMap() {
-    return convertValuesToStringArrays();
+    return convertValuesToStringArrays(getParams());
   }
 
-  private Map<String, String[]> convertValuesToStringArrays() {
-    Map<String, String[]> arrayMap = new LinkedHashMap<>();
-    String name;
-    Enumeration<String> names = getParameterNames();
-    while (names.hasMoreElements()) {
-      name = names.nextElement();
-      arrayMap.put(name, getParameterValues(name));
+  private Map<String, String[]> convertValuesToStringArrays(List<NameValuePair> params) {
+    Map<String, List<String>> tempMap = new LinkedHashMap<>();
+    for(NameValuePair param : params) {
+      String paramKey = param.getName();
+      if(!tempMap.containsKey(paramKey)) {
+        tempMap.put(paramKey, new ArrayList<>());
+      }
+      tempMap.get(paramKey).add(param.getValue());
     }
-    return arrayMap;
+
+    Map<String, String[]> returnMap = new LinkedHashMap<>();
+    for(Map.Entry<String, List<String>> entry : tempMap.entrySet()) {
+      returnMap.put(entry.getKey(), entry.getValue().toArray(new String[0]));
+    }
+    return returnMap;
   }
 
   @Override
   public Enumeration<String> getParameterNames() {
-    Enumeration<String> e = null;
-    Map<String, List<String>> params;
-    try {
-      params = getParams();
-      if (params == null) {
-        params = new LinkedHashMap<>();
-      }
-      e = Collections.enumeration(params.keySet());
-    } catch (UnsupportedEncodingException e1) {
-      log.unableToGetParamsFromQueryString(e1);
-    }
-
-    return e;
+    return Collections.enumeration(getParameterMap().keySet());
   }
 
   @Override
   public String[] getParameterValues(String name) {
-    String[] p = {};
-    Map<String, List<String>> params;
-    try {
-      params = getParams();
-      if (params == null) {
-        params = new LinkedHashMap<>();
-      }
-      p = params.get(name).toArray(p);
-    } catch (UnsupportedEncodingException e) {
-      log.unableToGetParamsFromQueryString(e);
-    }
-
-    return p;
+    return getParameterMap().get(name);
   }
 
-  private Map<String, List<String>> getParams( String qString )
-      throws UnsupportedEncodingException {
-    Map<String, List<String>> params;
-    if (getMethod().equals("GET")) {
+  private List<NameValuePair> getParams(String qString ) {
+    if (getMethod().equals(HttpMethod.GET.name())) {
       if (qString != null && !qString.isEmpty()) {
-        params = HttpUtils.splitQuery( qString );
+        return URLEncodedUtils.parse(qString, StandardCharsets.UTF_8);
+      } else {
+        return new ArrayList<>();
       }
-      else {
-        params = new LinkedHashMap<>();
-      }
-    }
-    else {
+    } else {
       if (qString == null || qString.isEmpty()) {
-        return null;
-      }
-      else {
-        params = HttpUtils.splitQuery( qString );
+        return new ArrayList<>();
+      } else {
+        return URLEncodedUtils.parse(qString, StandardCharsets.UTF_8);
       }
     }
-    return params;
   }
 
-  private Map<String, List<String>> getParams()
-      throws UnsupportedEncodingException {
+  private List<NameValuePair> getParams() {
     return getParams( super.getQueryString() );
   }
 
   @Override
   public String getQueryString() {
-    String q = null;
-    Map<String, List<String>> params;
-    try {
-      params = getParams();
-      if (params == null) {
-        params = new LinkedHashMap<>();
-      }
-      ArrayList<String> al = new ArrayList<>();
-      al.add(username);
+    List<NameValuePair> params = getParams();
+    List<String> principalParamNames = getImpersonationParamNames();
+    List<NameValuePair> scrubbedParams = scrubOfExistingPrincipalParams(params, principalParamNames);
 
-      List<String> principalParamNames = getImpersonationParamNames();
-      params = scrubOfExistingPrincipalParams(params, principalParamNames);
-
-      if (Boolean.parseBoolean(System.getProperty(GatewayConfig.HADOOP_KERBEROS_SECURED))) {
-        params.put(DOAS_PRINCIPAL_PARAM, al);
-      } else {
-        params.put(PRINCIPAL_PARAM, al);
-      }
-
-      String encoding = getCharacterEncoding();
-      if (encoding == null) {
-        encoding = Charset.defaultCharset().name();
-      }
-      q = urlEncode(params, encoding);
-    } catch (UnsupportedEncodingException e) {
-      log.unableToGetParamsFromQueryString(e);
+    if (Boolean.parseBoolean(System.getProperty(GatewayConfig.HADOOP_KERBEROS_SECURED))) {
+      scrubbedParams.add(new BasicNameValuePair(DOAS_PRINCIPAL_PARAM, username));
+    } else {
+      scrubbedParams.add(new BasicNameValuePair(PRINCIPAL_PARAM, username));
     }
 
-    return q;
+    String encoding = getCharacterEncoding();
+    if (encoding == null) {
+      encoding = Charset.defaultCharset().name();
+    }
+
+    return URLEncodedUtils.format(params, encoding);
   }
 
   private List<String> getImpersonationParamNames() {
@@ -186,24 +148,25 @@ private static SpiGatewayMessages log = MessagesFactory.get( SpiGatewayMessages.
     // params in a future release and get this list from a central registry.
     // This will provide better coverage of protection by removing any
     // prepopulated impersonation params.
-    ArrayList<String> principalParamNames = new ArrayList<>();
+    List<String> principalParamNames = new ArrayList<>();
     principalParamNames.add(DOAS_PRINCIPAL_PARAM);
     principalParamNames.add(PRINCIPAL_PARAM);
     return principalParamNames;
   }
 
-  private Map<String, List<String>> scrubOfExistingPrincipalParams(
-      Map<String, List<String>> params, List<String> principalParamNames) {
-    HashSet<String> remove = new HashSet<>();
-    for (String paramKey : params.keySet()) {
+  private List<NameValuePair> scrubOfExistingPrincipalParams(
+      List<NameValuePair> params, List<String> principalParamNames) {
+    Iterator<NameValuePair> iterator = params.iterator();
+    while(iterator.hasNext()) {
+      NameValuePair param = iterator.next();
       for (String p : principalParamNames) {
+        String paramKey = param.getName();
         if (p.equalsIgnoreCase(paramKey)) {
-          remove.add(paramKey);
-          log.possibleIdentitySpoofingAttempt(paramKey);
+          iterator.remove();
+          LOG.possibleIdentitySpoofingAttempt(paramKey);
         }
       }
     }
-    params.keySet().removeAll(remove);
     return params;
   }
 
@@ -229,58 +192,17 @@ private static SpiGatewayMessages log = MessagesFactory.get( SpiGatewayMessages.
         encoding = Charset.defaultCharset().name();
       }
       String body = IOUtils.toString( super.getInputStream(), encoding );
-      Map<String, List<String>> params = getParams( body );
-      if (params == null) {
-        params = new LinkedHashMap<>();
-      }
-      body = urlEncode( params, encoding );
-      // ASCII is OK here because the urlEncode about should have already escaped
+      List<NameValuePair> params = getParams( body );
+      body = URLEncodedUtils.format( params, encoding );
+      // ASCII is OK here because body should have already been escaped
       return new ServletInputStreamWrapper( new ByteArrayInputStream( body.getBytes(StandardCharsets.US_ASCII.name()) ) );
     } else {
       return super.getInputStream();
     }
   }
 
-  static String urlEncode( String string, String encoding ) {
-    try {
-      return URLEncoder.encode( string, encoding );
-    } catch (UnsupportedEncodingException e) {
-      throw new UnsupportedOperationException(e);
-    }
-  }
-
-  public static String urlEncode( Map<String, List<String>> map, String encoding ) {
-    StringBuilder sb = new StringBuilder();
-    for( Map.Entry<String,List<String>> entry : map.entrySet() ) {
-      String name = entry.getKey();
-      if( name != null && !name.isEmpty()) {
-        List<String> values = entry.getValue();
-        if( values == null || values.isEmpty() ) {
-          sb.append( entry.getKey() );
-        } else {
-          for (String value : values) {
-            if (sb.length() > 0) {
-              sb.append('&');
-            }
-            try {
-              sb.append(urlEncode(name, encoding));
-              if (value != null) {
-                sb.append('=');
-                sb.append(urlEncode(value, encoding));
-              }
-            } catch (IllegalArgumentException e) {
-              log.skippingUnencodableParameter(name, value, encoding, e);
-            }
-          }
-        }
-      }
-    }
-    return sb.toString();
-  }
-
   private static class ServletInputStreamWrapper extends SynchronousServletInputStreamAdapter {
-
-    private InputStream stream;
+    private final InputStream stream;
 
     ServletInputStreamWrapper( InputStream stream ) {
       this.stream = stream;
