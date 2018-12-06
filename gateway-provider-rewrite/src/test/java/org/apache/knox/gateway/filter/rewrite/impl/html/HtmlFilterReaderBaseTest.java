@@ -337,7 +337,7 @@ public class HtmlFilterReaderBaseTest {
   public void testMRJobHistoryUIJavaScriptText() throws IOException, ParserConfigurationException {
     Map<String, Map<String, String>> rules = new HashMap<>();
     Map<String, String> map = new HashMap<>();
-    map.put( "https?://[^/':,]+:[\\d]+", "https://knoxhost:8443/gateway/nodemanagerui/node?host=knoxhost" );
+    map.put( "https?://[^/':,]+:[\\d]+", "https://knoxhost:8443/gateway/testservice/node?host=knoxhost" );
     rules.put( "test-rule", map );
     String inputXml =
         "<root>\n" +
@@ -356,7 +356,7 @@ public class HtmlFilterReaderBaseTest {
         "<root>\n" +
         "  <script type=\"text/javascript\">\n" +
         "    var appsTableData=[\n" +
-        "      [\"<a href='https://knoxhost:8443/gateway/nodemanagerui/node?host=knoxhost'>/default-rack/node</a>\",\"<a href='https://knoxhost:8443/gateway/nodemanagerui/node?host=knoxhost'>testhost:8042</a>\"],\n" +
+        "      [\"<a href='https://knoxhost:8443/gateway/testservice/node?host=knoxhost'>/default-rack/node</a>\",\"<a href='https://knoxhost:8443/gateway/testservice/node?host=knoxhost'>testhost:8042</a>\"],\n" +
         "    ]\n" +
         "  </script>\n" +
         "</root>\n";

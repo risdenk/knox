@@ -340,7 +340,6 @@ public class ZooKeeperConfigurationMonitorTest {
             "  \"provider-config-ref\":\"sandbox-providers.xml\",\n" +
             "  \"cluster\":\"Sandbox\",\n" +
             "  \"services\":[\n" +
-            "    {\"name\":\"NODEUI\"},\n" +
             "    {\"name\":\"YARNUI\"},\n" +
             "    {\"name\":\"HDFSUI\"},\n" +
             "    {\"name\":\"OOZIEUI\"},\n" +
