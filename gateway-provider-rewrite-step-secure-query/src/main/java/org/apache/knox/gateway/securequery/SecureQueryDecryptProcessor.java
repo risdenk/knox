@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.securequery;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteEnvironment;
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteContext;
@@ -32,6 +31,7 @@ import org.apache.knox.gateway.util.urltemplate.Template;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -105,8 +105,8 @@ public class SecureQueryDecryptProcessor implements
   public void destroy() {
   }
 
-  String decode( String string ) throws UnsupportedEncodingException {
-    byte[] bytes = Base64.decodeBase64( string );
+  String decode( String string ) {
+    byte[] bytes = Base64.getUrlDecoder().decode(string);
     EncryptionResult result = EncryptionResult.fromByteArray(bytes);
     byte[] clear = null;
     try {

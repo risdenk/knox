@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.util;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -81,6 +80,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1719,7 +1719,7 @@ public class KnoxCLI extends Configured implements Tool {
       String authString = "";
 //    Create Authorization String
       if( user != null && pass != null) {
-        authString = "Basic " + Base64.encodeBase64String((user + ":" + pass).getBytes(StandardCharsets.UTF_8));
+        authString = "Basic " + Base64.getEncoder().encodeToString((user + ":" + pass).getBytes(StandardCharsets.UTF_8));
       } else {
         out.println("Username and/or password not supplied. Expect HTTP 401 Unauthorized responses.");
       }

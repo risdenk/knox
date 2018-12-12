@@ -25,7 +25,6 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.provider.federation.jwt.filter.AbstractJWTFilter;
 import org.apache.knox.gateway.provider.federation.jwt.filter.SSOCookieFederationFilter;
 import org.apache.knox.gateway.security.PrimaryPrincipal;
@@ -61,6 +60,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -99,8 +99,7 @@ public abstract class AbstractJWTFilterTest  {
     String dn = buildDistinguishedName(InetAddress.getLocalHost().getHostName());
     Certificate cert = X509CertificateUtil.generateCertificate(dn, KPair, 365, "SHA1withRSA");
     byte[] data = cert.getEncoded();
-    Base64 encoder = new Base64( 76, "\n".getBytes( StandardCharsets.US_ASCII ) );
-    pem = new String(encoder.encodeToString( data ).getBytes( StandardCharsets.US_ASCII ), StandardCharsets.US_ASCII).trim();
+    pem = Base64.getMimeEncoder(76, "\n".getBytes( StandardCharsets.US_ASCII)).encodeToString(data);
 
     publicKey = (RSAPublicKey) KPair.getPublic();
     privateKey = (RSAPrivateKey) KPair.getPrivate();
@@ -669,8 +668,7 @@ public abstract class AbstractJWTFilterTest  {
       String dn = buildDistinguishedName(InetAddress.getLocalHost().getHostName());
       Certificate cert = X509CertificateUtil.generateCertificate(dn, KPair, 365, "SHA1withRSA");
       byte[] data = cert.getEncoded();
-      Base64 encoder = new Base64( 76, "\n".getBytes( StandardCharsets.US_ASCII ) );
-      String failingPem = new String(encoder.encodeToString( data ).getBytes( StandardCharsets.US_ASCII ), StandardCharsets.US_ASCII).trim();
+      String failingPem = Base64.getMimeEncoder(76, "\n".getBytes( StandardCharsets.US_ASCII)).encodeToString(data);
 
       props.put(getAudienceProperty(), "bar");
       props.put(getVerificationPemProperty(), failingPem);

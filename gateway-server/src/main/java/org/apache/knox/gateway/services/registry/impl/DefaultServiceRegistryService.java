@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.knox.gateway.GatewayMessages;
 import org.apache.knox.gateway.config.GatewayConfig;
@@ -30,23 +29,18 @@ import org.apache.knox.gateway.services.Service;
 import org.apache.knox.gateway.services.ServiceLifecycleException;
 import org.apache.knox.gateway.services.registry.ServiceRegistry;
 import org.apache.knox.gateway.services.security.CryptoService;
+import org.apache.knox.gateway.util.PasswordUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DefaultServiceRegistryService implements ServiceRegistry, Service {
   private static GatewayMessages LOG = MessagesFactory.get( GatewayMessages.class );
-
-  protected char[] chars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g',
-  'h', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-  'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K',
-  'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-  '2', '3', '4', '5', '6', '7', '8', '9',};
 
   private CryptoService crypto;
   private Registry registry = new Registry();
@@ -62,20 +56,10 @@ public class DefaultServiceRegistryService implements ServiceRegistry, Service {
 
   @Override
   public String getRegistrationCode(String clusterName) {
-    String code = generateRegCode(16);
+    String code = PasswordUtils.generatePassword(16);
     byte[] signature = crypto.sign("SHA256withRSA", code);
-    String encodedSig = Base64.encodeBase64URLSafeString(signature);
-
+    String encodedSig = Base64.getUrlEncoder().encodeToString(signature);
     return code + "::" + encodedSig;
-  }
-
-  private String generateRegCode(int length) {
-    StringBuilder sb = new StringBuilder();
-    SecureRandom r = new SecureRandom();
-    for (int i = 0; i < length; i++) {
-      sb.append(chars[r.nextInt(chars.length)]);
-    }
-    return sb.toString();
   }
 
   @Override
@@ -93,7 +77,8 @@ public class DefaultServiceRegistryService implements ServiceRegistry, Service {
     String[] parts = regCode.split("::");
 
     // part one is the code and part two is the signature
-    boolean verified = crypto.verify("SHA256withRSA", parts[0], Base64.decodeBase64(parts[1]));
+    boolean verified = crypto.verify("SHA256withRSA", parts[0],
+        Base64.getUrlDecoder().decode(parts[1]));
     if (verified) {
       Map<String,RegEntry> clusterServices = registry.get(clusterName);
       if (clusterServices == null) {

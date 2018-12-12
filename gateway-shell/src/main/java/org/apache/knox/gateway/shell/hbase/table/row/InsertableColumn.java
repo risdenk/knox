@@ -16,9 +16,8 @@
  */
 package org.apache.knox.gateway.shell.hbase.table.row;
 
-import org.apache.commons.codec.binary.Base64;
-
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class InsertableColumn extends Column {
 
@@ -40,11 +39,11 @@ public class InsertableColumn extends Column {
   }
 
   public String encodedName() {
-    return Base64.encodeBase64String( toURIPart().getBytes( StandardCharsets.UTF_8 ) );
+    return Base64.getEncoder().encodeToString(toURIPart().getBytes(StandardCharsets.UTF_8));
   }
 
   public String encodedValue() {
     String stringValue = value.toString();
-    return Base64.encodeBase64String( stringValue.getBytes( StandardCharsets.UTF_8 ) );
+    return Base64.getEncoder().encodeToString(stringValue.getBytes(StandardCharsets.UTF_8));
   }
 }

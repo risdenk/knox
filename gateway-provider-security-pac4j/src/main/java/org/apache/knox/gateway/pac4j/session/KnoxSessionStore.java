@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.pac4j.session;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.knox.gateway.pac4j.filter.Pac4jDispatcherFilter;
 import org.apache.knox.gateway.services.security.CryptoService;
@@ -39,6 +38,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -80,7 +80,7 @@ public class KnoxSessionStore implements SessionStore {
 
     private Serializable uncompressDecryptBase64(final String v) {
         if (v != null && !v.isEmpty()) {
-            byte[] bytes = Base64.decodeBase64(v);
+            byte[] bytes = Base64.getDecoder().decode(v);
             EncryptionResult result = EncryptionResult.fromByteArray(bytes);
             byte[] clear = cryptoService.decryptForCluster(this.clusterName,
                 PAC4J_PASSWORD,
@@ -129,7 +129,7 @@ public class KnoxSessionStore implements SessionStore {
             }
 
             EncryptionResult result = cryptoService.encryptForCluster(this.clusterName, PAC4J_PASSWORD, bytes);
-            return Base64.encodeBase64String(result.toByteAray());
+            return Base64.getEncoder().encodeToString(result.toByteAray());
         }
     }
 

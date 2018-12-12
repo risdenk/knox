@@ -16,7 +16,6 @@
  */
 package org.apache.knox.gateway.shell.hbase.table.row;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.shell.AbstractRequest;
 import org.apache.knox.gateway.shell.EmptyResponse;
 import org.apache.knox.gateway.shell.KnoxSession;
@@ -34,6 +33,7 @@ import org.w3c.dom.Element;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -81,7 +81,7 @@ public class StoreRow {
           document.appendChild( root );
 
           Element row = document.createElement( ELEMENT_ROW );
-          row.setAttribute( ATTRIBUTE_KEY, Base64.encodeBase64String( rowId.getBytes( StandardCharsets.UTF_8 ) ) );
+          row.setAttribute( ATTRIBUTE_KEY, Base64.getEncoder().encodeToString(rowId.getBytes(StandardCharsets.UTF_8)));
           root.appendChild( row );
 
           for( InsertableColumn column : columns ) {

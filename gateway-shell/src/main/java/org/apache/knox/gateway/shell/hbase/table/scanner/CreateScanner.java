@@ -16,7 +16,6 @@
  */
 package org.apache.knox.gateway.shell.hbase.table.scanner;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.shell.AbstractRequest;
 import org.apache.knox.gateway.shell.EmptyResponse;
 import org.apache.knox.gateway.shell.KnoxSession;
@@ -36,6 +35,7 @@ import org.w3c.dom.Element;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -136,10 +136,10 @@ public class CreateScanner {
 
           Element root = document.createElement( ELEMENT_SCANNER );
           if( startRow != null ) {
-            root.setAttribute( ATTRIBUTE_START_ROW, Base64.encodeBase64String( startRow.getBytes( StandardCharsets.UTF_8 ) ) );
+            root.setAttribute( ATTRIBUTE_START_ROW, Base64.getEncoder().encodeToString(startRow.getBytes(StandardCharsets.UTF_8)));
           }
           if( endRow != null ) {
-            root.setAttribute( ATTRIBUTE_END_ROW, Base64.encodeBase64String( endRow.getBytes( StandardCharsets.UTF_8 ) ) );
+            root.setAttribute( ATTRIBUTE_END_ROW, Base64.getEncoder().encodeToString(endRow.getBytes(StandardCharsets.UTF_8)));
           }
           if( batch != null ) {
             root.setAttribute( ATTRIBUTE_BATCH, batch.toString() );
@@ -157,7 +157,7 @@ public class CreateScanner {
 
           for( Column column : columns ) {
             Element columnElement = document.createElement( ELEMENT_COLUMN );
-            columnElement.setTextContent( Base64.encodeBase64String( column.toURIPart().getBytes( StandardCharsets.UTF_8 ) ) );
+            columnElement.setTextContent( Base64.getEncoder().encodeToString(column.toURIPart().getBytes(StandardCharsets.UTF_8)));
             root.appendChild( columnElement );
           }
 

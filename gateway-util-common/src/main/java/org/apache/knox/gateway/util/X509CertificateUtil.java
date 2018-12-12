@@ -39,9 +39,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Date;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.i18n.GatewayUtilCommonMessages;
 import org.apache.knox.gateway.i18n.messages.MessagesFactory;
 
@@ -385,7 +385,7 @@ public class X509CertificateUtil {
   public static void writeCertificateToFile(Certificate cert, final File file)
       throws CertificateEncodingException, IOException {
     byte[] bytes = cert.getEncoded();
-    Base64 encoder = new Base64( 76, "\n".getBytes( StandardCharsets.US_ASCII ) );
+    Base64.Encoder encoder = Base64.getMimeEncoder(76, "\n".getBytes(StandardCharsets.US_ASCII));
     try(OutputStream out = Files.newOutputStream(file.toPath()) ) {
       out.write( "-----BEGIN CERTIFICATE-----\n".getBytes( StandardCharsets.US_ASCII ) );
       out.write( encoder.encodeToString( bytes ).getBytes( StandardCharsets.US_ASCII ) );

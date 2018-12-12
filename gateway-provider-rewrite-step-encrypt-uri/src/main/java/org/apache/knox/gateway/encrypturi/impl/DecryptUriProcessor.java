@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.encrypturi.impl;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.encrypturi.EncryptStepContextParams;
 import org.apache.knox.gateway.encrypturi.api.DecryptUriDescriptor;
 import org.apache.knox.gateway.encrypturi.api.EncryptUriDescriptor;
@@ -33,8 +32,8 @@ import org.apache.knox.gateway.util.urltemplate.Expander;
 import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Template;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
 
 public class DecryptUriProcessor
@@ -76,8 +75,8 @@ public class DecryptUriProcessor
   public void destroy() {
   }
 
-  private String decode( String string ) throws UnsupportedEncodingException {
-    byte[] bytes = Base64.decodeBase64( string );
+  private String decode( String string ) {
+    byte[] bytes = Base64.getUrlDecoder().decode(string);
     EncryptionResult result = EncryptionResult.fromByteArray(bytes);
     byte[] clear = cryptoService.decryptForCluster(clusterName,
         EncryptUriDescriptor.PASSWORD_ALIAS,

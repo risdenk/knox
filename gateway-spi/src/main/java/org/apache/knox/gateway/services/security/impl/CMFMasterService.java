@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.services.security.impl;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ntp.TimeStamp;
 import org.apache.knox.gateway.config.GatewayConfig;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 public class CMFMasterService {
@@ -137,10 +137,11 @@ public class CMFMasterService {
       ArrayList<String> lines = new ArrayList<>();
       lines.add(MASTER_PERSISTENCE_TAG);
 
-      String line = Base64.encodeBase64String((
-          Base64.encodeBase64String(atom.salt) + "::" +
-          Base64.encodeBase64String(atom.iv) + "::" +
-          Base64.encodeBase64String(atom.cipher)).getBytes(StandardCharsets.UTF_8));
+      Base64.Encoder encoder = Base64.getEncoder();
+      String line = encoder.encodeToString((
+          encoder.encodeToString(atom.salt) + "::" +
+              encoder.encodeToString(atom.iv) + "::" +
+              encoder.encodeToString(atom.cipher)).getBytes(StandardCharsets.UTF_8));
       lines.add(line);
       FileUtils.writeLines(masterFile, StandardCharsets.UTF_8.name(), lines);
 
@@ -165,10 +166,11 @@ public class CMFMasterService {
         List<String> lines = FileUtils.readLines(masterFile, StandardCharsets.UTF_8);
         String tag = lines.get(0);
         LOG.loadingFromPersistentMaster( tag );
-        String line = new String(Base64.decodeBase64(lines.get(1)), StandardCharsets.UTF_8);
+        Base64.Decoder decoder = Base64.getDecoder();
+        String line = new String(decoder.decode(lines.get(1)), StandardCharsets.UTF_8);
         String[] parts = line.split("::");
-        this.master = new String(encryptor.decrypt(Base64.decodeBase64(parts[0]),
-            Base64.decodeBase64(parts[1]), Base64.decodeBase64(parts[2])),
+        this.master = new String(encryptor.decrypt(decoder.decode(parts[0]),
+            decoder.decode(parts[1]), decoder.decode(parts[2])),
             StandardCharsets.UTF_8).toCharArray();
       } catch (Exception e) {
         LOG.failedToInitializeFromPersistentMaster(masterFile.getName(), e);

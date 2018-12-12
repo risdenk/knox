@@ -19,9 +19,9 @@ package org.apache.knox.gateway.encrypturi.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.encrypturi.EncryptStepContextParams;
 import org.apache.knox.gateway.encrypturi.api.EncryptUriDescriptor;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteEnvironment;
@@ -64,7 +64,7 @@ public class EncryptUriProcessor
       Template uri = Parser.parseTemplate( template );
       String resolvedTemplate = Expander
           .expandToString( uri, context.getParameters(), context.getEvaluator() );
-      if( resolvedTemplate != null && !resolvedTemplate.isEmpty() ) {
+      if(!resolvedTemplate.isEmpty()) {
         String endcoedUrl = encode( resolvedTemplate );
         EncryptStepContextParams params = new EncryptStepContextParams();
         params.addParam( param, Collections.singletonList(endcoedUrl));
@@ -83,7 +83,7 @@ public class EncryptUriProcessor
     EncryptionResult result = cryptoService.encryptForCluster(clusterName,
         EncryptUriDescriptor.PASSWORD_ALIAS,
         string.getBytes(StandardCharsets.UTF_8));
-    string = Base64.encodeBase64URLSafeString(result.toByteAray());
+    string = Base64.getUrlEncoder().encodeToString(result.toByteAray());
     return string;
   }
 

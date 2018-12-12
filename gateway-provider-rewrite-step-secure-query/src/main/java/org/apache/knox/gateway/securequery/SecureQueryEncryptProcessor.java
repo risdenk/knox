@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.securequery;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.knox.gateway.config.GatewayConfig;
 import org.apache.knox.gateway.filter.rewrite.api.UrlRewriteEnvironment;
 import org.apache.knox.gateway.filter.rewrite.spi.UrlRewriteContext;
@@ -29,7 +28,7 @@ import org.apache.knox.gateway.services.security.impl.ConfigurableEncryptor;
 import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Template;
 
-import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 
 public class SecureQueryEncryptProcessor
     implements UrlRewriteStepProcessor<SecureQueryEncryptDescriptor> {
@@ -76,14 +75,14 @@ public class SecureQueryEncryptProcessor
   public void destroy() {
   }
 
-  private String encode( String string ) throws UnsupportedEncodingException {
+  private String encode( String string ) {
     EncryptionResult result = null;
     try {
       result = encryptor.encrypt(string);
     } catch (Exception e) {
       log.unableToEncryptValue(e);
     }
-    string = Base64.encodeBase64URLSafeString(result.toByteAray());
+    string = Base64.getUrlEncoder().encodeToString(result.toByteAray());
     return string;
   }
 }
