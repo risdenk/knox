@@ -137,7 +137,7 @@
 
         <!-- Dependencies sorted alphabetically -->
         <apacheds.directory.api.version>1.0.2</apacheds.directory.api.version>
-        <apacheds.directory.server.version>2.0.0-M24</apacheds.directory.server.version>
+        <apacheds.directory.server.version>2.0.0.AM25</apacheds.directory.server.version>
         <apacheds-jdbm.version>2.0.0-M5</apacheds-jdbm.version>
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
         <asm.version>7.0</asm.version>
