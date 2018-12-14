@@ -143,7 +143,9 @@ public class X500PrincipalParser {
       if(endIndex > dn.length()) {
         throw new IllegalArgumentException("unterminated escape " + dn);
       }
-
+      if(nameValues == null) {
+        throw new IllegalArgumentException("Invalid DN " + dn);
+      }
       nameValues.add(dn.substring(startIndex, endIndex));
 
       if(c != '+') {

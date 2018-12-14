@@ -29,12 +29,10 @@ import org.apache.knox.gateway.services.security.impl.ConfigurableEncryptor;
 import org.apache.knox.gateway.util.urltemplate.Parser;
 import org.apache.knox.gateway.util.urltemplate.Template;
 
-import java.io.UnsupportedEncodingException;
-
 public class SecureQueryEncryptProcessor
     implements UrlRewriteStepProcessor<SecureQueryEncryptDescriptor> {
 
-  private static SecureQueryMessages log = MessagesFactory.get( SecureQueryMessages.class );
+  private static final SecureQueryMessages log = MessagesFactory.get( SecureQueryMessages.class );
   private static final String ENCRYPTED_PARAMETER_NAME = "_";
 
   private ConfigurableEncryptor encryptor;
@@ -76,14 +74,13 @@ public class SecureQueryEncryptProcessor
   public void destroy() {
   }
 
-  private String encode( String string ) throws UnsupportedEncodingException {
-    EncryptionResult result = null;
+  private String encode( String string ) {
     try {
-      result = encryptor.encrypt(string);
+      EncryptionResult result = encryptor.encrypt(string);
+      return Base64.encodeBase64URLSafeString(result.toByteAray());
     } catch (Exception e) {
       log.unableToEncryptValue(e);
+      throw new IllegalStateException(e);
     }
-    string = Base64.encodeBase64URLSafeString(result.toByteAray());
-    return string;
   }
 }

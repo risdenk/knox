@@ -369,7 +369,7 @@ public class KnoxSession implements Closeable {
 
   private KeyStore getTrustStore(ClientContext clientContext) throws GeneralSecurityException {
     KeyStore ks;
-    String truststorePass = null;
+    String truststorePass;
 
     // if a PEM file was provided create a keystore from that and use
     // it as the truststore

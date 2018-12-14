@@ -130,10 +130,9 @@ public class GatewayServer {
 
   static final String KNOXSESSIONCOOKIENAME = "KNOXSESSIONID";
 
-  private static GatewayServer server;
   private static GatewayServices services;
 
-  private static Properties buildProperties;
+  private static final Properties buildProperties = new Properties();
 
   private Server jetty;
   private GatewayConfig config;
@@ -154,11 +153,7 @@ public class GatewayServer {
       } else if( cmd.hasOption( GatewayCommandLine.REDEPLOY_LONG  ) ) {
         redeployTopologies( cmd.getOptionValue( GatewayCommandLine.REDEPLOY_LONG ) );
       } else {
-        buildProperties = loadBuildProperties();
-        services = instantiateGatewayServices();
-        if (services == null) {
-          log.failedToInstantiateGatewayServices();
-        }
+        loadBuildProperties();
         final GatewayConfig config = new GatewayConfigImpl();
         validateConfigurableGatewayDirectories(config);
         if (config.isHadoopKerberosSecured()) {
@@ -167,9 +162,10 @@ public class GatewayServer {
         }
         Map<String,String> options = new HashMap<>();
         options.put(GatewayCommandLine.PERSIST_LONG, Boolean.toString(cmd.hasOption(GatewayCommandLine.PERSIST_LONG)));
-        services.init(config, options);
+        GatewayServices gatewayServices = instantiateGatewayServices();
+        gatewayServices.init(config, options);
         if (!cmd.hasOption(GatewayCommandLine.NOSTART_LONG)) {
-          startGateway( config, services );
+          startGateway( config, gatewayServices );
         }
       }
     } catch ( ParseException e ) {
@@ -206,11 +202,13 @@ public class GatewayServer {
 
   private static GatewayServices instantiateGatewayServices() {
     ServiceLoader<GatewayServices> loader = ServiceLoader.load( GatewayServices.class );
-    Iterator<GatewayServices> services = loader.iterator();
-    if (services.hasNext()) {
-      return services.next();
+    Iterator<GatewayServices> servicesIterator = loader.iterator();
+    if (servicesIterator.hasNext()) {
+      return servicesIterator.next();
+    } else {
+      log.failedToInstantiateGatewayServices();
+      throw new IllegalStateException("Failed to load GatewayServices");
     }
-    return null;
   }
 
   public static synchronized GatewayServices getGatewayServices() {
@@ -231,20 +229,6 @@ public class GatewayServer {
 
   private static void configureLogging() {
     PropertyConfigurator.configure( System.getProperty( "log4j.configuration" ) );
-//    String fileName = config.getGatewayConfDir() + File.separator + "log4j.properties";
-//    File file = new File( fileName );
-//    if( file.isFile() && file.canRead() ) {
-//      FileInputStream stream;
-//      try {
-//        stream = new FileInputStream( file );
-//        Properties properties = new Properties();
-//        properties.load( stream );
-//        PropertyConfigurator.configure( properties );
-//        log.loadedLoggingConfig( fileName );
-//      } catch( IOException e ) {
-//        log.failedToLoadLoggingConfig( fileName );
-//      }
-//    }
   }
 
   private static void configureKerberosSecurity( GatewayConfig config ) {
@@ -315,14 +299,12 @@ public class GatewayServer {
     log.logSysProp(name, System.getProperty(name));
   }
 
-  private static Properties loadBuildProperties() {
-    Properties properties = new Properties();
+  private static void loadBuildProperties() {
     try(InputStream inputStream = GatewayServer.class.getClassLoader().getResourceAsStream( "build.properties" )) {
-      properties.load( inputStream );
+      buildProperties.load( inputStream );
     } catch( IOException e ) {
       // Ignore.
     }
-    return properties;
   }
 
   public static void redeployTopologies( String topologyName  ) {
@@ -358,41 +340,33 @@ public class GatewayServer {
     }
   }
 
-  public static GatewayServer startGateway( GatewayConfig config, GatewayServices svcs ) throws Exception {
+  public static synchronized GatewayServer startGateway( GatewayConfig config, GatewayServices svcs ) throws Exception {
     log.startingGateway();
-    server = new GatewayServer( config );
-    synchronized ( server ) {
-      //KM[ Commented this out because is causes problems with
-      // multiple services instance used in a single test process.
-      // I'm not sure what drive including this check though.
-      //if (services == null) {
-      services = svcs;
-      //}
-      //KM]
-      services.start();
-      DeploymentFactory.setGatewayServices(services);
-      server.start();
+    GatewayServer server = new GatewayServer(config);
+    services = svcs;
+    services.start();
+    DeploymentFactory.setGatewayServices(services);
+    server.start();
 
-      // Logging for topology <-> port
-      Connector[] connectors = server.jetty.getConnectors();
-      for (Connector connector : connectors) {
-        NetworkConnector networkConnector = (NetworkConnector) connector;
-        if (networkConnector != null) {
-          for (ConnectionFactory x : networkConnector.getConnectionFactories()) {
-            if (x instanceof HttpConnectionFactory) {
-              ((HttpConnectionFactory) x).getHttpConfiguration().setSendServerVersion(config.isGatewayServerHeaderEnabled());
-            }
-          }
-          if (networkConnector.getName() == null) {
-            log.startedGateway(networkConnector.getLocalPort());
-          } else {
-            log.startedGateway(networkConnector.getName(), networkConnector.getLocalPort());
+    // Logging for topology <-> port
+    Connector[] connectors = server.jetty.getConnectors();
+    for (Connector connector : connectors) {
+      NetworkConnector networkConnector = (NetworkConnector) connector;
+      if (networkConnector != null) {
+        for (ConnectionFactory x : networkConnector.getConnectionFactories()) {
+          if (x instanceof HttpConnectionFactory) {
+            ((HttpConnectionFactory) x).getHttpConfiguration().setSendServerVersion(config.isGatewayServerHeaderEnabled());
           }
         }
+        if (networkConnector.getName() == null) {
+          log.startedGateway(networkConnector.getLocalPort());
+        } else {
+          log.startedGateway(networkConnector.getName(), networkConnector.getLocalPort());
+        }
       }
-
-      return server;
     }
+
+    return server;
   }
 
   public GatewayServer( GatewayConfig config ) {
@@ -890,7 +864,6 @@ public class GatewayServer {
   }
 
   private synchronized void internalDeactivateTopology( Topology topology ) {
-
     log.deactivatingTopology( topology.getName() );
 
     String topoName = topology.getName();
@@ -907,8 +880,8 @@ public class GatewayServer {
       List<WebAppContext> deactivate = new ArrayList<>();
       for( WebAppContext app : deployments.values() ) {
         String appPath = app.getContextPath();
-        if( appPath.equals( topoPath ) || appPath.startsWith( topoPathSlash ) ) {
-          deactivate.add( app );
+        if (appPath.equals(topoPath) || appPath.startsWith(topoPathSlash)) {
+          deactivate.add(app);
         }
       }
 
@@ -930,7 +903,6 @@ public class GatewayServer {
 
   // Using an inner class to hide the handleTopologyEvent method from consumers of GatewayServer.
   private class InternalTopologyListener implements TopologyListener {
-
     @Override
     public void handleTopologyEvent( List<TopologyEvent> events ) {
       synchronized ( GatewayServer.this ) {

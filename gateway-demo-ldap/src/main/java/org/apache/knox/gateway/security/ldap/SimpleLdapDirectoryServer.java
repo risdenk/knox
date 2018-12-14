@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.UUID;
 
@@ -119,7 +120,7 @@ public class SimpleLdapDirectoryServer {
     server.start();
   }
 
-  public void stop( boolean clean ) throws Exception {
+  public void stop( boolean clean ) throws LdapException, IOException {
     server.stop();
     service.shutdown();
     if( clean ) {

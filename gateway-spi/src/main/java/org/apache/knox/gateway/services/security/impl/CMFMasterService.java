@@ -156,8 +156,8 @@ public class CMFMasterService {
       return encryptor.encrypt(new String(master));
     } catch (Exception e) {
       LOG.failedToEncryptMasterSecret(e);
+      throw new IllegalStateException(e);
     }
-    return null;
   }
 
   protected void initializeFromMaster(File masterFile) throws Exception {

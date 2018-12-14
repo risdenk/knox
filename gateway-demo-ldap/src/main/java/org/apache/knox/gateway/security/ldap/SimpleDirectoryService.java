@@ -21,7 +21,6 @@ import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.server.core.DefaultDirectoryService;
 
 public class SimpleDirectoryService extends DefaultDirectoryService {
-
   public SimpleDirectoryService() throws LdapException {
     super();
   }
