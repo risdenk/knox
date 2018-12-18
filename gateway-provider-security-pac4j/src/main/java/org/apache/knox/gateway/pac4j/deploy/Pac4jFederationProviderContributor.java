@@ -34,8 +34,7 @@ import java.util.Map.Entry;
  *
  * @since 0.8.0
  */
-public class Pac4jFederationProviderContributor extends
-    ProviderDeploymentContributorBase {
+public class Pac4jFederationProviderContributor extends ProviderDeploymentContributorBase {
 
   private static final String ROLE = "federation";
   private static final String NAME = "pac4j";
@@ -50,11 +49,6 @@ public class Pac4jFederationProviderContributor extends
   @Override
   public String getName() {
     return NAME;
-  }
-
-  @Override
-  public void initializeContribution(DeploymentContext context) {
-    super.initializeContribution(context);
   }
 
   @Override

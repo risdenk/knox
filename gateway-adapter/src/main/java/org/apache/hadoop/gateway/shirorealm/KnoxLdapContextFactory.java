@@ -28,13 +28,10 @@ import java.util.Hashtable;
  * please use
  * org.apache.knox.gateway.shirorealm.KnoxLdapContextFactory
  * @since 0.14.0
+ * @deprecated
  */
 @Deprecated
 public class KnoxLdapContextFactory extends org.apache.knox.gateway.shirorealm.KnoxLdapContextFactory {
-
-  /**
-   * Create an instance
-   */
   public KnoxLdapContextFactory() {
     super();
   }
@@ -44,5 +41,4 @@ public class KnoxLdapContextFactory extends org.apache.knox.gateway.shirorealm.K
       throws NamingException {
     return super.createLdapContext(env);
   }
-
 }

@@ -32,7 +32,6 @@ import java.util.Map;
  * associated rules.
  */
 public class ScopedMatcher extends Matcher<UrlRewriteRuleProcessorHolder> {
-
   public static final String GLOBAL_SCOPE = "GLOBAL";
 
   private Map<String, Matcher<UrlRewriteRuleProcessorHolder>> matchers;
@@ -40,11 +39,6 @@ public class ScopedMatcher extends Matcher<UrlRewriteRuleProcessorHolder> {
   public ScopedMatcher() {
     super();
     matchers = new HashMap<>();
-  }
-
-  @Override
-  public UrlRewriteRuleProcessorHolder get(Template template) {
-    return super.get(template);
   }
 
   @Override

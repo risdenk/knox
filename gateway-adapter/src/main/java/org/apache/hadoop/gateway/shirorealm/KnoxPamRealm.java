@@ -30,18 +30,13 @@ import org.apache.shiro.subject.PrincipalCollection;
  * please use
  * org.apache.knox.gateway.shirorealm.KnoxPamRealm
  * @since 1.0.0
+ * @deprecated
  */
 @Deprecated
-public class KnoxPamRealm
-    extends org.apache.knox.gateway.shirorealm.KnoxPamRealm {
-
-  /**
-   * Create an instance
-   */
+public class KnoxPamRealm extends org.apache.knox.gateway.shirorealm.KnoxPamRealm {
   public KnoxPamRealm() {
     super();
   }
-
 
   @Override
   protected AuthenticationInfo doGetAuthenticationInfo(

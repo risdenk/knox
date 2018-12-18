@@ -30,53 +30,46 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AtlasApiHaDispatch extends DefaultHaDispatch {
+  private static Set<String> REQUEST_EXCLUDE_HEADERS = new HashSet<>();
 
-    private static Set<String> REQUEST_EXCLUDE_HEADERS = new HashSet<>();
+  static {
+    REQUEST_EXCLUDE_HEADERS.add("Content-Length");
+  }
 
-    static {
-        REQUEST_EXCLUDE_HEADERS.add("Content-Length");
+  public AtlasApiHaDispatch() {
+    setServiceRole("ATLAS-API");
+  }
+
+  @Override
+  public Set<String> getOutboundResponseExcludeHeaders() {
+    return Collections.emptySet();
+  }
+
+  @Override
+  public Set<String> getOutboundRequestExcludeHeaders() {
+    return REQUEST_EXCLUDE_HEADERS;
+  }
+
+
+  @Override
+  protected void executeRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
+    HttpResponse inboundResponse = null;
+    try {
+      inboundResponse = executeOutboundRequest(outboundRequest);
+      int statusCode = inboundResponse.getStatusLine().getStatusCode();
+      Header originalLocationHeader = inboundResponse.getFirstHeader("Location");
+
+
+      if ((statusCode == HttpServletResponse.SC_MOVED_TEMPORARILY || statusCode == HttpServletResponse.SC_TEMPORARY_REDIRECT) && originalLocationHeader != null) {
+        inboundResponse.removeHeaders("Location");
+        failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, new Exception("Atlas HA redirection"));
+      }
+
+      writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
+
+    } catch (IOException e) {
+      LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
+      failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
     }
-
-    public AtlasApiHaDispatch() {
-        setServiceRole("ATLAS-API");
-    }
-
-    @Override
-    public void init() {
-        super.init();
-    }
-
-    @Override
-    public Set<String> getOutboundResponseExcludeHeaders() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getOutboundRequestExcludeHeaders() {
-        return REQUEST_EXCLUDE_HEADERS;
-    }
-
-
-    @Override
-    protected void executeRequest(HttpUriRequest outboundRequest, HttpServletRequest inboundRequest, HttpServletResponse outboundResponse) throws IOException {
-        HttpResponse inboundResponse = null;
-        try {
-            inboundResponse = executeOutboundRequest(outboundRequest);
-            int statusCode = inboundResponse.getStatusLine().getStatusCode();
-            Header originalLocationHeader = inboundResponse.getFirstHeader("Location");
-
-
-            if ((statusCode == HttpServletResponse.SC_MOVED_TEMPORARILY || statusCode == HttpServletResponse.SC_TEMPORARY_REDIRECT) && originalLocationHeader != null) {
-                inboundResponse.removeHeaders("Location");
-                failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, new Exception("Atlas HA redirection"));
-            }
-
-            writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
-
-        } catch (IOException e) {
-            LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
-            failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
-        }
-    }
-
+  }
 }

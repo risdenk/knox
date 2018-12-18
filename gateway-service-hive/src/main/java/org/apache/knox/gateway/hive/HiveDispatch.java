@@ -30,11 +30,6 @@ public class HiveDispatch extends DefaultDispatch {
   private boolean basicAuthPreemptive;
 
   @Override
-  public void init() {
-    super.init();
-  }
-
-  @Override
   protected void addCredentialsToRequest(HttpUriRequest request) {
     if( isBasicAuthPreemptive() ) {
       HiveDispatchUtils.addCredentialsToRequest(request);
@@ -49,6 +44,5 @@ public class HiveDispatch extends DefaultDispatch {
   public boolean isBasicAuthPreemptive() {
     return basicAuthPreemptive;
   }
-
 }
 

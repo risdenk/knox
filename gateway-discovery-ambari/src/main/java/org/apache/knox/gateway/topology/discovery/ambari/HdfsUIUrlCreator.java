@@ -20,14 +20,7 @@ package org.apache.knox.gateway.topology.discovery.ambari;
  * A ServiceURLCreator implementation for HDFSUI.
  */
 public class HdfsUIUrlCreator extends HDFSURLCreatorBase {
-
   private static final String SERVICE = "HDFSUI";
-
-
-  @Override
-  public void init(AmbariCluster cluster) {
-    super.init(cluster);
-  }
 
   @Override
   public String getTargetService() {
@@ -38,5 +31,4 @@ public class HdfsUIUrlCreator extends HDFSURLCreatorBase {
   protected String createURL(String address) {
     return getURLScheme() + "://" + address;
   }
-
 }

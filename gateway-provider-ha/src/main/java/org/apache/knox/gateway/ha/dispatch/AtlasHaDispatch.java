@@ -28,57 +28,56 @@ import java.util.Collections;
 import java.util.Set;
 
 public class AtlasHaDispatch extends DefaultHaDispatch {
-    private static final Set<String> REQUEST_EXCLUDE_HEADERS = Collections.singleton("Content-Length");
+  private static final Set<String> REQUEST_EXCLUDE_HEADERS = Collections.singleton("Content-Length");
 
-    public AtlasHaDispatch() {
-        setServiceRole("ATLAS");
-    }
+  public AtlasHaDispatch() {
+    setServiceRole("ATLAS");
+  }
 
-    @Override
-    public Set<String> getOutboundResponseExcludeHeaders() {
+  @Override
+  public Set<String> getOutboundResponseExcludeHeaders() {
         return Collections.emptySet();
     }
 
-    @Override
-    public Set<String> getOutboundRequestExcludeHeaders() {
-        return REQUEST_EXCLUDE_HEADERS;
-    }
+  @Override
+  public Set<String> getOutboundRequestExcludeHeaders() {
+    return REQUEST_EXCLUDE_HEADERS;
+  }
 
-    @Override
-    protected void executeRequest(HttpUriRequest      outboundRequest,
-                                  HttpServletRequest  inboundRequest,
-                                  HttpServletResponse outboundResponse) throws IOException {
-        HttpResponse inboundResponse = null;
-        try {
-            inboundResponse = executeOutboundRequest(outboundRequest);
+  @Override
+  protected void executeRequest(HttpUriRequest outboundRequest,
+                                HttpServletRequest inboundRequest,
+                                HttpServletResponse outboundResponse) throws IOException {
+    HttpResponse inboundResponse = null;
+    try {
+      inboundResponse = executeOutboundRequest(outboundRequest);
 
-            int sc = inboundResponse.getStatusLine().getStatusCode();
-            if(sc == HttpServletResponse.SC_MOVED_TEMPORARILY || sc == HttpServletResponse.SC_TEMPORARY_REDIRECT) {
-                if(!isLoginRedirect(inboundResponse.getFirstHeader("Location"))) {
-                    inboundResponse.removeHeaders("Location");
-                    failoverRequest(outboundRequest,
-                                    inboundRequest,
-                                    outboundResponse,
-                                    inboundResponse,
-                                    new Exception("Atlas HA redirection"));
-                }
-            }
-
-            writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
-
-        } catch (IOException e) {
-            LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
-            failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
+      int sc = inboundResponse.getStatusLine().getStatusCode();
+      if (sc == HttpServletResponse.SC_MOVED_TEMPORARILY || sc == HttpServletResponse.SC_TEMPORARY_REDIRECT) {
+        if (!isLoginRedirect(inboundResponse.getFirstHeader("Location"))) {
+          inboundResponse.removeHeaders("Location");
+          failoverRequest(outboundRequest,
+              inboundRequest,
+              outboundResponse,
+              inboundResponse,
+              new Exception("Atlas HA redirection"));
         }
-    }
+      }
 
-    private boolean isLoginRedirect(Header locationHeader) {
-        boolean result = false;
-        if (locationHeader != null) {
-            String value = locationHeader.getValue();
-            result = (value.endsWith("login.jsp") || value.contains("originalUrl"));
-        }
-        return result;
-    }
+      writeOutboundResponse(outboundRequest, inboundRequest, outboundResponse, inboundResponse);
 
+    } catch (IOException e) {
+      LOG.errorConnectingToServer(outboundRequest.getURI().toString(), e);
+      failoverRequest(outboundRequest, inboundRequest, outboundResponse, inboundResponse, e);
+    }
+  }
+
+  private boolean isLoginRedirect(Header locationHeader) {
+    boolean result = false;
+    if (locationHeader != null) {
+      String value = locationHeader.getValue();
+      result = (value.endsWith("login.jsp") || value.contains("originalUrl"));
+    }
+    return result;
+  }
 }

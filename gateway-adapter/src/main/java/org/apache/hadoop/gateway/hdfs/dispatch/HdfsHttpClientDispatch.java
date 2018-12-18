@@ -22,6 +22,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * @deprecated
+ */
 @Deprecated
 public class HdfsHttpClientDispatch extends org.apache.knox.gateway.hdfs.dispatch.HdfsHttpClientDispatch {
 
@@ -29,7 +32,6 @@ public class HdfsHttpClientDispatch extends org.apache.knox.gateway.hdfs.dispatc
     super();
   }
 
-  //@Override
   /**
    * This method ensures that the request InputStream is not acquired
    * prior to a dispatch to a component such as a namenode that doesn't
@@ -43,5 +45,4 @@ public class HdfsHttpClientDispatch extends org.apache.knox.gateway.hdfs.dispatc
       throws IOException {
     return super.createRequestEntity(request);
   }
-
 }

@@ -17,7 +17,6 @@
  */
 package org.apache.knox.gateway.dispatch;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,15 +36,5 @@ public class PassAllHeadersDispatch extends ConfigurableDispatch {
   @Override
   protected void setRequestExcludeHeaders(String headers) {
     super.setRequestExcludeHeaders("");
-  }
-
-  @Override
-  public Set<String> getOutboundResponseExcludeHeaders() {
-    return Collections.emptySet();
-  }
-
-  @Override
-  public Set<String> getOutboundRequestExcludeHeaders() {
-    return REQUEST_EXCLUDE_HEADERS;
   }
 }

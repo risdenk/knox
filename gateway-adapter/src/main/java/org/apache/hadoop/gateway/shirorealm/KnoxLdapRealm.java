@@ -34,14 +34,10 @@ import javax.naming.ldap.LdapContext;
  * please use
  * org.apache.knox.gateway.shirorealm.KnoxLdapRealm
  * @since 0.14.0
+ * @deprecated
  */
 @Deprecated
-public class KnoxLdapRealm
-    extends org.apache.knox.gateway.shirorealm.KnoxLdapRealm {
-
-  /**
-   * Create an instance
-   */
+public class KnoxLdapRealm extends org.apache.knox.gateway.shirorealm.KnoxLdapRealm {
   public KnoxLdapRealm() {
     super();
   }

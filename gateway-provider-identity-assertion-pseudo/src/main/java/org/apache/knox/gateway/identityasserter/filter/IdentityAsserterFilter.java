@@ -17,19 +17,10 @@
  */
 package org.apache.knox.gateway.identityasserter.filter;
 
-
 import javax.security.auth.Subject;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import org.apache.knox.gateway.identityasserter.common.filter.CommonIdentityAssertionFilter;
 
 public class IdentityAsserterFilter extends CommonIdentityAssertionFilter {
-
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    super.init(filterConfig);
-  }
-
   @Override
   public String[] mapGroupPrincipals(String mappedPrincipalName, Subject subject) {
     return mapGroupPrincipalsBase(mappedPrincipalName, subject);

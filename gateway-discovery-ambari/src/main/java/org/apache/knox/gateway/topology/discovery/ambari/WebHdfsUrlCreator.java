@@ -20,14 +20,7 @@ package org.apache.knox.gateway.topology.discovery.ambari;
  * A ServiceURLCreator implementation for WEBHDFS.
  */
 public class WebHdfsUrlCreator extends HDFSURLCreatorBase {
-
   private static final String SERVICE = "WEBHDFS";
-
-
-  @Override
-  public void init(AmbariCluster cluster) {
-    super.init(cluster);
-  }
 
   @Override
   public String getTargetService() {
@@ -38,5 +31,4 @@ public class WebHdfsUrlCreator extends HDFSURLCreatorBase {
   protected String createURL(String address) {
     return getURLScheme() + "://" + address + "/webhdfs";
   }
-
 }

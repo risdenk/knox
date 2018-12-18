@@ -52,7 +52,6 @@ public class WebAppSecContributor extends ProviderDeploymentContributorBase {
   private static final String STRICT_TRANSPORT_FILTER_CLASSNAME = "org.apache.knox.gateway.webappsec.filter.StrictTransportFilter";
   private static final String STRICT_TRANSPORT_ENABLED = "strict.transport.enabled";
 
-
   @Override
   public String getRole() {
     return ROLE;
@@ -64,17 +63,11 @@ public class WebAppSecContributor extends ProviderDeploymentContributorBase {
   }
 
   @Override
-  public void initializeContribution(DeploymentContext context) {
-    super.initializeContribution(context);
-  }
-
-  @Override
   public void contributeFilter(DeploymentContext           context,
                                Provider                    provider,
                                Service                     service,
                                ResourceDescriptor          resource,
                                List<FilterParamDescriptor> params) {
-
     Provider webappsec = context.getTopology().getProvider(ROLE, NAME);
     if (webappsec != null && webappsec.isEnabled()) {
       Map<String,String> map = provider.getParams();

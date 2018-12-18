@@ -16,22 +16,12 @@
  */
 package org.apache.hadoop.gateway.rm.dispatch;
 
-import org.apache.knox.gateway.ha.provider.HaProvider;
-
+/**
+ * @deprecated
+ */
 @Deprecated
 public class RMHaDispatch extends org.apache.knox.gateway.rm.dispatch.RMHaDispatch {
-
   public RMHaDispatch() {
     super();
-  }
-
-  @Override
-  public void setHaProvider(HaProvider haProvider) {
-    super.setHaProvider(haProvider);
-  }
-
-  @Override
-  public void init() {
-    super.init();
   }
 }

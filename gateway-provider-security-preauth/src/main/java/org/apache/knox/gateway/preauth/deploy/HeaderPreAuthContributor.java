@@ -47,11 +47,6 @@ public class HeaderPreAuthContributor extends
   }
 
   @Override
-  public void initializeContribution(DeploymentContext context) {
-    super.initializeContribution(context);
-  }
-
-  @Override
   public void contributeFilter(DeploymentContext context, Provider provider, Service service,
       ResourceDescriptor resource, List<FilterParamDescriptor> params) {
     // blindly add all the provider params as filter init params

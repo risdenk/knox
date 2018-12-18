@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class UrlRewriteServletFilter extends AbstractGatewayFilter {
-
   public static final String REQUEST_URL_RULE_PARAM = "request.url";
   public static final String REQUEST_HEADERS_FILTER_PARAM = "request.headers";
   public static final String REQUEST_COOKIES_FILTER_PARAM = "request.cookies";
@@ -44,11 +43,6 @@ public class UrlRewriteServletFilter extends AbstractGatewayFilter {
   public static final MimeType COOKIES_MIME_TYPE = MimeTypes.create( "application/x-http-cookies", null );
 
   @Override
-  public void init( FilterConfig filterConfig ) throws ServletException {
-    super.init( filterConfig );
-  }
-
-  @Override
   protected void doFilter( HttpServletRequest request, HttpServletResponse response, FilterChain chain )
       throws IOException, ServletException {
     FilterConfig config = getConfig();
@@ -56,5 +50,4 @@ public class UrlRewriteServletFilter extends AbstractGatewayFilter {
     UrlRewriteResponse rewriteResponse = new UrlRewriteResponse( config, rewriteRequest, response );
     chain.doFilter( rewriteRequest, rewriteResponse );
   }
-
 }

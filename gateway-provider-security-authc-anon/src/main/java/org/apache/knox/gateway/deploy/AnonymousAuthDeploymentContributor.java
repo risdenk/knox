@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class AnonymousAuthDeploymentContributor extends ProviderDeploymentContributorBase {
-
   private static final String ROLE = "authentication";
   private static final String NAME = "Anonymous";
 
@@ -43,11 +42,6 @@ public class AnonymousAuthDeploymentContributor extends ProviderDeploymentContri
   @Override
   public String getName() {
     return NAME;
-  }
-
-  @Override
-  public void initializeContribution(DeploymentContext context) {
-    super.initializeContribution(context);
   }
 
   @Override
