@@ -20,7 +20,6 @@ language: minimal
 matrix:
   fast_finish: true
   include:
-    - env: IMAGE=maven:3-jdk-8
     - env: IMAGE=maven:3-jdk-11
     
 env:
@@ -31,7 +30,7 @@ services:
 before_install:
   - docker pull $IMAGE
 script:
-  - $DOCKERRUN $IMAGE mvn -T.75C clean verify -U -Dsurefire.useFile=false -Djavax.net.ssl.trustStorePassword=changeit -B -V
+  - $DOCKERRUN $IMAGE mvn -T.75C clean verify -U -Dsurefire.useFile=false -Djavax.net.ssl.trustStorePassword=changeit -B -V -Perrorprone
   - shellcheck gateway-shell-release/home/bin/*.sh
   - shellcheck gateway-release/home/bin/*.sh
   - shellcheck gateway-release-common/home/bin/*.sh
