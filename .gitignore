@@ -27,6 +27,7 @@ dependency-reduced-pom.xml
 *.iws
 atlassian-ide-plugin.xml
 .DS_Store
+build
 target
 install
 patch
