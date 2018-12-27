@@ -43,6 +43,8 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.UUID;
@@ -113,14 +115,14 @@ public class TestUtils {
   public static void LOG_ENTER() {
     StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
     System.out.flush();
-    System.out.println( String.format( Locale.ROOT, "Running %s#%s", caller.getClassName(), caller.getMethodName() ) );
+    System.out.println( String.format( Locale.ROOT, "%s - Running %s#%s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")), caller.getClassName(), caller.getMethodName() ) );
     System.out.flush();
   }
 
   public static void LOG_EXIT() {
     StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
     System.out.flush();
-    System.out.println( String.format( Locale.ROOT, "Exiting %s#%s", caller.getClassName(), caller.getMethodName() ) );
+    System.out.println( String.format( Locale.ROOT, "%s - Exiting %s#%s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")), caller.getClassName(), caller.getMethodName() ) );
     System.out.flush();
   }
 
