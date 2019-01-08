@@ -374,4 +374,15 @@
       <apply path="Location" rule="YARNUIV2/yarnuiv2/outbound/headers/index/location"/>
     </content>
   </filter>
- </rules>
+
+  <rule dir="OUT" name="YARNUIV2/yarnuiv2/outbound/rewrite/timeline.service.reader.webapp.http.address">
+    <match pattern="{host}:{port}"/>
+    <rewrite template="{$frontend[url]}/yarnuiv2/timeline?scheme={gateway.scheme}?{host}?{port}"/>
+  </rule>
+
+  <filter name="YARNUIV2/yarnuiv2/outbound/timeline.service.reader.webapp.http.address">
+    <content type="*/json">
+      <apply path="$.property.value" rule="YARNUIV2/yarnuiv2/outbound/rewrite/timeline.service.reader.webapp.http.address"/>
+    </content>
+  </filter>
+</rules>
