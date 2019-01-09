@@ -86,6 +86,10 @@
     <rewrite template="{$serviceUrl[YARNUIV2]}/ui2/fonts/{**}"/>
   </rule>
 
+  <rule dir="IN" name="YARNUIV2/yarnuiv2/inbound/conf" pattern="*://*:*/**/yarnuiv2/conf?{**}">
+    <rewrite template="{$serviceUrl[YARNUIV2]}/conf?{**}"/>
+  </rule>
+
   <rule dir="IN" name="YARNUIV2/yarnuiv2/inbound/config" pattern="*://*:*/**/yarnuiv2/config/{**}">
     <rewrite template="{$serviceUrl[YARNUIV2]}/ui2/config/{**}"/>
   </rule>
