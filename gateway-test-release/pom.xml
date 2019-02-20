@@ -38,7 +38,7 @@
         <!-- This property name must be different than jetty.version
              Otherwise Jetty 9.3.x and 9.4.x will not both be available.
              Jetty 9.4.x is needed for Knox and Jetty 9.3.x for Hadoop -->
-        <hadoop-jetty.version>9.3.25.v20180904</hadoop-jetty.version>
+        <hadoop-jetty.version>9.4.15.v20190215</hadoop-jetty.version>
         <!-- Guava 26.0-jre removes Future related methods that break 
              the Hadoop integration tests -->
         <hadoop-guava.version>25.1-jre</hadoop-guava.version>
