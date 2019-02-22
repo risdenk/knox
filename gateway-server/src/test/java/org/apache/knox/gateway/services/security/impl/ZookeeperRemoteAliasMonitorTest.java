@@ -79,7 +79,7 @@ public class ZookeeperRemoteAliasMonitorTest {
     // Define the test cluster
     List<InstanceSpec> instanceSpecs = new ArrayList<>();
     for (int i = 0; i < 1; i++) {
-      InstanceSpec is = new InstanceSpec(null, -1, -1, -1, false, (i + 1), -1,
+      InstanceSpec is = new InstanceSpec(null, -1, -1, -1, true, (i + 1), -1,
           -1, customInstanceSpecProps);
       instanceSpecs.add(is);
     }
