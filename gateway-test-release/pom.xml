@@ -41,7 +41,7 @@
         <hadoop-jetty.version>9.3.25.v20180904</hadoop-jetty.version>
         <!-- Guava 26.0-jre removes Future related methods that break 
              the Hadoop integration tests -->
-        <hadoop-guava.version>25.1-jre</hadoop-guava.version>
+        <hadoop-guava.version>27.1-jre</hadoop-guava.version>
     </properties>
 
     <dependencies>
