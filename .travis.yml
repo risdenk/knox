@@ -31,7 +31,7 @@ services:
 before_install:
   - docker pull $IMAGE
 script:
-  - $DOCKERRUN $IMAGE mvn -T.75C clean verify -U -Dsurefire.useFile=false -Djavax.net.ssl.trustStorePassword=changeit -B -V
+  - $DOCKERRUN $IMAGE mvn -T.75C clean verify javadoc:javadoc javadoc:test-javadoc -U -Dsurefire.useFile=false -Djavax.net.ssl.trustStorePassword=changeit -Dmaven.javadoc.failOnError=true -Dmaven.javadoc.failOnWarnings=true -B -V
   - shellcheck gateway-shell-release/home/bin/*.sh
   - shellcheck gateway-release/home/bin/*.sh
   - shellcheck gateway-release-common/home/bin/*.sh
