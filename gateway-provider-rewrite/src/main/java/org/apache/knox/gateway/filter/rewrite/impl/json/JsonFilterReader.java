@@ -530,6 +530,9 @@ class JsonFilterReader extends Reader {
       }
     }
     try {
+      if(rule == null) {
+        throw new Exception("Rule was null");
+      }
       value = filterValueString( node.field, value, rule );
       if( node.isArray() ) {
         ((ArrayNode)node.node).set( 0, new TextNode( value ) );
