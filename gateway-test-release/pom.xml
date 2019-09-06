@@ -38,7 +38,7 @@
         <hadoop-jersey.version>1.19.4</hadoop-jersey.version>
         <!-- Guava 26.0-jre removes Future related methods that break 
              the Hadoop integration tests -->
-        <hadoop-guava.version>25.1-jre</hadoop-guava.version>
+        <hadoop-guava.version>28.1-jre</hadoop-guava.version>
     </properties>
 
     <dependencies>
