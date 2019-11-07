@@ -35,7 +35,7 @@
     </modules>
 
     <properties>
-        <hadoop-jersey.version>1.19</hadoop-jersey.version>
+        <hadoop-jersey.version>1.19.4</hadoop-jersey.version>
     </properties>
 
     <dependencies>
