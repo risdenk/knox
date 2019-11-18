@@ -19,6 +19,7 @@
 .classpath
 .project
 .settings
+.mvn/.gradle-enterprise/
 dependency-reduced-pom.xml
 .idea/
 .iml/
