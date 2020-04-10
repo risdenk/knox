@@ -213,7 +213,7 @@
         <javax.websocket-api.version>1.1</javax.websocket-api.version>
         <jaxb.version>2.3.0</jaxb.version>
         <jaxws-ri.version>2.3.2</jaxws-ri.version>
-        <jakarta.xml.bind.version>2.3.2</jakarta.xml.bind.version>
+        <jakarta.xml.bind.version>2.3.3</jakarta.xml.bind.version>
         <java-support.version>8.0.0</java-support.version>
         <jericho-html.version>3.4</jericho-html.version>
         <jersey.version>2.6</jersey.version>
