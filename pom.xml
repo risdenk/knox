@@ -263,7 +263,7 @@
         <stax-ex.version>1.8.3</stax-ex.version>
         <stax2-api.version>4.2.1</stax2-api.version>
         <swagger-annotations.version>1.6.2</swagger-annotations.version>
-        <swagger-maven-plugin.version>3.1.7</swagger-maven-plugin.version>
+        <swagger-maven-plugin.version>3.1.8</swagger-maven-plugin.version>
         <taglibs-standard.version>1.2.5</taglibs-standard.version>
         <testcontainers.version>1.15.1</testcontainers.version>
         <txw2.version>2.4.0-b180830.0438</txw2.version>
