@@ -223,7 +223,7 @@
         <java-support.version>7.5.2</java-support.version>
         <javassist.version>3.27.0-GA</javassist.version>
         <jboss-logging.version>3.4.1.Final</jboss-logging.version>
-        <jee-pac4j.version>5.0.0</jee-pac4j.version>
+        <jee-pac4j.version>6.0.0</jee-pac4j.version>
         <jericho-html.version>3.4</jericho-html.version>
         <jersey.version>2.6</jersey.version>
         <jetty.version>9.4.34.v20201102</jetty.version>
