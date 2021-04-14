@@ -217,7 +217,7 @@
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
         <javax.websocket-api.version>1.1</javax.websocket-api.version>
-        <jaxws-ri.version>2.3.3</jaxws-ri.version>
+        <jaxws-ri.version>2.3.4</jaxws-ri.version>
         <jakarta.xml.bind.version>2.3.2</jakarta.xml.bind.version>
         <jakarta.activation.version>1.2.2</jakarta.activation.version>
         <java-support.version>7.5.2</java-support.version>
