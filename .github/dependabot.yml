@@ -1,0 +1,405 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "11:00"
+  open-pull-requests-limit: 99
+  reviewers:
+  - risdenk
+  assignees:
+  - risdenk
+  ignore:
+  - dependency-name: com.sun.activation:jakarta.activation
+    versions:
+    - ">= 2.a, < 3"
+  - dependency-name: com.sun.xml.fastinfoset:FastInfoset
+    versions:
+    - ">= 2.a, < 3"
+  - dependency-name: com.sun.xml.ws:jaxws-ri
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: jakarta.xml.bind:jakarta.xml.bind-api
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: net.shibboleth.utilities:java-support
+    versions:
+    - ">= 8.a, < 9"
+  - dependency-name: org.eclipse.jetty:jetty-annotations
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-annotations
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-bom
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-bom
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-client
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-client
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-http
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-http
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-http:tests
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-http:tests
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-io
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-io
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-security
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-security
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-server
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-server
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-servlet
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-servlet
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-servlet:tests
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-servlet:tests
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-util
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-util
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-util-ajax
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-util-ajax
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-webapp
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-webapp
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.jetty:jetty-xml
+    versions:
+    - ">= 10.a, < 11"
+  - dependency-name: org.eclipse.jetty:jetty-xml
+    versions:
+    - ">= 11.a, < 12"
+  - dependency-name: org.eclipse.persistence:eclipselink
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: org.fusesource.jansi:jansi
+    versions:
+    - ">= 2.a, < 3"
+  - dependency-name: org.glassfish.jaxb:jaxb-runtime
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: org.glassfish.jaxb:txw2
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: org.glassfish.jersey.containers:jersey-container-servlet
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: org.glassfish.jersey.containers:jersey-container-servlet-core
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: org.glassfish.jersey.core:jersey-server
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: org.jvnet.staxex:stax-ex
+    versions:
+    - ">= 2.a, < 3"
+  - dependency-name: org.opensaml:opensaml-core
+    versions:
+    - ">= 4.a, < 5"
+  - dependency-name: org.opensaml:opensaml-security-api
+    versions:
+    - ">= 4.a, < 5"
+  - dependency-name: org.opensaml:opensaml-storage-impl
+    versions:
+    - ">= 4.a, < 5"
+  - dependency-name: org.opensaml:opensaml-xmlsec-api
+    versions:
+    - ">= 4.a, < 5"
+  - dependency-name: org.opensaml:opensaml-xmlsec-impl
+    versions:
+    - ">= 4.a, < 5"
+  - dependency-name: net.minidev:json-smart
+    versions:
+    - 2.4.2
+    - 2.4.4
+    - 2.4.5
+  - dependency-name: io.dropwizard.metrics:metrics-jvm
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-jmx
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-jetty9
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-graphite
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-httpclient
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-servlets
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-json
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: io.dropwizard.metrics:metrics-core
+    versions:
+    - 4.1.17
+    - 4.1.18
+    - 4.1.19
+  - dependency-name: com.nimbusds:nimbus-jose-jwt
+    versions:
+    - 9.4.2
+    - "9.5"
+    - 9.6.1
+    - "9.7"
+    - "9.8"
+    - 9.8.1
+  - dependency-name: com.fasterxml.woodstox:woodstox-core
+    versions:
+    - 6.2.3
+    - 6.2.4
+    - 6.2.5
+  - dependency-name: com.google.protobuf:protobuf-java
+    versions:
+    - 3.15.0
+    - 3.15.1
+    - 3.15.2
+    - 3.15.3
+    - 3.15.4
+    - 3.15.5
+    - 3.15.6
+    - 3.15.7
+  - dependency-name: org.owasp:dependency-check-maven
+    versions:
+    - 6.1.0
+    - 6.1.1
+    - 6.1.2
+    - 6.1.3
+    - 6.1.4
+    - 6.1.5
+  - dependency-name: io.netty:netty-bom
+    versions:
+    - 4.1.58.Final
+    - 4.1.59.Final
+    - 4.1.60.Final
+    - 4.1.61.Final
+    - 4.1.62.Final
+  - dependency-name: org.eclipse.jetty:jetty-util-ajax
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-xml
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-security
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-client
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-annotations
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-webapp
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-io
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-util
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-servlet
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-server
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-http
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-http:tests
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-servlet:tests
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-bom
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: com.puppycrawl.tools:checkstyle
+    versions:
+    - "8.39"
+    - "8.40"
+    - "8.41"
+    - 8.41.1
+  - dependency-name: com.github.spotbugs:spotbugs-maven-plugin
+    versions:
+    - 4.2.0
+    - 4.2.2
+  - dependency-name: org.springframework:spring-framework-bom
+    versions:
+    - 5.3.3
+    - 5.3.4
+    - 5.3.5
+  - dependency-name: org.hibernate:hibernate-core
+    versions:
+    - 5.4.27.Final
+    - 5.4.28.Final
+    - 5.4.29.Final
+  - dependency-name: com.fasterxml.jackson:jackson-bom
+    versions:
+    - 2.12.1
+    - 2.12.2
+  - dependency-name: com.github.spotbugs:spotbugs
+    versions:
+    - 4.2.1
+    - 4.2.2
+  - dependency-name: org.pac4j:pac4j-saml-opensamlv3
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: org.pac4j:pac4j-oidc
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: org.pac4j:pac4j-oauth
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: org.pac4j:pac4j-http
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: org.pac4j:pac4j-core
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: org.pac4j:pac4j-config
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: org.pac4j:pac4j-cas
+    versions:
+    - 4.3.1
+    - 4.4.0
+  - dependency-name: com.github.ben-manes.caffeine:caffeine
+    versions:
+    - 2.9.0
+    - 3.0.0
+  - dependency-name: org.testcontainers:vault
+    versions:
+    - 1.15.2
+  - dependency-name: org.testcontainers:testcontainers
+    versions:
+    - 1.15.2
+  - dependency-name: net.java.dev.jna:jna
+    versions:
+    - 5.7.0
+  - dependency-name: joda-time:joda-time
+    versions:
+    - 2.10.9
+  - dependency-name: org.glassfish.jersey.core:jersey-server
+    versions:
+    - "2.33"
+  - dependency-name: org.glassfish.jersey.containers:jersey-container-servlet
+    versions:
+    - "2.33"
+  - dependency-name: org.glassfish.jersey.containers:jersey-container-servlet-core
+    versions:
+    - "2.33"
+  - dependency-name: org.springframework.vault:spring-vault-dependencies
+    versions:
+    - 2.3.1
+  - dependency-name: com.github.eirslett:frontend-maven-plugin
+    versions:
+    - 1.11.2
